@@ -27,14 +27,7 @@ class Menu
         if ($usergroup->getId() != ADMIN && $parent == 0 &&  $mode != 'login')
             return '';
         
-        //if ($mode == 'menu' && $parent == null) 
-          //$header = '<li '.(!isset($_GET['com']) ? 'class="current_page_item"' : '').'><a href=".">'.App::$_LANG->getValue('LANG_HOME').'</a></li>'."\n";
-        //else
-        
-        $header = '';
-
-        $content = '';
-        $footer = '';
+        $items = '';
         $components = Component::getAllComponents(($parent != null ? $parent : 0));
         while (($com = App::$_DB->getRecord($components)) != null)
         {
@@ -45,9 +38,9 @@ class Menu
                     if ($com->com_in_menu == true)
                     {
                         if ($parent == Component::getComponentId('Competitions') && @$_GET['competition'])
-                            $header .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
+                            $items .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
                         else
-                            $header .= '<li '.($com->com_id == @$_GET['com'] ? 'class="current_page_item"' : '').'><a href="?com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
+                            $items .= '<li '.($com->com_id == @$_GET['com'] ? 'class="current_page_item"' : '').'><a href="?com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
                     }   
                 }
                 else if ($mode == 'login')
@@ -55,9 +48,9 @@ class Menu
                     if ($com->com_in_menu == false)
                     {
                         if(UserControl::getCurrentUserGroup()->getId() == GAST)
-                          $content .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=login" class="login">{LANG_LOGIN}</a></li>'."\n";
+                          $items .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=login" class="login">{LANG_LOGIN}</a></li>'."\n";
                         else
-                          $content .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=logout" class="login">{LANG_LOGOUT}</a></li>'."\n";
+                          $items .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=logout" class="login">{LANG_LOGOUT}</a></li>'."\n";
                     }
                 }
                 else
@@ -66,8 +59,10 @@ class Menu
                 }
             }
         }
-        
-        return $header . $content . $footer;
+
+        // Returns a <ul> wrapper around all <li> items, or an empty string when
+        // there are no accessible items to render (callers must handle both cases).
+        return $items ? '<ul>' . $items . '</ul>' : '';
     } // getMenuHTML
 }
 ?>

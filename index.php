@@ -153,7 +153,7 @@ final class App
 
             $menu = new Menu();
             $replaceArr['MENU'] = $menu->getMenuHTML('menu');
-            $replaceArr['LOGIN'] = '';//$menu->getMenuHTML('login');
+            $replaceArr['LOGIN'] = $menu->getMenuHTML('login');
 
             if (@$_GET['competition'] && Competition::exists($_GET['competition']))
             {
@@ -171,17 +171,12 @@ final class App
                 $replaceArr['INFORMATION'] = '<div class="title">
                     <h2>Menu</h2>
                 </div>
-                <p>
-                <div id="submenu">
-                    <ul>
-                    <li><a href="?competition='.@$_GET['competition'].'">'.App::$_LANG->getValue('LANG_HOME').'</a></li>        
-                    '.$user_information.'
-                    '.$menu->getMenuHTML('menu', Component::getComponentId('Competitions')).'
-                    '.$menu->getMenuHTML('login').'
-                    </ul>
-                </div>
-                </p>
-                <br />
+                <ul>
+                <li><a href="?competition='.@$_GET['competition'].'">'.App::$_LANG->getValue('LANG_HOME').'</a></li>
+                '.$user_information.'
+                '.$menu->getMenuHTML('menu', Component::getComponentId('Competitions')).'
+                '.$menu->getMenuHTML('login').'
+                </ul>
                 <div class="title">
                     <h2>'.self::$_LANG->getValue('LANG_COMPETITION') . ':<br /> ' . $competition->getName() .' </h2>
                 </div>

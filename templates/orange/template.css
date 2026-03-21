@@ -52,59 +52,62 @@ p
 }
 
 #container {
-	margin: 0px auto;
-    width: 1140px;
-    position: absolute;
-  	left: 0;
-	right: 0;
-	background-color: #fff;	
-	border: 1px solid black;
-	height:auto !important; /* real browsers */
-	height:100%; /* IE6: treaded as min-height*/
-	min-height:100%; /* real browsers */
+    margin: 0 auto;
+    max-width: 1140px;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid black;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+#content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 #content #column1 {
-    float: left;
     width: 230px;
     padding: 0px 20px 20px 20px;
-    margin-bottom: 100px;
+    box-sizing: border-box;
 }
 
 #content #column2 {
-    float: left;
-    width: 825px;
+    flex: 1;
+    min-width: 0;
     padding: 2em 20px 20px 20px;
-    margin-bottom: 90px;
+    box-sizing: border-box;
 }
 
 #copyright {
-  	position: absolute;
-	bottom: 0px; /* stick to bottom */
-	background-color: #000;	
+    background-color: #000;
     color: white;
-    height: 100px;
+    --copyright-h: 60px; /* single source of truth for footer height */
+    height: var(--copyright-h);
     text-align: center;
-    line-height: 100px;
+    line-height: var(--copyright-h);
     clear: both;
-    width: 1140px;
+    width: 100%;
 }
 
 #menu-wrapper {
-	background-color: #000;	
+    background-color: #000;
     color: white;
-    height: 50px;
-    padding: 0px 10px 0px 10px;
+    min-height: 50px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 #menu {
-    float: left;
-    width: 840px;
+    flex: 1;
 }
 
 #login {
-    float: right;
-    width: 100px;
+    flex-shrink: 0;
 }
 
 #menu ul, #login ul {
@@ -157,8 +160,10 @@ p
 #header
 {
 	background: #ff6d29 url(images/overlay.png);
-    height: 200px;
+    min-height: 120px;
+    height: auto;
     color: white;
+    overflow: hidden;
 }
 
 #header img {
@@ -639,6 +644,57 @@ img.actions, img.icon
 @media (min-width: 768px) {
     .d-md-block {
         display: block !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive shell layout  (T011 – mobile/tablet/desktop breakpoints)
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+    #menu-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 10px 8px 10px;
+    }
+
+    #menu,
+    #login {
+        width: 100%;
+    }
+
+    #menu ul,
+    #login ul {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    #content {
+        flex-direction: column;
+    }
+
+    #content #column1 {
+        width: 100%;
+        padding: 0 16px 16px 16px;
+    }
+
+    #content #column2 {
+        width: 100%;
+        padding: 16px;
+    }
+
+    #header {
+        height: auto;
+        min-height: 100px;
+        padding-bottom: 12px;
+    }
+
+    #header #title {
+        margin: 16px 10px 10px 16px;
+    }
+
+    h1 {
+        font-size: 26px;
     }
 }
 
