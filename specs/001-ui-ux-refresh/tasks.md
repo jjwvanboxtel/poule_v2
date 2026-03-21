@@ -45,8 +45,8 @@
 
 ### Tests for User Story 1
 
-- [ ] T007 [P] [US1] Add the navigation/orientation browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\navigation-shell.spec.ts`
-- [ ] T008 [P] [US1] Add shared shell render regressions for placeholders, hero context and sidebar output in `C:\Github\poule_v2\tests\ui\ui_shell_render_tests.php`
+- [x] T007 [P] [US1] Add the navigation/orientation browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\navigation-shell.spec.ts`
+- [x] T008 [P] [US1] Add shared shell render regressions for placeholders, hero context and sidebar output in `C:\Github\poule_v2\tests\ui\ui_shell_render_tests.php`
 
 ### Implementation for User Story 1
 
