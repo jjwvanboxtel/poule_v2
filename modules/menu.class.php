@@ -38,9 +38,9 @@ class Menu
                     if ($com->com_in_menu == true)
                     {
                         if ($parent == Component::getComponentId('Competitions') && @$_GET['competition'])
-                            $items .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
+                            $items .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.$com->com_id.'"><i class="ti ti-circle-dot nav-icon"></i><span class="nav-text">'.htmlspecialchars($com->com_friendlyname, ENT_QUOTES, 'UTF-8').'</span></a></li>'."\n";
                         else
-                            $items .= '<li '.($com->com_id == @$_GET['com'] ? 'class="current_page_item"' : '').'><a href="?com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
+                            $items .= '<li '.($com->com_id == @$_GET['com'] ? 'class="current_page_item"' : '').'><a href="?com='.$com->com_id.'"><i class="ti ti-circle-dot nav-icon"></i><span class="nav-text">'.htmlspecialchars($com->com_friendlyname, ENT_QUOTES, 'UTF-8').'</span></a></li>'."\n";
                     }   
                 }
                 else if ($mode == 'login')

@@ -26,7 +26,7 @@ import { type Locator, type Page } from '@playwright/test';
  * `templates/orange/index.tpl.php`.
  */
 export const SHELL_SELECTORS = {
-  /** Outermost layout wrapper — `#container`. */
+  /** Outermost main content wrapper — `#container`. */
   container: '#container',
 
   /** Navigation bar wrapper — `#menu-wrapper`. */
@@ -50,17 +50,17 @@ export const SHELL_SELECTORS = {
   /** Subtitle / competition name beneath the h1. */
   subTitle: '#header p',
 
-  /** Content wrapper — `#content`. */
-  content: '#content',
+  /** Content wrapper — `#container` (main-wrapper in new layout). */
+  content: '#container',
 
-  /** Sidebar / contextual info column — `#content #column1`. */
-  column1: '#content #column1',
+  /** Sidebar / contextual info column — `#column1`. */
+  column1: '#column1',
 
   /** Contextual submenu inside the sidebar — `#submenu`. */
   sidebar: '#submenu',
 
-  /** Primary content column — `#content #column2`. */
-  column2: '#content #column2',
+  /** Primary content column — `#column2`. */
+  column2: '#column2',
 
   /** Footer copyright bar — `#copyright`. */
   copyright: '#copyright',
