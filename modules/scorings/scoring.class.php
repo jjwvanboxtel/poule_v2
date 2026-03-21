@@ -1,0 +1,213 @@
+<?php
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+class Scoring
+{
+    private $result = null;
+    private $competitionList = array();
+    private $id = 0;
+    
+    private static $resultList = null;
+    
+    public static $_SCORING_GAME_RESULT_CORRECT = 1;
+    public static $_SCORING_GAME_WINNER_EQUAL_CORRECT = 2;
+    public static $_SCORING_CARDS_CORRECT = 3;
+    public static $_SCORING_YELLOW_OR_RED_CARDS_CORRECT = 4;
+    public static $_SCORING_QUESTION_CORRECT = 5;
+    
+    public function __construct($id)
+    {
+        $this->id = App::$_DB->escapeString($id);
+        $this->result = App::$_DB->doSQL('SELECT *
+                                          FROM `scoring`
+                                          WHERE `scoring_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->getRecord($this->result);
+        
+        $resultList = App::$_DB->doSQL('SELECT * FROM `scoring_competition`
+                                        WHERE `Scoring_scoring_id` = ' . $this->id);
+                          
+        while (($competition = App::$_DB->getRecord($resultList)) != null)
+        {
+            $this->competitionList[$competition->Competition_competition_id]['enabled'] = $competition->Scoring_Competition_enabled;
+            $this->competitionList[$competition->Competition_competition_id]['points'] = $competition->Scoring_Competition_points;
+            $this->competitionList[$competition->Competition_competition_id]['round_id'] = $competition->Round_round_id;
+        }
+    }
+
+    /**
+     * Destructs the scoring-object.
+     */
+    public function __destruct()
+    {
+        App::$_DB->freeQuery($this->result);
+    } //__destruct
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->result->scoring_name;
+    }
+    
+    public function getEnabled($competitionId)
+    {
+        return $this->competitionList[$competitionId]['enabled'];
+    }
+
+    public function getPoints($competitionId)
+    {
+        return $this->competitionList[$competitionId]['points'];
+    }
+
+    public function getSection()
+    {
+        return new Section($this->result->Section_section_id);
+    }
+    
+    public function setName($name)
+    {
+        $this->result->scoring_name = $name;
+    }
+    
+    public function setEnabled($competitionId, $enabled)
+    {
+        $this->competitionList[$competitionId]['enabled'] = $enabled;
+    }   
+
+    public function setPoints($competitionId, $points)
+    {
+        $this->competitionList[$competitionId]['points'] = $points;
+    }
+    
+    public function save()
+    {
+        App::$_DB->doSQL('UPDATE `scoring` SET
+                          `scoring_name` = "'.App::$_DB->escapeString($this->result->scoring_name).'",
+                          `Section_section_id` = '.$this->result->Section_section_id.'
+                         WHERE `scoring_id` = ' . $this->id . ' LIMIT 1;');
+                         
+        foreach ($this->competitionList as $competitionId => $scoring)
+        {
+            App::$_DB->doSQL('UPDATE `scoring_competition` SET
+                                `Scoring_Competition_enabled` = "'.$scoring['enabled'].'",
+                                `Scoring_Competition_points` = "'.$scoring['points'].'"
+                                WHERE `Scoring_scoring_id` = ' . $this->id . ' 
+                                AND `Competition_competition_id` = ' . $competitionId . ' LIMIT 1;');
+        }
+    }
+
+    public static function addScoringByRound($competitionId, $roundName, $roundId)
+    {
+        App::$_DB->doSQL('INSERT INTO `scoring` (scoring_name, Section_section_id, Round_round_id, Competition_competition_id)
+                          VALUES (
+                            "'.App::$_DB->escapeString($roundName).'",
+                            4,
+                            '.$roundId.',
+                            '.$competitionId.')
+                          ');              
+                          
+        $scoringId = App::$_DB->getLastId();
+        
+        App::$_DB->doSQL('INSERT INTO `scoring_competition` (Scoring_scoring_id, Competition_competition_id, Scoring_Competition_enabled, Scoring_Competition_points, Round_round_id)
+                          VALUES (
+                            '.$scoringId.',
+                            '.$competitionId.',
+                            0,
+                            0,
+                            '.$roundId.')
+                          '); 
+        
+        return $scoringId;
+    }
+
+    public static function deleteScoringByRound($roundId)
+    {
+        App::$_DB->doSQL('DELETE FROM `scoring_competition` 
+                            WHERE `Round_round_id` = ' . $roundId . '');
+        App::$_DB->doSQL('DELETE FROM `scoring` 
+                            WHERE `Round_round_id` = ' . $roundId . '');
+
+        return true;
+    }
+    
+    public static function deleteAllScoringCompetitionByCompetition($competitionId)
+    {
+        App::$_DB->doSQL('DELETE FROM `scoring_competition`
+                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+        App::$_DB->doSQL('DELETE FROM `scoring`
+                          WHERE `Competition_competition_id` = ' . $competitionId . '');    
+    }
+    
+    public static function getAllScorings($competitionId=0, $section=false)
+    {
+        if ($competitionId != 0)
+        {
+            $query = '';
+            if ($section)
+              $query = 'AND `Section_section_id` = ' . $section;
+
+            self::$resultList = App::$_DB->doSQL('SELECT `scoring`.*, `scoring_competition`.`Scoring_Competition_enabled`, `scoring_competition`.`Scoring_Competition_points`, `scoring_competition`.`Round_round_id`, `section`.`section_name`
+                                                FROM `scoring`
+                                                INNER JOIN `section` ON `section`.`section_id` = `scoring`.`Section_section_id`
+                                                INNER JOIN `scoring_competition` ON `scoring_competition`.`Scoring_scoring_id` = `scoring`.`scoring_id`
+                                                WHERE `scoring_competition`.`Competition_competition_id` = '.$competitionId.'
+                                                '.$query.'
+                                                ORDER BY `scoring_id` ASC');          
+        }
+        else
+        {
+            self::$resultList = App::$_DB->doSQL('SELECT *
+                                        FROM `scoring`
+                                        WHERE `Round_round_id` = 0');          
+        }
+    }
+
+    public static function getScoringByRoundId($roundId)
+    {
+        self::$resultList = App::$_DB->doSQL('SELECT `scoring`.*, `scoring_competition`.`Scoring_Competition_enabled`, `scoring_competition`.`Scoring_Competition_points`, `scoring_competition`.`Round_round_id`, `section`.`section_name`
+                                        FROM `scoring`
+                                        INNER JOIN `section` ON `section`.`section_id` = `scoring`.`Section_section_id`
+                                        INNER JOIN `scoring_competition` ON `scoring_competition`.`Scoring_scoring_id` = `scoring`.`scoring_id`
+                                        WHERE `scoring`.`Round_round_id` = '.$roundId);  
+        return App::$_DB->getRecord(self::$resultList);
+    }
+    
+    public static function nextScoring()
+    {
+        if (self::$resultList == null)
+          return null;
+
+        $record = App::$_DB->getRecord(self::$resultList);
+        if ($record == null)
+          self::$resultList = null;
+
+        return $record;
+    }
+
+    public static function exists($id)
+    {
+        $record = App::$_DB->doSQL('SELECT count( * ) AS total
+                                    FROM `scoring`
+                                    WHERE `scoring_id` = ' . App::$_DB->escapeString($id));
+
+        return (boolean)App::$_DB->getRecord($record)->total;
+    }
+
+    public static function addCompetition($scoringId, $competitionId)
+    {
+            App::$_DB->doSQL('INSERT INTO `scoring_competition` (Scoring_scoring_id, Competition_competition_id, Scoring_Competition_enabled, Scoring_Competition_points, Round_round_id)
+                          VALUES (
+                            '.$scoringId.',
+                            '.$competitionId.',
+                            0,
+                            0,
+                            0)
+                          ');
+    } 
+}
+?>

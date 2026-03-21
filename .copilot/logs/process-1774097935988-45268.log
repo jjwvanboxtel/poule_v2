@@ -1,0 +1,305 @@
+2026-03-21T12:58:56.657Z [INFO] Workspace initialized: d5b1506c-19d6-4e6a-818c-89a50c48bb34 (checkpoints: 0)
+2026-03-21T12:58:56.782Z [INFO] Starting Copilot CLI: 1.0.10
+2026-03-21T12:58:56.782Z [INFO] Node.js version: v24.11.1
+2026-03-21T12:58:56.784Z [INFO] Registering foreground session: d5b1506c-19d6-4e6a-818c-89a50c48bb34
+2026-03-21T12:58:57.096Z [INFO] Login status unknown
+2026-03-21T12:58:57.097Z [INFO] Registering foreground session: d5b1506c-19d6-4e6a-818c-89a50c48bb34
+2026-03-21T12:58:57.129Z [INFO] Remote session access enabled
+2026-03-21T12:58:57.150Z [INFO] Welcome jjwvanboxtel!
+2026-03-21T12:58:57.242Z [INFO] Init suggestion check completed
+2026-03-21T12:58:57.258Z [ERROR] Starting MCP client for playwright with 
+command: npx 
+args: @playwright/mcp@latest 
+cwd: undefined
+2026-03-21T12:58:57.258Z [ERROR] Starting MCP client for playwright with command: npx and args: @playwright/mcp@latest
+2026-03-21T12:58:57.259Z [ERROR] Creating MCP client for playwright...
+2026-03-21T12:58:57.259Z [ERROR] Connecting MCP client for playwright...
+2026-03-21T12:58:57.276Z [ERROR] Starting remote MCP client for context7 with url: https://mcp.context7.com/mcp
+2026-03-21T12:58:57.276Z [ERROR] Creating MCP client for context7...
+2026-03-21T12:58:57.276Z [ERROR] Connecting MCP client for context7...
+2026-03-21T12:58:57.276Z [ERROR] Starting remote MCP client for github with url: https://api.githubcopilot.com/mcp/
+2026-03-21T12:58:57.276Z [ERROR] Creating MCP client for github...
+2026-03-21T12:58:57.277Z [ERROR] Connecting MCP client for github...
+2026-03-21T12:58:57.416Z [INFO] No update needed, current version is 1.0.10, fetched latest release is v1.0.10
+2026-03-21T12:58:57.586Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id CF60:BEB35:60F05CE:530AB12:69BE9611 in 282ms
+2026-03-21T12:58:57.668Z [INFO] Using default model: claude-sonnet-4.6
+2026-03-21T12:58:58.001Z [ERROR] MCP client for github connected, took 724ms
+2026-03-21T12:58:58.001Z [ERROR] Started MCP client for remote server github
+2026-03-21T12:58:58.032Z [ERROR] MCP client for context7 connected, took 756ms
+2026-03-21T12:58:58.033Z [ERROR] MCP server context7 provided deferred instructions: Use this server to retrieve up-to-date documentation and code examples for any library....
+2026-03-21T12:58:58.033Z [ERROR] Started MCP client for remote server context7
+2026-03-21T12:58:59.668Z [ERROR] MCP client for playwright connected, took 2409ms
+2026-03-21T12:58:59.668Z [ERROR] Started MCP client for playwright
+2026-03-21T12:58:59.669Z [ERROR] Starting remote MCP client for github-mcp-server with url: https://api.individual.githubcopilot.com/mcp/readonly
+2026-03-21T12:58:59.669Z [ERROR] Creating MCP client for github-mcp-server...
+2026-03-21T12:58:59.669Z [ERROR] Connecting MCP client for github-mcp-server...
+2026-03-21T12:58:59.925Z [ERROR] MCP client for github-mcp-server connected, took 256ms
+2026-03-21T12:58:59.925Z [ERROR] Started MCP client for remote server github-mcp-server
+2026-03-21T12:58:59.925Z [ERROR] GitHub MCP server configured after authentication
+2026-03-21T12:59:00.526Z [INFO] Memory enablement check: enabled
+2026-03-21T12:59:00.991Z [INFO] Memory enablement check: enabled
+2026-03-21T12:59:04.579Z [INFO] Registering foreground session: d5b1506c-19d6-4e6a-818c-89a50c48bb34
+2026-03-21T13:01:40.612Z [INFO] Memory enablement check: enabled
+2026-03-21T13:03:03.731Z [INFO] Memory enablement check: enabled
+2026-03-21T13:03:04.028Z [INFO]  
+2026-03-21T13:03:04.028Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:03:04.029Z [INFO] --- End of group ---
+2026-03-21T13:03:04.348Z [INFO]  
+2026-03-21T13:03:04.348Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:03:04.348Z [INFO] --- End of group ---
+2026-03-21T13:03:04.349Z [INFO]  
+2026-03-21T13:03:04.349Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:03:04.349Z [INFO] --- End of group ---
+2026-03-21T13:03:04.350Z [INFO]  
+2026-03-21T13:03:04.350Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:03:04.350Z [INFO] --- End of group ---
+2026-03-21T13:03:04.350Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:03:04.351Z [INFO] --- End of group ---
+2026-03-21T13:03:04.351Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:03:04.351Z [INFO] --- End of group ---
+2026-03-21T13:03:04.351Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:03:04.768Z [INFO] CompactionProcessor: Utilization 34.1% (43710/128000 tokens) below threshold 80%
+2026-03-21T13:03:04.881Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:03:14.190Z [INFO] --- End of group ---
+2026-03-21T13:03:14.192Z [INFO] Session named: "Create Database Migrations And Seeder"
+2026-03-21T13:03:19.215Z [INFO] --- End of group ---
+2026-03-21T13:03:19.366Z [INFO] CompactionProcessor: Utilization 34.7% (44426/128000 tokens) below threshold 80%
+2026-03-21T13:03:19.496Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:03:33.693Z [INFO] --- End of group ---
+2026-03-21T13:03:33.806Z [INFO] CompactionProcessor: Utilization 38.0% (48608/128000 tokens) below threshold 80%
+2026-03-21T13:03:33.925Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:04:25.244Z [INFO] --- End of group ---
+2026-03-21T13:04:25.331Z [INFO] CompactionProcessor: Utilization 39.5% (50568/128000 tokens) below threshold 80%
+2026-03-21T13:04:25.456Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:04:40.427Z [INFO] --- End of group ---
+2026-03-21T13:04:40.507Z [INFO] CompactionProcessor: Utilization 39.7% (50810/128000 tokens) below threshold 80%
+2026-03-21T13:04:40.637Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:04:46.793Z [INFO] --- End of group ---
+2026-03-21T13:04:51.769Z [INFO] CompactionProcessor: Utilization 39.8% (50964/128000 tokens) below threshold 80%
+2026-03-21T13:04:51.908Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:05:07.904Z [INFO] --- End of group ---
+2026-03-21T13:05:08.060Z [ERROR] Language.query is deprecated. Use new Query(language, source) instead.
+
+2026-03-21T13:05:14.806Z [INFO] CompactionProcessor: Utilization 40.4% (51710/128000 tokens) below threshold 80%
+2026-03-21T13:05:14.927Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:05:30.975Z [INFO] --- End of group ---
+2026-03-21T13:05:52.256Z [INFO] CompactionProcessor: Utilization 41.0% (52431/128000 tokens) below threshold 80%
+2026-03-21T13:05:52.378Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:06:08.250Z [INFO] --- End of group ---
+2026-03-21T13:06:13.033Z [INFO] CompactionProcessor: Utilization 41.5% (53155/128000 tokens) below threshold 80%
+2026-03-21T13:06:13.152Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:06:22.851Z [INFO] --- End of group ---
+2026-03-21T13:06:23.197Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id DCD7:346AD:630C39D:54BD539:69BE97CE in 321ms
+2026-03-21T13:09:40.268Z [INFO] Memory enablement check: enabled
+2026-03-21T13:09:40.625Z [INFO]  
+2026-03-21T13:09:40.625Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:09:40.625Z [INFO] --- End of group ---
+2026-03-21T13:09:40.628Z [INFO]  
+2026-03-21T13:09:40.628Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:09:40.628Z [INFO] --- End of group ---
+2026-03-21T13:09:40.629Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:09:40.629Z [INFO] --- End of group ---
+2026-03-21T13:09:40.700Z [INFO] CompactionProcessor: Utilization 41.8% (53464/128000 tokens) below threshold 80%
+2026-03-21T13:09:40.825Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:10:07.694Z [INFO] --- End of group ---
+2026-03-21T13:10:21.056Z [INFO] CompactionProcessor: Utilization 42.9% (54895/128000 tokens) below threshold 80%
+2026-03-21T13:10:21.183Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:10:28.453Z [INFO] --- End of group ---
+2026-03-21T13:10:28.587Z [INFO] CompactionProcessor: Utilization 44.2% (56565/128000 tokens) below threshold 80%
+2026-03-21T13:10:28.741Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:10:34.293Z [INFO] --- End of group ---
+2026-03-21T13:10:34.419Z [INFO] CompactionProcessor: Utilization 48.9% (62539/128000 tokens) below threshold 80%
+2026-03-21T13:10:34.573Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:10:45.621Z [INFO] --- End of group ---
+2026-03-21T13:10:45.993Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id EB93:1641:5A71F7F:4D441A3:69BE98D5 in 341ms
+2026-03-21T13:11:49.477Z [INFO] Memory enablement check: enabled
+2026-03-21T13:11:49.808Z [INFO]  
+2026-03-21T13:11:49.808Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:11:49.808Z [INFO] --- End of group ---
+2026-03-21T13:11:49.821Z [INFO]  
+2026-03-21T13:11:49.821Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:11:49.821Z [INFO] --- End of group ---
+2026-03-21T13:11:49.822Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:11:49.822Z [INFO] --- End of group ---
+2026-03-21T13:11:49.892Z [INFO] CompactionProcessor: Utilization 49.2% (63014/128000 tokens) below threshold 80%
+2026-03-21T13:11:50.039Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:12:18.059Z [INFO] --- End of group ---
+2026-03-21T13:12:18.276Z [INFO] CompactionProcessor: Utilization 50.9% (65139/128000 tokens) below threshold 80%
+2026-03-21T13:12:18.423Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:12:47.661Z [INFO] --- End of group ---
+2026-03-21T13:12:47.758Z [INFO] CompactionProcessor: Utilization 51.8% (66355/128000 tokens) below threshold 80%
+2026-03-21T13:12:47.938Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:13:01.731Z [INFO] --- End of group ---
+2026-03-21T13:13:13.137Z [INFO] CompactionProcessor: Utilization 52.2% (66759/128000 tokens) below threshold 80%
+2026-03-21T13:13:13.284Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:13:19.201Z [INFO] --- End of group ---
+2026-03-21T13:13:19.289Z [INFO] CompactionProcessor: Utilization 52.2% (66821/128000 tokens) below threshold 80%
+2026-03-21T13:13:19.432Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:13:26.752Z [INFO] --- End of group ---
+2026-03-21T13:13:29.560Z [INFO] CompactionProcessor: Utilization 52.4% (67123/128000 tokens) below threshold 80%
+2026-03-21T13:13:29.713Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:14:10.843Z [INFO] --- End of group ---
+2026-03-21T13:14:10.939Z [INFO] CompactionProcessor: Utilization 53.4% (68396/128000 tokens) below threshold 80%
+2026-03-21T13:14:11.103Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:14:17.233Z [INFO] --- End of group ---
+2026-03-21T13:14:17.370Z [INFO] CompactionProcessor: Utilization 54.0% (69135/128000 tokens) below threshold 80%
+2026-03-21T13:14:17.519Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:14:33.344Z [INFO] --- End of group ---
+2026-03-21T13:14:33.435Z [INFO] CompactionProcessor: Utilization 54.1% (69207/128000 tokens) below threshold 80%
+2026-03-21T13:14:33.586Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:14:42.596Z [INFO] --- End of group ---
+2026-03-21T13:14:55.003Z [INFO] CompactionProcessor: Utilization 54.2% (69364/128000 tokens) below threshold 80%
+2026-03-21T13:14:55.153Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:15:00.967Z [INFO] --- End of group ---
+2026-03-21T13:15:01.068Z [INFO] CompactionProcessor: Utilization 54.2% (69431/128000 tokens) below threshold 80%
+2026-03-21T13:15:01.228Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:15:07.920Z [INFO] --- End of group ---
+2026-03-21T13:15:30.831Z [INFO] CompactionProcessor: Utilization 54.4% (69618/128000 tokens) below threshold 80%
+2026-03-21T13:15:30.979Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:15:39.082Z [INFO] --- End of group ---
+2026-03-21T13:15:39.815Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id CD21:4E3D7:627DD7E:5494A98:69BE99FB in 582ms
+2026-03-21T13:16:40.521Z [INFO] Memory enablement check: enabled
+2026-03-21T13:16:40.870Z [INFO]  
+2026-03-21T13:16:40.870Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:16:40.870Z [INFO] --- End of group ---
+2026-03-21T13:16:40.874Z [INFO]  
+2026-03-21T13:16:40.874Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:16:40.874Z [INFO] --- End of group ---
+2026-03-21T13:16:40.874Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:16:40.875Z [INFO] --- End of group ---
+2026-03-21T13:16:40.966Z [INFO] CompactionProcessor: Utilization 54.6% (69929/128000 tokens) below threshold 80%
+2026-03-21T13:16:41.138Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:17:07.120Z [INFO] --- End of group ---
+2026-03-21T13:17:07.258Z [INFO] CompactionProcessor: Utilization 58.5% (74937/128000 tokens) below threshold 80%
+2026-03-21T13:17:07.424Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:17:24.162Z [INFO] --- End of group ---
+2026-03-21T13:17:24.260Z [INFO] CompactionProcessor: Utilization 59.2% (75713/128000 tokens) below threshold 80%
+2026-03-21T13:17:24.433Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:17:33.032Z [INFO] --- End of group ---
+2026-03-21T13:17:53.106Z [INFO] CompactionProcessor: Utilization 59.3% (75914/128000 tokens) below threshold 80%
+2026-03-21T13:17:53.266Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:18:08.372Z [INFO] --- End of group ---
+2026-03-21T13:18:08.763Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id E22F:1065DB:604C623:528B851:69BE9A90 in 358ms
+2026-03-21T13:20:23.037Z [INFO] Memory enablement check: enabled
+2026-03-21T13:20:23.332Z [INFO]  
+2026-03-21T13:20:23.332Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:20:23.332Z [INFO] --- End of group ---
+2026-03-21T13:20:23.336Z [INFO]  
+2026-03-21T13:20:23.336Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:20:23.336Z [INFO] --- End of group ---
+2026-03-21T13:20:23.336Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:20:23.337Z [INFO] --- End of group ---
+2026-03-21T13:20:23.429Z [INFO] CompactionProcessor: Utilization 60.1% (76935/128000 tokens) below threshold 80%
+2026-03-21T13:20:23.614Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:20:41.989Z [INFO] --- End of group ---
+2026-03-21T13:20:42.089Z [INFO] CompactionProcessor: Utilization 60.2% (76996/128000 tokens) below threshold 80%
+2026-03-21T13:20:42.256Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:20:55.679Z [INFO] --- End of group ---
+2026-03-21T13:20:55.816Z [INFO] CompactionProcessor: Utilization 61.3% (78476/128000 tokens) below threshold 80%
+2026-03-21T13:20:55.981Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:21:04.385Z [INFO] --- End of group ---
+2026-03-21T13:21:04.493Z [INFO] CompactionProcessor: Utilization 61.4% (78541/128000 tokens) below threshold 80%
+2026-03-21T13:21:04.679Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:21:11.844Z [INFO] --- End of group ---
+2026-03-21T13:21:12.117Z [INFO] CompactionProcessor: Utilization 62.3% (79699/128000 tokens) below threshold 80%
+2026-03-21T13:21:12.581Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:21:45.376Z [INFO] --- End of group ---
+2026-03-21T13:21:45.745Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id EAEB:162C:416CFC6:38508E7:69BE9B69 in 347ms
+2026-03-21T13:32:15.187Z [INFO] Memory enablement check: enabled
+2026-03-21T13:32:15.529Z [INFO]  
+2026-03-21T13:32:15.529Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:32:15.529Z [INFO] --- End of group ---
+2026-03-21T13:32:15.750Z [INFO]  
+2026-03-21T13:32:15.750Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:32:15.750Z [INFO] --- End of group ---
+2026-03-21T13:32:15.751Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:32:15.751Z [INFO] --- End of group ---
+2026-03-21T13:32:15.864Z [INFO] CompactionProcessor: Utilization 64.5% (82559/128000 tokens) below threshold 80%
+2026-03-21T13:32:16.054Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:32:30.078Z [INFO] --- End of group ---
+2026-03-21T13:32:30.195Z [INFO] CompactionProcessor: Utilization 64.5% (82615/128000 tokens) below threshold 80%
+2026-03-21T13:32:30.366Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:32:40.000Z [INFO] --- End of group ---
+2026-03-21T13:32:40.331Z [INFO] CompactionProcessor: Utilization 65.0% (83245/128000 tokens) below threshold 80%
+2026-03-21T13:32:40.520Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:32:47.589Z [INFO] --- End of group ---
+2026-03-21T13:32:47.703Z [INFO] CompactionProcessor: Utilization 65.1% (83351/128000 tokens) below threshold 80%
+2026-03-21T13:32:47.892Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:32:54.974Z [INFO] --- End of group ---
+2026-03-21T13:32:55.980Z [INFO] CompactionProcessor: Utilization 65.4% (83693/128000 tokens) below threshold 80%
+2026-03-21T13:32:56.173Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:33:02.474Z [INFO] --- End of group ---
+2026-03-21T13:33:02.621Z [INFO] CompactionProcessor: Utilization 66.0% (84432/128000 tokens) below threshold 80%
+2026-03-21T13:33:02.827Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:33:09.241Z [INFO] --- End of group ---
+2026-03-21T13:33:09.408Z [INFO] CompactionProcessor: Utilization 67.0% (85744/128000 tokens) below threshold 80%
+2026-03-21T13:33:09.588Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:33:19.628Z [INFO] --- End of group ---
+2026-03-21T13:33:19.755Z [INFO] CompactionProcessor: Utilization 67.0% (85813/128000 tokens) below threshold 80%
+2026-03-21T13:33:19.969Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:33:27.888Z [INFO] --- End of group ---
+2026-03-21T13:33:27.998Z [INFO] CompactionProcessor: Utilization 67.1% (85901/128000 tokens) below threshold 80%
+2026-03-21T13:33:28.174Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:33:35.946Z [INFO] --- End of group ---
+2026-03-21T13:33:36.101Z [INFO] CompactionProcessor: Utilization 68.1% (87166/128000 tokens) below threshold 80%
+2026-03-21T13:33:36.295Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:33:46.259Z [INFO] --- End of group ---
+2026-03-21T13:36:31.024Z [INFO] CompactionProcessor: Utilization 68.3% (87372/128000 tokens) below threshold 80%
+2026-03-21T13:36:31.227Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:36:38.720Z [INFO] --- End of group ---
+2026-03-21T13:36:38.860Z [INFO] CompactionProcessor: Utilization 68.8% (88109/128000 tokens) below threshold 80%
+2026-03-21T13:36:39.054Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:36:54.281Z [INFO] --- End of group ---
+2026-03-21T13:36:54.450Z [INFO] CompactionProcessor: Utilization 69.4% (88783/128000 tokens) below threshold 80%
+2026-03-21T13:36:54.683Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:37:02.545Z [INFO] --- End of group ---
+2026-03-21T13:37:02.657Z [INFO] CompactionProcessor: Utilization 69.4% (88849/128000 tokens) below threshold 80%
+2026-03-21T13:37:02.847Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:37:09.732Z [INFO] --- End of group ---
+2026-03-21T13:37:26.963Z [INFO] CompactionProcessor: Utilization 69.5% (89001/128000 tokens) below threshold 80%
+2026-03-21T13:37:27.171Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:37:47.610Z [INFO] --- End of group ---
+2026-03-21T13:37:52.182Z [INFO] CompactionProcessor: Utilization 70.2% (89812/128000 tokens) below threshold 80%
+2026-03-21T13:37:52.377Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:37:58.278Z [INFO] --- End of group ---
+2026-03-21T13:37:58.401Z [INFO] CompactionProcessor: Utilization 70.2% (89874/128000 tokens) below threshold 80%
+2026-03-21T13:37:58.613Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:38:06.487Z [INFO] --- End of group ---
+2026-03-21T13:38:06.649Z [INFO] CompactionProcessor: Utilization 70.4% (90101/128000 tokens) below threshold 80%
+2026-03-21T13:38:06.842Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:38:13.505Z [INFO] --- End of group ---
+2026-03-21T13:38:13.694Z [INFO] CompactionProcessor: Utilization 70.5% (90188/128000 tokens) below threshold 80%
+2026-03-21T13:38:13.884Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:38:22.261Z [INFO] --- End of group ---
+2026-03-21T13:38:22.388Z [INFO] CompactionProcessor: Utilization 70.5% (90252/128000 tokens) below threshold 80%
+2026-03-21T13:38:22.589Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:38:36.550Z [INFO] --- End of group ---
+2026-03-21T13:38:36.908Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id E903:6C776:5FB535C:51CB78E:69BE9F5C in 335ms
+2026-03-21T13:39:48.392Z [INFO] Memory enablement check: enabled
+2026-03-21T13:39:48.717Z [INFO]  
+2026-03-21T13:39:48.717Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:39:48.717Z [INFO] --- End of group ---
+2026-03-21T13:39:48.722Z [INFO]  
+2026-03-21T13:39:48.722Z [INFO] --- Start of group: configured settings: ---
+2026-03-21T13:39:48.722Z [INFO] --- End of group ---
+2026-03-21T13:39:48.723Z [INFO] --- Start of group: Completion request configuration:  ---
+2026-03-21T13:39:48.724Z [INFO] --- End of group ---
+2026-03-21T13:39:48.851Z [INFO] CompactionProcessor: Utilization 71.8% (91867/128000 tokens) below threshold 80%
+2026-03-21T13:39:49.098Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:40:05.541Z [INFO] --- End of group ---
+2026-03-21T13:40:05.699Z [INFO] CompactionProcessor: Utilization 72.5% (92755/128000 tokens) below threshold 80%
+2026-03-21T13:40:05.906Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:40:38.115Z [INFO] --- End of group ---
+2026-03-21T13:40:38.245Z [INFO] CompactionProcessor: Utilization 73.2% (93745/128000 tokens) below threshold 80%
+2026-03-21T13:40:38.463Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:40:49.620Z [INFO] --- End of group ---
+2026-03-21T13:40:49.822Z [INFO] CompactionProcessor: Utilization 73.5% (94100/128000 tokens) below threshold 80%
+2026-03-21T13:40:50.031Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:41:01.098Z [INFO] --- End of group ---
+2026-03-21T13:41:01.285Z [INFO] CompactionProcessor: Utilization 73.7% (94279/128000 tokens) below threshold 80%
+2026-03-21T13:41:01.515Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:41:11.582Z [INFO] --- End of group ---
+2026-03-21T13:41:11.741Z [INFO] CompactionProcessor: Utilization 74.3% (95157/128000 tokens) below threshold 80%
+2026-03-21T13:41:11.950Z [INFO] --- Start of group: Sending request to the AI model ---
+2026-03-21T13:41:22.940Z [INFO] --- End of group ---
+2026-03-21T13:41:23.266Z [INFO] [Octokit] GET /repos/jjwvanboxtel/poule_v2/pulls?head=jjwvanboxtel%3Amain&state=open&per_page=1 - 200 with id F311:13A52B:65192E7:56E0592:69BEA003 in 302ms
