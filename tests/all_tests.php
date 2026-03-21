@@ -23,10 +23,14 @@ class AllTests extends TestSuite {
         $this->addFile('table_tests.php');
 
         // UI regression suites (001-ui-ux-refresh).
-        // ui_testcase.php defines the shared UiTestCase base class only.
+        // ui_testcase.php defines the shared UiTestCase base class.
+        // ui_shell_assertions.php adds UiShellAssertions for shell/navigation.
+        // ui_markup_assertions.php adds UiMarkupAssertions for alerts/forms/tables.
         // Concrete test files (e.g. ui_shell_render_tests.php) are added
         // here as they are created in subsequent tasks.
         require_once('ui/ui_testcase.php');
+        require_once('ui/ui_shell_assertions.php');
+        require_once('ui/ui_markup_assertions.php');
     }
 }
 ?>

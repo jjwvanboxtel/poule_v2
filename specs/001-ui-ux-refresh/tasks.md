@@ -29,9 +29,9 @@
 
 **⚠️ CRITICAL**: No user story work should begin until this phase is complete.
 
-- [ ] T004 [P] Capture reusable module-route and screen-selector fixtures for navigation, forms and overviews in `C:\Github\poule_v2\tests\playwright\tests\helpers\navigation-data.ts` and `C:\Github\poule_v2\tests\playwright\tests\helpers\module-routes.ts`
-- [ ] T005 [P] Add shared server-rendered UI assertions for title panels, alerts, forms and list tables in `C:\Github\poule_v2\tests\ui\ui_shell_assertions.php` and `C:\Github\poule_v2\tests\ui\ui_markup_assertions.php`
-- [ ] T006 Create the shared Bootstrap-aligned utility layer for cards, alerts, buttons, forms and list tables in `C:\Github\poule_v2\templates\orange\template.css`
+- [x] T004 [P] Capture reusable module-route and screen-selector fixtures for navigation, forms and overviews in `C:\Github\poule_v2\tests\playwright\tests\helpers\navigation-data.ts` and `C:\Github\poule_v2\tests\playwright\tests\helpers\module-routes.ts`
+- [x] T005 [P] Add shared server-rendered UI assertions for title panels, alerts, forms and list tables in `C:\Github\poule_v2\tests\ui\ui_shell_assertions.php` and `C:\Github\poule_v2\tests\ui\ui_markup_assertions.php`
+- [x] T006 Create the shared Bootstrap-aligned utility layer for cards, alerts, buttons, forms and list tables in `C:\Github\poule_v2\templates\orange\template.css`
 
 **Checkpoint**: Foundation ready — shell, form and overview work can now proceed with shared test support and CSS utilities in place.
 
