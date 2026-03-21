@@ -333,3 +333,312 @@ img.actions, img.icon
 {
     float: left;
 }
+
+/* ==========================================================================
+   Bootstrap-aligned utility layer  (T006 – UI/UX Refresh foundation)
+   --------------------------------------------------------------------------
+   These classes mirror Bootstrap 5 naming conventions so that downstream
+   template and module work (US1–US3) can adopt them without depending on
+   a separate Bootstrap bundle being loaded first.  When Bootstrap 5 is
+   wired into the shell (T009), these declarations act as brand-coloured
+   overrides that keep the orange theme intact.
+
+   Rules:
+   - Never remove or modify any selector above this line.
+   - Keep all class names consistent with Bootstrap 5 (card, alert, btn, …).
+   - Brand colours:  primary #ff6d29  |  dark #000  |  bg-light #f1f1f1
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Page-title helpers  (referenced by app-fixtures.ts and module-routes.ts)
+   -------------------------------------------------------------------------- */
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #000;
+}
+
+.page-subtitle {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Card component
+   -------------------------------------------------------------------------- */
+
+.card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+}
+
+.card-header .card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #000;
+}
+
+/* --------------------------------------------------------------------------
+   Alert component
+   -------------------------------------------------------------------------- */
+
+.alert {
+    padding: 0.75rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    border-color: #a3cfbb;
+    color: #0a3622;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f1aeb5;
+    color: #58151c;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffe69c;
+    color: #664d03;
+}
+
+.alert-info {
+    background-color: #cff4fc;
+    border-color: #9eeaf9;
+    color: #055160;
+}
+
+/* --------------------------------------------------------------------------
+   Button component
+   -------------------------------------------------------------------------- */
+
+.btn {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: transparent;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.btn:hover {
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #ff6d29;
+    border-color: #ff6d29;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #e05c1d;
+    border-color: #d45518;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: #fff;
+}
+
+.btn-light {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #000;
+}
+
+.btn-light:hover {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+    color: #000;
+}
+
+.btn-sm {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Form utilities
+   -------------------------------------------------------------------------- */
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.form-label {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #ff6d29;
+    outline: 0;
+}
+
+.form-select {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* --------------------------------------------------------------------------
+   List / overview table utilities
+   -------------------------------------------------------------------------- */
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.overview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0;
+}
+
+.overview-table th {
+    text-align: left;
+    padding: 0.5rem 0.6rem;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.overview-table td {
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+.overview-table tr:last-child td {
+    border-bottom: none;
+}
+
+.action-row {
+    text-align: right;
+    padding: 0.5rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   Minimal responsive / visibility helpers
+   -------------------------------------------------------------------------- */
+
+.d-none {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .d-md-block {
+        display: block !important;
+    }
+}
+
