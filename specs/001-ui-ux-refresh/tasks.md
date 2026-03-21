@@ -17,9 +17,9 @@
 
 **Purpose**: Create the test and helper scaffolding needed to execute the UI/UX refresh safely in this legacy PHP codebase.
 
-- [ ] T001 Create the Playwright workspace for UI smoke tests in `C:\Github\poule_v2\tests\playwright\package.json` and `C:\Github\poule_v2\tests\playwright\playwright.config.ts`
-- [ ] T002 [P] Create shared Playwright helper fixtures and viewport utilities in `C:\Github\poule_v2\tests\playwright\tests\helpers\app-fixtures.ts` and `C:\Github\poule_v2\tests\playwright\tests\helpers\viewports.ts`
-- [ ] T003 Create a dedicated SimpleTest UI regression bootstrap in `C:\Github\poule_v2\tests\ui\ui_testcase.php` and register the UI regression suites in `C:\Github\poule_v2\tests\all_tests.php`
+- [x] T001 Create the Playwright workspace for UI smoke tests in `C:\Github\poule_v2\tests\playwright\package.json` and `C:\Github\poule_v2\tests\playwright\playwright.config.ts`
+- [x] T002 [P] Create shared Playwright helper fixtures and viewport utilities in `C:\Github\poule_v2\tests\playwright\tests\helpers\app-fixtures.ts` and `C:\Github\poule_v2\tests\playwright\tests\helpers\viewports.ts`
+- [x] T003 Create a dedicated SimpleTest UI regression bootstrap in `C:\Github\poule_v2\tests\ui\ui_testcase.php` and register the UI regression suites in `C:\Github\poule_v2\tests\all_tests.php`
 
 ---
 

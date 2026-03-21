@@ -6,8 +6,8 @@ require_once('./simpletest/autorun.php');
 
 class AllTests extends TestSuite {
 
-    function AllTests() {
-        $this->TestSuite('All tests for Poule system');
+    function __construct() {
+        parent::__construct('All tests for Poule system');
         $this->addFile('cities_tests.php');
         $this->addFile('competitions_tests.php');
         $this->addFile('countries_tests.php');
@@ -33,6 +33,11 @@ class AllTests extends TestSuite {
         // T008: Shell render regressions for placeholder usage, hero context
         // and sidebar output (locks down the shell before the T009 refactor).
         $this->addFile('ui/ui_shell_render_tests.php');
+    }
+
+    /* Backwards-compatible PHP4-style constructor */
+    function AllTests() {
+        $this->__construct();
     }
 }
 ?>
