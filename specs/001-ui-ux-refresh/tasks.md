@@ -66,8 +66,8 @@
 
 ### Tests for User Story 2
 
-- [ ] T012 [P] [US2] Add the form-management browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\form-management.spec.ts`
-- [ ] T013 [P] [US2] Add form markup regressions for grouped fields, action rows and validation/status states in `C:\Github\poule_v2\tests\ui\ui_form_render_tests.php`
+- [x] T012 [P] [US2] Add the form-management browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\form-management.spec.ts`
+- [x] T013 [P] [US2] Add form markup regressions for grouped fields, action rows and validation/status states in `C:\Github\poule_v2\tests\ui\ui_form_render_tests.php`
 
 ### Implementation for User Story 2
 
