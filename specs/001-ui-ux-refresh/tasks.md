@@ -17,9 +17,9 @@
 
 **Purpose**: Create the test and helper scaffolding needed to execute the UI/UX refresh safely in this legacy PHP codebase.
 
-- [ ] T001 Create the Playwright workspace for UI smoke tests in `C:\Github\poule_v2\tests\playwright\package.json` and `C:\Github\poule_v2\tests\playwright\playwright.config.ts`
-- [ ] T002 [P] Create shared Playwright helper fixtures and viewport utilities in `C:\Github\poule_v2\tests\playwright\tests\helpers\app-fixtures.ts` and `C:\Github\poule_v2\tests\playwright\tests\helpers\viewports.ts`
-- [ ] T003 Create a dedicated SimpleTest UI regression bootstrap in `C:\Github\poule_v2\tests\ui\ui_testcase.php` and register the UI regression suites in `C:\Github\poule_v2\tests\all_tests.php`
+- [x] T001 Create the Playwright workspace for UI smoke tests in `C:\Github\poule_v2\tests\playwright\package.json` and `C:\Github\poule_v2\tests\playwright\playwright.config.ts`
+- [x] T002 [P] Create shared Playwright helper fixtures and viewport utilities in `C:\Github\poule_v2\tests\playwright\tests\helpers\app-fixtures.ts` and `C:\Github\poule_v2\tests\playwright\tests\helpers\viewports.ts`
+- [x] T003 Create a dedicated SimpleTest UI regression bootstrap in `C:\Github\poule_v2\tests\ui\ui_testcase.php` and register the UI regression suites in `C:\Github\poule_v2\tests\all_tests.php`
 
 ---
 
@@ -50,9 +50,9 @@
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Refactor the shared shell markup and responsive content containers in `C:\Github\poule_v2\templates\orange\index.tpl.php`
-- [ ] T010 [P] [US1] Modernize primary and contextual navigation rendering while preserving existing links and active-state logic in `C:\Github\poule_v2\modules\menu.class.php` and `C:\Github\poule_v2\index.php`
-- [ ] T011 [US1] Normalize home, competition and deep-link hero/sidebar context blocks without changing route behavior in `C:\Github\poule_v2\index.php` and `C:\Github\poule_v2\templates\orange\template.css`
+- [x] T009 [US1] Refactor the shared shell markup and responsive content containers in `C:\Github\poule_v2\templates\orange\index.tpl.php`
+- [x] T010 [P] [US1] Modernize primary and contextual navigation rendering while preserving existing links and active-state logic in `C:\Github\poule_v2\modules\menu.class.php` and `C:\Github\poule_v2\index.php`
+- [x] T011 [US1] Normalize home, competition and deep-link hero/sidebar context blocks without changing route behavior in `C:\Github\poule_v2\index.php` and `C:\Github\poule_v2\templates\orange\template.css`
 
 **Checkpoint**: User Story 1 is complete when the shared shell is consistent and independently testable across the main application entry paths.
 
