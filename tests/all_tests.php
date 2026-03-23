@@ -33,6 +33,11 @@ class AllTests extends TestSuite {
         // T008: Shell render regressions for placeholder usage, hero context
         // and sidebar output (locks down the shell before the T009 refactor).
         $this->addFile('ui/ui_shell_render_tests.php');
+
+        // T013: Form render regressions for login, add, field grouping,
+        // action rows, validation states and token replacement
+        // (locks down the form contract before the T014–T017 restyling).
+        $this->addFile('ui/ui_form_render_tests.php');
     }
 
     /* Backwards-compatible PHP4-style constructor */
