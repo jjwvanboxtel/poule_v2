@@ -273,7 +273,6 @@ class Users extends Component
 
         $content = '';
         $replaceArr = array();
-        $replaceArr['ERROR_MSG'] = '';
 
         //get default values
         if ($edit && $edit instanceof InputException)
@@ -303,7 +302,7 @@ class Users extends Component
                 $bankaccount = @$_POST['bankaccount'];
             }
             
-            $replaceArr['ERROR_MSG'] = '<div>'.$edit->getMessage().'</div>';
+            $msg = '<div>'.$edit->getMessage().'</div>';
         }
         else if ($edit)
         {
@@ -328,12 +327,12 @@ class Users extends Component
             $confirmPassword = '';
         }
         
-        $content .= '<tr><td>{LANG_USER_FNAME}:</td><td><input maxlength="45" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'firstname') || (@$edit && !@$firstName) ? 'class="error" ' : ' ') . 'type="text" name="firstname"' . (@$firstName ? ' value="'.@$firstName.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_LNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'lastname') || (@$edit && !@$lastName) ? 'class="error" ' : ' ') . 'type="text" name="lastname"' . (@$lastName ? ' value="'.@$lastName.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_PHONENR}:</td><td><input maxlength="10" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'telnr') ? 'class="error" ' : ' ') . 'type="text" name="telnr"' . (@$telNr ? ' value="'.@$telNr.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_EMAIL}:</td><td><input maxlength="128" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'emailaddress') || (@$edit && !@$emailAddress) ? 'class="error" ' : ' ') . 'type="text" name="emailaddress"' . (@$emailAddress ? ' value="'.@$emailAddress.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_PASS}:</td><td><input maxlength="65" ' . ((@$edit instanceof InputException && !isset($password)) ? 'class="error" ' : '') . 'type="password" name="password" /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_PASS} {LANG_USER_CONFIRM}:</td><td><input maxlength="65" ' . ((@$edit instanceof InputException && !isset($confirmpassword)) ? 'class="error" ' : '') . ' type="password" name="confirmpassword" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_FNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'firstname') || (@$edit && !@$firstName)) ? ' error' : '') . '" maxlength="45" type="text" name="firstname"' . (@$firstName ? ' value="'.@$firstName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_LNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'lastname') || (@$edit && !@$lastName)) ? ' error' : '') . '" maxlength="70" type="text" name="lastname"' . (@$lastName ? ' value="'.@$lastName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_PHONENR}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'telnr') ? ' error' : '') . '" maxlength="10" type="text" name="telnr"' . (@$telNr ? ' value="'.@$telNr.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_EMAIL}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'emailaddress') || (@$edit && !@$emailAddress)) ? ' error' : '') . '" maxlength="128" type="text" name="emailaddress"' . (@$emailAddress ? ' value="'.@$emailAddress.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_PASS}:</td><td><input class="form-control' . ((@$edit instanceof InputException && !isset($password)) ? ' error' : '') . '" maxlength="65" type="password" name="password" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_PASS} {LANG_USER_CONFIRM}:</td><td><input class="form-control' . ((@$edit instanceof InputException && !isset($confirmpassword)) ? ' error' : '') . '" maxlength="65" type="password" name="confirmpassword" /></td></tr>' . "\n";
 
         //generate list of usergroups
         if (!@$user instanceof Participant && $_GET['option'] != 'newparticipant')
@@ -354,19 +353,29 @@ class Users extends Component
         else
         {
             $content .= '<tr><td>' . "\n";
-            $content .= '{LANG_USER_STREET}:</td><td><input maxlength="100" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? 'class="error" ' : ' ') . 'type="text" name="street"' . (@$street ? ' value="'.@$street.'"' : '') . ' />' . "\n";
-            $content .= '<input style="width: 20px;" maxlength="6" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? 'class="error" ' : ' ') . 'type="text" name="housenr"' . (@$housenr ? ' value="'.@$housenr.'"' : '') . ' />' . "\n";
-            $content .= '<input style="width: 15px;" type="text" maxlength="1" name="nradd"' . (@$nradd ? ' value="'.@$nradd.'"' : '') . ' />' . "\n";
-            $content .= '</td></tr>' . "\n";
+            $content .= '{LANG_USER_STREET}:</td><td><div class="d-flex gap-2">' . "\n";
+            $content .= '<input class="form-control flex-grow-1' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? ' error' : '') . '" maxlength="100" type="text" name="street"' . (@$street ? ' value="'.@$street.'"' : '') . ' />' . "\n";
+            $content .= '<input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? ' error' : '') . '" style="width: 80px;" maxlength="6" type="text" name="housenr" placeholder="Nr"' . (@$housenr ? ' value="'.@$housenr.'"' : '') . ' />' . "\n";
+            $content .= '<input class="form-control" style="width: 60px;" type="text" maxlength="1" name="nradd" placeholder="+"' . (@$nradd ? ' value="'.@$nradd.'"' : '') . ' />' . "\n";
+            $content .= '</div></td></tr>' . "\n";
 
-            $content .= '<tr><td>{LANG_USER_POSTALCODE}:</td><td><input maxlength="6" ' . ((@$edit && $edit instanceof InputException && ($edit->getErrorField() == 'address' || $edit->getErrorField() == 'postalcode')) ? 'class="error" ' : ' ') . 'type="text" name="postalcode"' . (@$postalcode ? ' value="'.@$postalcode.'"' : '') . ' /></td></tr>' . "\n";
-            $content .= '<tr><td>{LANG_USER_TOWN}:</td><td><input maxlength="100" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? 'class="error" ' : ' ') . 'type="text" name="town"' . (@$town ? ' value="'.@$town.'"' : '') . ' /></td></tr>' . "\n";
-            $content .= '<tr><td>{LANG_USER_BANKACCOUNT}:</td><td><input maxlength="18" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'bankaccount') ? 'class="error" ' : ' ') . 'type="text" name="bankaccount"' . (@$bankaccount ? ' value="'.@$bankaccount.'"' : '') . ' /></td></tr>' . "\n";
+            $content .= '<tr><td>{LANG_USER_POSTALCODE}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && ($edit->getErrorField() == 'address' || $edit->getErrorField() == 'postalcode')) ? ' error' : '') . '" maxlength="6" type="text" name="postalcode"' . (@$postalcode ? ' value="'.@$postalcode.'"' : '') . ' /></td></tr>' . "\n";
+            $content .= '<tr><td>{LANG_USER_TOWN}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? ' error' : '') . '" maxlength="100" type="text" name="town"' . (@$town ? ' value="'.@$town.'"' : '') . ' /></td></tr>' . "\n";
+            $content .= '<tr><td>{LANG_USER_BANKACCOUNT}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'bankaccount') ? ' error' : '') . '" maxlength="18" type="text" name="bankaccount"' . (@$bankaccount ? ' value="'.@$bankaccount.'"' : '') . ' /></td></tr>' . "\n";
         }
 
         $replaceArr['USER_TITLE'] = "{LANG_USER} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;
-        $replaceArr['USER_MSG'] = $msg;        
+        if ($msg != '') {
+            $isError = (stripos($msg, '{ERROR_') !== false || stripos($msg, 'ERROR_') !== false || stripos($msg, 'error') !== false);
+            $bg = $isError ? '#fdecea' : '#e9f7ef';
+            $textClass = $isError ? 'text-danger' : 'text-success';
+            $borderClass = $isError ? 'border-danger' : 'border-success';
+            $replaceArr['ERROR_MSG'] = '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';"><div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
+        } else {
+            $replaceArr['ERROR_MSG'] = '';
+        }
+
         $replaceArr['USER_COM_ID'] = $_GET['com'];
         $tpl->replace($replaceArr);
         echo $tpl;

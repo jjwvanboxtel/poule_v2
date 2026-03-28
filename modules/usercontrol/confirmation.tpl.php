@@ -4,6 +4,4 @@
     <h2>{LANG_LOGIN}</h2>
 </div>
 
-<div class="card card-body">
-    {LOGIN_MSG}
-</div>
+{LOGIN_MSG_WRAPPER}

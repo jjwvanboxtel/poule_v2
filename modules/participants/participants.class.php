@@ -154,6 +154,21 @@ class Participants extends Component
         $replaceArr['CONTENT'] = $content;       
         $replaceArr['PARTICIPANT_COM_ID'] = $_GET['com'];
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+
+        // Create wrapped message only if non-empty; strip trailing <br> to avoid extra gap
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $msg = rtrim($msg);
+        if ($msg != '') {
+            $isError = (stripos($msg, '{ERROR_') !== false || stripos($msg, 'ERROR_') !== false || stripos($msg, 'error') !== false);
+            $bg = $isError ? '#fdecea' : '#e9f7ef';
+            $textClass = $isError ? 'text-danger' : 'text-success';
+            $borderClass = $isError ? 'border-danger' : 'border-success';
+            $replaceArr['ERROR_MSG_WRAPPER'] = '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';"><div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
+        } else {
+            $replaceArr['ERROR_MSG_WRAPPER'] = '';
+        }
+
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditParticipantGroup

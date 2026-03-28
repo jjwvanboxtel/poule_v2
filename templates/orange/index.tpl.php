@@ -37,8 +37,13 @@
             <!-- App title shown in topbar on mobile / small screens -->
             <span class="navbar-brand fw-semibold d-lg-none">{TITLE}</span>
 
+            <!-- Main navigation menu -->
+            <div id="menu" class="d-none d-lg-flex ms-auto">
+                {MENU}
+            </div>
+
             <!-- Login / logout area -->
-            <div id="login" class="ms-auto">
+            <div id="login">
                 {LOGIN}
             </div>
         </nav>
@@ -53,9 +58,8 @@
                 </a>
             </div>
 
-            <!-- Primary navigation -->
-            <p class="sidebar-section-label">Navigatie</p>
-            <div id="menu">
+            <!-- Primary navigation (mobile only) -->
+            <div id="menu-mobile" class="d-lg-none">
                 {MENU}
             </div>
 
