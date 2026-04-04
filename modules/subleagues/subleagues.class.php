@@ -37,7 +37,7 @@ class Subleagues extends Component
                     try
                     {
                         $this->doEditSubleague();
-                        $this->showSubleagues('<div id="msg">{LANG_SUBLEAGUE} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showSubleagues('{LANG_SUBLEAGUE} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -45,7 +45,7 @@ class Subleagues extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showSubleagues('<div>{LANG_SUBLEAGUE} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showSubleagues('{LANG_SUBLEAGUE} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -64,9 +64,9 @@ class Subleagues extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditSubleague($subleague))
-                          $this->showSubleagues('<div>{LANG_SUBLEAGUE} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showSubleagues('{LANG_SUBLEAGUE} {ERROR_EDIT}');
                         else
-                          $this->showSubleagues('<div>{LANG_SUBLEAGUE} {LANG_ADD_OK}</div><br />' . "\n");
+                          $this->showSubleagues('{LANG_SUBLEAGUE} {LANG_ADD_OK}');
                     }
                     else
                     {
@@ -79,7 +79,7 @@ class Subleagues extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showSubleagues('<div>{LANG_SUBLEAGUE} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showSubleagues('{LANG_SUBLEAGUE} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
           case 'user_edit':
@@ -93,9 +93,9 @@ class Subleagues extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditSubleagueParticipants($subleague))
-                          $this->showEditSubleagueParticipants('<div>{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {ERROR_ADD}</div><br />' . "\n");
+                          $this->showEditSubleagueParticipants('{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {ERROR_ADD}');
                         else
-                          $this->showEditSubleagueParticipants('<div>{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {LANG_ADD_OK}</div><br />' . "\n");
+                          $this->showEditSubleagueParticipants('{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {LANG_ADD_OK}');
                     }
                     else
                     {
@@ -108,7 +108,7 @@ class Subleagues extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showSubleagues('<div>{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showSubleagues('{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {ERROR_ADD}: ' . $ex->getMessage());
                 }
                 break;
             case 'user_delete': 
@@ -122,7 +122,7 @@ class Subleagues extends Component
                         $subleague = new Subleague($_GET['id']);
 
                         if (!$subleague->deleteParticipant($_GET['participantId']))
-                          $this->showEditSubleagueParticipants('<div>{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showEditSubleagueParticipants('{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -131,7 +131,7 @@ class Subleagues extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showEditSubleagueParticipants('<div>{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showEditSubleagueParticipants('{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -145,9 +145,9 @@ class Subleagues extends Component
                         $subleague = new Subleague($_GET['id']);
 
                         if (!$subleague->delete())
-                          $this->showSubleagues('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_SUBLEAGUE} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showSubleagues('{ERROR_OLD_FILE_REMOVE}<br />{LANG_SUBLEAGUE} {LANG_REMOVE_OK}');
                         else
-                          $this->showSubleagues('<div>{LANG_SUBLEAGUE} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showSubleagues('{LANG_SUBLEAGUE} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -156,7 +156,7 @@ class Subleagues extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showSubleagues('<div>{LANG_SUBLEAGUE} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showSubleagues('{LANG_SUBLEAGUE} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -196,7 +196,7 @@ class Subleagues extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_SUBLEAGUES}';
-        $replaceArr['SUBLEAGUE_MSG'] = $msg;
+        $replaceArr['SUBLEAGUE_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $replaceArr['SUBLEAGUE_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_SUBLEAGUE} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_SUBLEAGUE} {LANG_ADD}</a>'. "\n" : '');
@@ -292,10 +292,7 @@ class Subleagues extends Component
         $replaceArr['SUBLEAGUE_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
         $replaceArr['SUBLEAGUE_ID'] = @$_GET['id'];
-        $replaceArr['SUBLEAGUE_MSG'] = $msg;
-        $msgRaw = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $msgRaw = preg_replace('/^<div[^>]*>(.*?)<\/div>\s*$/si', '$1', trim($msgRaw));
-        $replaceArr['SUBLEAGUE_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msgRaw));
+        $replaceArr['SUBLEAGUE_MSG'] = self::buildMsgWrapper($msg);
         $tpl->replace($replaceArr);
         echo $tpl;
 
@@ -327,7 +324,7 @@ class Subleagues extends Component
             //the post went wrong, get previous values
             $subleagueName = @$_POST['subleaguename'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
                 
         $content .= '<tr><td>{LANG_SUBLEAGUE}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'subleaguename') || (@$edit && !@$subleagueName) ? 'class="error" ' : ' ') . 'type="text" name="subleaguename"' . (@$subleagueName ? ' value="'.@$subleagueName.'"' : '') . ' /></td></tr>' . "\n";
@@ -345,9 +342,6 @@ class Subleagues extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['SUBLEAGUE_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditSubleague

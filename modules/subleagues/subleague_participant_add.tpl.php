@@ -4,7 +4,7 @@
     <h2>{SUBLEAGUE_TITLE}</h2>
 </div>
 
-{SUBLEAGUE_MSG_WRAPPER}
+{SUBLEAGUE_MSG}
 
 <div id="subleague_participant_add" class="card card-body">
     <form action="?competition={COMPETITION_ID}&com={SUBLEAGUE_COM_ID}&id={SUBLEAGUE_ID}&option=user_edit" method="post">

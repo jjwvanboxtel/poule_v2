@@ -38,7 +38,7 @@ class Countries extends Component
                     try
                     {
                         $this->doEditCountry();
-                        $this->showCountries('<div id="msg">{LANG_COUNTRY} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showCountries('{LANG_COUNTRY} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -46,7 +46,7 @@ class Countries extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showCountries('<div>{LANG_COUNTRY} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showCountries('{LANG_COUNTRY} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -65,9 +65,9 @@ class Countries extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditCountry($country))
-                          $this->showCountries('<div>{LANG_COUNTRY} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showCountries('{LANG_COUNTRY} {ERROR_EDIT}');
                         else
-                          $this->showCountries('<div>{LANG_COUNTRY} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showCountries('{LANG_COUNTRY} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -80,7 +80,7 @@ class Countries extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCountries('<div>{LANG_COUNTRY} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCountries('{LANG_COUNTRY} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -94,9 +94,9 @@ class Countries extends Component
                         $country = new Country($_GET['id']);
 
                         if (!$country->delete())
-                          $this->showCountries('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_COUNTRY} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCountries('{ERROR_OLD_FILE_REMOVE}<br />{LANG_COUNTRY} {LANG_REMOVE_OK}');
                         else
-                          $this->showCountries('<div>{LANG_COUNTRY} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCountries('{LANG_COUNTRY} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -105,7 +105,7 @@ class Countries extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCountries('<div>{LANG_COUNTRY} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCountries('{LANG_COUNTRY} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -140,7 +140,7 @@ class Countries extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_COUNTRIES}';
-        $replaceArr['COUNTRY_MSG'] = $msg;
+        $replaceArr['COUNTRY_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['COUNTRY_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_COUNTRY} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_COUNTRY} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -175,7 +175,7 @@ class Countries extends Component
             //the post went wrong, get previous values
             $countryName = @$_POST['countryname'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_COUNTRY_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'countryname') || (@$edit && !@$countryName) ? 'class="error" ' : ' ') . 'type="text" name="countryname"' . (@$countryName ? ' value="'.@$countryName.'"' : '') . ' /></td></tr>' . "\n";
  
@@ -193,9 +193,6 @@ class Countries extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['COUNTRY_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditCountry

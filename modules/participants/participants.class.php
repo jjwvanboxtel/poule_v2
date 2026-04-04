@@ -37,7 +37,7 @@ class Participants extends Component
                     if(isset($_POST['submit']))
                     {
                         Participants::doEditParticipant();
-                        $this->showParticipants('<div>{LANG_PARTICIPANT} {LANG_EDIT_OK}</div><br />' . "\n");
+                        $this->showParticipants('{LANG_PARTICIPANT} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -106,7 +106,7 @@ class Participants extends Component
         
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_PARTICIPANTS}';
-        $replaceArr['PARTICIPANT_MSG'] = $msg;
+        $replaceArr['PARTICIPANT_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['CONTENT'] = $content;
         $replaceArr['FILTER_LIST'] = $filter; 
         $replaceArr['COM_ID'] = $this->componentId;
@@ -139,7 +139,7 @@ class Participants extends Component
             //the post went wrong, get previous values
             $payed = @$_POST['participantpayed'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         else if ($edit)
         {
@@ -154,12 +154,6 @@ class Participants extends Component
         $replaceArr['CONTENT'] = $content;       
         $replaceArr['PARTICIPANT_COM_ID'] = $_GET['com'];
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-
-        // Create wrapped message only if non-empty; strip trailing <br> to avoid extra gap
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $msg = rtrim($msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
 
         $tpl->replace($replaceArr);
         echo $tpl;

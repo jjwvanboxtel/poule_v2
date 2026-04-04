@@ -4,7 +4,7 @@
     <h2>{COUNTRY_TITLE}</h2>
 </div>
 
-{ERROR_MSG_WRAPPER}
+{ERROR_MSG}
 
 <div id="country_add" class="card card-body">
     <form action="" method="post" enctype="multipart/form-data">

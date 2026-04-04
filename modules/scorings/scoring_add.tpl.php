@@ -4,7 +4,7 @@
     <h2>{SCORING_TITLE}</h2>
 </div>
 
-{ERROR_MSG_WRAPPER}
+{ERROR_MSG}
 
 <div id="scoring_add" class="card card-body">
     <form action="" method="post">

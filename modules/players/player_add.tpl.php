@@ -4,7 +4,7 @@
     <h2>{PLAYER_TITLE}</h2>
 </div>
 
-{ERROR_MSG_WRAPPER}
+{ERROR_MSG}
 
 <div id="player_add" class="card card-body">
     <form action="" method="post" enctype="multipart/form-data">

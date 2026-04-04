@@ -40,9 +40,9 @@ class Scorings extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditScoring($scoring))
-                          $this->showScorings('<div>{LANG_SCORING} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showScorings('{LANG_SCORING} {ERROR_EDIT}');
                         else
-                          $this->showScorings('<div>{LANG_SCORING} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showScorings('{LANG_SCORING} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -55,7 +55,7 @@ class Scorings extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showScorings('<div>{LANG_SCORING} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showScorings('{LANG_SCORING} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -108,7 +108,7 @@ class Scorings extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_SCORINGS}';
-        $replaceArr['SCORING_MSG'] = $msg;
+        $replaceArr['SCORING_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
@@ -153,7 +153,7 @@ class Scorings extends Component
             $scoringPoints = @$_POST['scoringpionts'];
             $sectionName = $scoring->getSection()->getName();
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_SCORING_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'scoringname') || (@$edit && !@$scoringName) ? 'class="error" ' : ' ') . 'type="text" name="scoringname"' . (@$scoringName ? ' value="'.@$scoringName.'"' : '') . ' /></td></tr>' . "\n";
         $content .= '<tr><td>{LANG_ENABLED}:</td><td><input type="checkbox" name="scoringenabled" value="1" ' . (@$scoringEnabled == 1 ? ' checked' : '') . '></td></tr>' . "\n";
@@ -169,9 +169,6 @@ class Scorings extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['SCORING_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditScoring

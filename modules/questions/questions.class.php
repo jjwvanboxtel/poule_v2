@@ -41,7 +41,7 @@ class Questions extends Component
                     try
                     {
                         $this->doEditQuestion();
-                        $this->showQuestions('<div id="msg">{LANG_QUESTION} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showQuestions('{LANG_QUESTION} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -49,7 +49,7 @@ class Questions extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showQuestions('<div>{LANG_QUESTION} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showQuestions('{LANG_QUESTION} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -68,9 +68,9 @@ class Questions extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditQuestion($question))
-                          $this->showQuestions('<div>{LANG_QUESTION} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}');
                         else
-                          $this->showQuestions('<div>{LANG_QUESTION} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -83,7 +83,7 @@ class Questions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showQuestions('<div>{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'editanwser':
@@ -97,9 +97,9 @@ class Questions extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditAnwser($question))
-                          $this->showQuestions('<div>{LANG_QUESTION} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}');
                         else
-                          $this->showQuestions('<div>{LANG_QUESTION} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -112,7 +112,7 @@ class Questions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showEditAnwser('<div>{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showEditAnwser('{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -126,9 +126,9 @@ class Questions extends Component
                         $question = new Question($_GET['id']);
 
                         if (!$question->delete())
-                          $this->showQuestions('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_QUESTION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showQuestions('{ERROR_OLD_FILE_REMOVE}<br />{LANG_QUESTION} {LANG_REMOVE_OK}');
                         else
-                          $this->showQuestions('<div>{LANG_QUESTION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -137,7 +137,7 @@ class Questions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showQuestions('<div>{LANG_QUESTION} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showQuestions('{LANG_QUESTION} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -182,7 +182,7 @@ class Questions extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_QUESTIONS}';
-        $replaceArr['QUESTION_MSG'] = $msg;
+        $replaceArr['QUESTION_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['QUESTION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_QUESTION} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_QUESTION} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -223,7 +223,7 @@ class Questions extends Component
             $questionType = @$_POST['questiontype'];
             $questionAnwserCount = @$_POST['questionanwsercount'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td valign="top">{LANG_QUESTION}:</td><td><textarea ' . (@$edit && !@$questionQuestion ? 'style="background-color: red;" ' : ' ') . 'cols="80" rows="10" name="questionquestion">' . (@$questionQuestion ? ''.@$questionQuestion.'' : '') . '</textarea></td></tr>' . "\n";
         $content .= '<tr>' . "\n";
@@ -249,9 +249,6 @@ class Questions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['QUESTION_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditQuestion
@@ -371,9 +368,6 @@ class Questions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
         $replaceArr['QUESTION_COM_ID'] = $this->componentId;
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditAnwser

@@ -4,7 +4,7 @@
     <h2>{QUESTION_TITLE}</h2>
 </div>
 
-{ERROR_MSG_WRAPPER}
+{ERROR_MSG}
 
 <div id="question_add" class="card card-body">
     <form action="" method="post">

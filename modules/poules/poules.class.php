@@ -37,7 +37,7 @@ class Poules extends Component
                     try
                     {
                         $this->doEditPoule();
-                        $this->showPoules('<div id="msg">{LANG_POULE} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showPoules('{LANG_POULE} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -45,7 +45,7 @@ class Poules extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showPoules('<div>{LANG_POULE} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showPoules('{LANG_POULE} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -64,9 +64,9 @@ class Poules extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditPoule($poule))
-                          $this->showPoules('<div>{LANG_POULE} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showPoules('{LANG_POULE} {ERROR_EDIT}');
                         else
-                          $this->showPoules('<div>{LANG_POULE} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showPoules('{LANG_POULE} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -79,7 +79,7 @@ class Poules extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showPoules('<div>{LANG_POULE} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showPoules('{LANG_POULE} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -93,9 +93,9 @@ class Poules extends Component
                         $poule = new Poule($_GET['id']);
 
                         if (!$poule->delete())
-                          $this->showPoules('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_POULE} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showPoules('{ERROR_OLD_FILE_REMOVE}<br />{LANG_POULE} {LANG_REMOVE_OK}');
                         else
-                          $this->showPoules('<div>{LANG_POULE} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showPoules('{LANG_POULE} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -104,7 +104,7 @@ class Poules extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showPoules('<div>{LANG_POULE} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showPoules('{LANG_POULE} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -138,7 +138,7 @@ class Poules extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_POULES}';
-        $replaceArr['POULE_MSG'] = $msg;
+        $replaceArr['POULE_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['POULE_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_POULE} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_POULE} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -173,7 +173,7 @@ class Poules extends Component
             //the post went wrong, get previous values
             $pouleName = @$_POST['poulename'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_POULE_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'poulename') || (@$edit && !@$pouleName) ? 'class="error" ' : ' ') . 'type="text" name="poulename"' . (@$pouleName ? ' value="'.@$pouleName.'"' : '') . ' /></td></tr>' . "\n";
          
@@ -181,9 +181,6 @@ class Poules extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['POULE_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditPoule

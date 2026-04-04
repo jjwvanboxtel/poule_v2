@@ -38,7 +38,7 @@ class Forms extends Component
                     try
                     {
                         $this->doEditForm();
-                        $this->showForms('<div id="msg">{LANG_FORM} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showForms('{LANG_FORM} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -46,7 +46,7 @@ class Forms extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showForms('<div>{LANG_FORM} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showForms('{LANG_FORM} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -65,9 +65,9 @@ class Forms extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditForm($form))
-                          $this->showForms('<div>{LANG_FORM} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showForms('{LANG_FORM} {ERROR_EDIT}');
                         else
-                          $this->showForms('<div>{LANG_FORM} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showForms('{LANG_FORM} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -80,7 +80,7 @@ class Forms extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showForms('<div>{LANG_FORM} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showForms('{LANG_FORM} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -94,9 +94,9 @@ class Forms extends Component
                         $form = new Form($_GET['id']);
 
                         if (!$form->delete())
-                          $this->showForms('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_FORM} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showForms('{ERROR_OLD_FILE_REMOVE}<br />{LANG_FORM} {LANG_REMOVE_OK}');
                         else
-                          $this->showForms('<div>{LANG_FORM} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showForms('{LANG_FORM} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -105,7 +105,7 @@ class Forms extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showForms('<div>{LANG_FORM} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showForms('{LANG_FORM} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -148,7 +148,7 @@ class Forms extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_FORMS}';
-        $replaceArr['FORM_MSG'] = $msg;
+        $replaceArr['FORM_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['FORM_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_FORM} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_FORM} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -183,7 +183,7 @@ class Forms extends Component
             //the post went wrong, get previous values
             $formName = @$_POST['formname'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_FORM}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'formname') || (@$edit && !@$formName) ? 'class="error" ' : ' ') . 'type="text" name="formname"' . (@$formName ? ' value="'.@$formName.'"' : '') . ' /></td></tr>' . "\n";
  
@@ -201,9 +201,6 @@ class Forms extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['FORM_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditForm

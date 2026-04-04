@@ -40,7 +40,7 @@ class Rounds extends Component
                     try
                     {
                         $this->doEditRound();
-                        $this->showRounds('<div id="msg">{LANG_ROUND} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showRounds('{LANG_ROUND} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -48,7 +48,7 @@ class Rounds extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showRounds('<div>{LANG_ROUND} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showRounds('{LANG_ROUND} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -67,9 +67,9 @@ class Rounds extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditRound($round))
-                          $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {ERROR_EDIT}');
                         else
-                          $this->showRounds('<div>{LANG_ROUND} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -82,7 +82,7 @@ class Rounds extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showRounds('{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'editcountries':
@@ -96,9 +96,9 @@ class Rounds extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditRoundCountries($round))
-                          $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {ERROR_EDIT}');
                         else
-                          $this->showRounds('<div>{LANG_ROUND} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -111,7 +111,7 @@ class Rounds extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showRounds('{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -125,9 +125,9 @@ class Rounds extends Component
                         $round = new Round($_GET['id']);
 
                         if (!$round->delete())
-                          $this->showRounds('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_ROUND} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showRounds('{ERROR_OLD_FILE_REMOVE}<br />{LANG_ROUND} {LANG_REMOVE_OK}');
                         else
-                          $this->showRounds('<div>{LANG_ROUND} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -136,7 +136,7 @@ class Rounds extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showRounds('<div>{LANG_ROUND} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showRounds('{LANG_ROUND} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -172,7 +172,7 @@ class Rounds extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_ROUNDS}';
-        $replaceArr['ROUND_MSG'] = $msg;
+        $replaceArr['ROUND_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['ROUND_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_ROUND} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_ROUND} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -209,7 +209,7 @@ class Rounds extends Component
             $roundName = @$_POST['roundname'];
             $roundCount = @$_POST['roundcount'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_ROUND_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'roundname') || (@$edit && !@$roundName) ? 'class="error" ' : ' ') . 'type="text" name="roundname"' . (@$roundName ? ' value="'.@$roundName.'"' : '') . ' /></td></tr>' . "\n";
         $content .= '<tr>' . "\n";
@@ -225,9 +225,6 @@ class Rounds extends Component
         $replaceArr['ROUND_TITLE'] = "{LANG_ROUND} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";        $replaceArr['CONTENT'] = $content;
         $replaceArr['ROUND_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditRound
@@ -268,9 +265,6 @@ class Rounds extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['ROUND_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditRoundCountries
