@@ -248,6 +248,9 @@ class UserGroups extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['USERGROUP_TOTAL'] = $c;
         $replaceArr['USERGROUP_COM_ID'] = $this->componentId;
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditUserGroup      

@@ -249,7 +249,9 @@ class Questions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['QUESTION_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditQuestion
@@ -369,6 +371,9 @@ class Questions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
         $replaceArr['QUESTION_COM_ID'] = $this->componentId;
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditAnwser

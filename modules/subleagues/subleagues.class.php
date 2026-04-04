@@ -262,7 +262,7 @@ class Subleagues extends Component
              $content .= '<option value="' . $user->user_id . '">' . $user->user_firstname . ' ' . $user->user_lastname. '</option>' . "\n";
         }
         $content .= '</select>'."\n";
-        $content .= '&nbsp;<input class="submit" type="submit" name="submit" value="{LANG_ADD}" /></td>'."\n";
+        $content .= '&nbsp;<input class="btn btn-primary" type="submit" name="submit" value="{LANG_ADD}" /></td>'."\n";
         $content .= '<td>&nbsp;</td>'."\n";
         $content .= '</tr>' . "\n";
         
@@ -293,6 +293,9 @@ class Subleagues extends Component
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
         $replaceArr['SUBLEAGUE_ID'] = @$_GET['id'];
         $replaceArr['SUBLEAGUE_MSG'] = $msg;
+        $msgRaw = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $msgRaw = preg_replace('/^<div[^>]*>(.*?)<\/div>\s*$/si', '$1', trim($msgRaw));
+        $replaceArr['SUBLEAGUE_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msgRaw));
         $tpl->replace($replaceArr);
         echo $tpl;
 
@@ -342,6 +345,9 @@ class Subleagues extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['SUBLEAGUE_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditSubleague

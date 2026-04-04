@@ -225,6 +225,9 @@ class Rounds extends Component
         $replaceArr['ROUND_TITLE'] = "{LANG_ROUND} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";        $replaceArr['CONTENT'] = $content;
         $replaceArr['ROUND_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditRound
@@ -265,6 +268,9 @@ class Rounds extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['ROUND_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditRoundCountries
