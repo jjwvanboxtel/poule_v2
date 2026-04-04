@@ -41,7 +41,7 @@ class Games extends Component
                     try
                     {
                         $this->doEditGame();
-                        $this->showGames('<div id="msg">{LANG_GAME} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showGames('{LANG_GAME} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -49,7 +49,7 @@ class Games extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showGames('<div>{LANG_GAME} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showGames('{LANG_GAME} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -68,9 +68,9 @@ class Games extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditGame($game))
-                          $this->showGames('<div>{LANG_GAME} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showGames('{LANG_GAME} {ERROR_EDIT}');
                         else
-                          $this->showGames('<div>{LANG_GAME} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showGames('{LANG_GAME} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -83,7 +83,7 @@ class Games extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showGames('<div>{LANG_GAME} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showGames('{LANG_GAME} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -97,9 +97,9 @@ class Games extends Component
                         $game = new Game($_GET['id']);
 
                         if (!$game->delete())
-                          $this->showGames('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_GAME} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showGames('{ERROR_OLD_FILE_REMOVE}<br />{LANG_GAME} {LANG_REMOVE_OK}');
                         else
-                          $this->showGames('<div>{LANG_GAME} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showGames('{LANG_GAME} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -108,7 +108,7 @@ class Games extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showGames('<div>{LANG_GAME} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showGames('{LANG_GAME} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -153,7 +153,7 @@ class Games extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_GAMES}';
-        $replaceArr['GAME_MSG'] = $msg;
+        $replaceArr['GAME_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['GAME_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_GAME} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_GAME} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -204,7 +204,7 @@ class Games extends Component
             $gameHomeCountry = @$_POST['gamehomecountry'];
             $gameAwayCountry = @$_POST['gameawaycountry'];
             $gamePoule = @$_POST['gamepoule'];
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_DATE}:</td><td>
             <input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'gamedate') || (@$edit && !@$gameDate) ? 'class="error" ' : ' ') . 'type="text" name="gamedate"' . (@$gameDate ? ' value="'.@$gameDate.'"' : '') . ' /></td>

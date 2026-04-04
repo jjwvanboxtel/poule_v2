@@ -72,7 +72,7 @@
 ### Implementation for User Story 2
 
 - [x] T014 [US2] Restyle the authentication and account-related forms in `C:\Github\poule_v2\modules\usercontrol\loginscreen.tpl.php`, `C:\Github\poule_v2\modules\usercontrol\login_lost.tpl.php` and `C:\Github\poule_v2\modules\usercontrol\confirmation.tpl.php`
-- [ ] T015 [P] [US2] Restyle the primary administration forms in `C:\Github\poule_v2\modules\competitions\competition_add.tpl.php`, `C:\Github\poule_v2\modules\games\game_add.tpl.php`, `C:\Github\poule_v2\modules\participants\participant_add.tpl.php` and `C:\Github\poule_v2\modules\users\user_add.tpl.php`
+- [x] T015 [P] [US2] Restyle the primary administration forms in `C:\Github\poule_v2\modules\competitions\competition_add.tpl.php`, `C:\Github\poule_v2\modules\games\game_add.tpl.php`, `C:\Github\poule_v2\modules\participants\participant_add.tpl.php` and `C:\Github\poule_v2\modules\users\user_add.tpl.php`
 - [x] T016 [P] [US2] Restyle the remaining maintenance forms in `C:\Github\poule_v2\modules\cities\city_add.tpl.php`, `C:\Github\poule_v2\modules\countries\country_add.tpl.php`, `C:\Github\poule_v2\modules\forms\form_add.tpl.php`, `C:\Github\poule_v2\modules\players\player_add.tpl.php`, `C:\Github\poule_v2\modules\poules\poule_add.tpl.php`, `C:\Github\poule_v2\modules\questions\question_add.tpl.php`, `C:\Github\poule_v2\modules\referees\referee_add.tpl.php`, `C:\Github\poule_v2\modules\rounds\round_add.tpl.php`, `C:\Github\poule_v2\modules\scorings\scoring_add.tpl.php`, `C:\Github\poule_v2\modules\sections\section_add.tpl.php`, `C:\Github\poule_v2\modules\subleagues\subleague_add.tpl.php`, `C:\Github\poule_v2\modules\subleagues\subleague_participant_add.tpl.php` and `C:\Github\poule_v2\modules\usergroups\usergroup_add.tpl.php`
 - [x] T017 [US2] Unify form feedback, confirmation and action-row styling in `C:\Github\poule_v2\modules\predictions\subscribe_confirmation.tpl.php` and `C:\Github\poule_v2\templates\orange\template.css`
 
@@ -88,8 +88,8 @@
 
 ### Tests for User Story 3
 
-- [ ] T018 [P] [US3] Add the overview-readability browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\overview-readability.spec.ts`
-- [ ] T019 [P] [US3] Add overview markup regressions for tables, summaries and action regions in `C:\Github\poule_v2\tests\ui\ui_overview_render_tests.php`
+- [x] T018 [P] [US3] Add the overview-readability browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\overview-readability.spec.ts`
+- [x] T019 [P] [US3] Add overview markup regressions for tables, summaries and action regions in `C:\Github\poule_v2\tests\ui\ui_overview_render_tests.php`
 
 ### Implementation for User Story 3
 

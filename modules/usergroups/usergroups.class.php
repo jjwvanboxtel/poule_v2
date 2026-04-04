@@ -33,7 +33,7 @@ class UserGroups extends Component
                     try
                     {
                         $this->doEditUserGroup();
-                        $this->showUserGroups('<div id="msg">{LANG_USERGROUP} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -41,7 +41,7 @@ class UserGroups extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showUserGroups('<div>{LANG_USERGROUP} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -62,7 +62,7 @@ class UserGroups extends Component
 
                         $this->doEditUserGroup($userGroup);
                         $userGroup->save();
-                        $this->showUserGroups('<div>{LANG_USERGROUP} {LANG_EDIT_OK}</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -75,7 +75,7 @@ class UserGroups extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUserGroups('<div>{LANG_USERGROUP} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUserGroups('{LANG_USERGROUP} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 
                 break;
@@ -93,7 +93,7 @@ class UserGroups extends Component
                           throw new Exception("{ERROR_ACCESSDENIED}");
 
                         $usergroup->delete();
-                        $this->showUserGroups('<div>{LANG_USERGROUP} {LANG_REMOVE_OK}</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -102,7 +102,7 @@ class UserGroups extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUserGroups('<div>{LANG_USERGROUP} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUserGroups('{LANG_USERGROUP} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 
                 break;
@@ -142,7 +142,7 @@ class UserGroups extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_USERGROUPS}';
-        $replaceArr['USERGROUP_MSG'] = $msg;
+        $replaceArr['USERGROUP_MSG'] = self::buildMsgWrapper($msg);
 
         $replaceArr['ACTIONS'] = '';
         $replaceArr['LINK_ADD'] = '';
@@ -182,7 +182,7 @@ class UserGroups extends Component
             {
                 case 'group': $groupName = @$_POST['group']; break;
             }
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
 
         $input = '{LANG_USERGROUP_NAME}: <input maxlength="45" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'group') || (@$edit && !@$groupName) ? 'class="error" ' : '') . ' type="text" name="group"' . (@$groupName ? ' value="'.$groupName.'"' : '') . ' />' . "\n";
@@ -248,9 +248,6 @@ class UserGroups extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['USERGROUP_TOTAL'] = $c;
         $replaceArr['USERGROUP_COM_ID'] = $this->componentId;
-        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
-        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
-        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper(rtrim($msg));
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditUserGroup      

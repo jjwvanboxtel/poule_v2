@@ -44,6 +44,36 @@ async function skipIfAbsent(locator: Locator): Promise<void> {
 }
 
 /**
+ * On viewports narrower than the Bootstrap `lg` breakpoint (992 px) the
+ * primary nav (`#menu`) is hidden inside the collapsed mobile sidebar.
+ * This helper opens the sidebar via the hamburger button and waits until
+ * the mobile menu is actionable before returning.
+ *
+ * Safe to call unconditionally: it is a no-op on wide viewports where
+ * `#mobileBtn` is hidden.
+ *
+ * @param page          The Playwright Page object.
+ * @param viewportWidth The current viewport width in pixels.
+ */
+async function openMobileMenuIfNeeded(
+  page: Page,
+  viewportWidth: number,
+): Promise<void> {
+  if (viewportWidth >= 992) return;
+
+  const mobileBtn = page.locator('#mobileBtn');
+  if ((await mobileBtn.count()) === 0) return;
+
+  await mobileBtn.click();
+  // Wait until the first visible link in the mobile menu is actionable
+  // instead of using a hard-coded delay.
+  await page
+    .locator('#menu-mobile a[href*="com="]')
+    .first()
+    .waitFor({ state: 'visible' });
+}
+
+/**
  * Navigate to the application login screen by following the first login
  * link found anywhere on the current page.
  *
@@ -338,8 +368,13 @@ test.describe('Form rendering at representative viewports', () => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await gotoApp(page, homeRoute());
 
+      // On mobile/tablet viewports the primary nav (#menu) is inside the
+      // collapsed sidebar.  Open it first, then pick a visible module link.
+      await openMobileMenuIfNeeded(page, vp.width);
+
       const navLink = page
-        .locator(`${SHELL_SELECTORS.menu} a[href*="com="]`)
+        .locator(`${SHELL_SELECTORS.menu} a[href*="com="], #menu-mobile a[href*="com="]`)
+        .filter({ visible: true })
         .first();
       await skipIfAbsent(navLink);
       await navLink.click();
@@ -359,8 +394,13 @@ test.describe('Form rendering at representative viewports', () => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await gotoApp(page, homeRoute());
 
+      // On mobile/tablet viewports the primary nav (#menu) is inside the
+      // collapsed sidebar.  Open it first, then pick a visible module link.
+      await openMobileMenuIfNeeded(page, vp.width);
+
       const navLink = page
-        .locator(`${SHELL_SELECTORS.menu} a[href*="com="]`)
+        .locator(`${SHELL_SELECTORS.menu} a[href*="com="], #menu-mobile a[href*="com="]`)
+        .filter({ visible: true })
         .first();
       await skipIfAbsent(navLink);
       await navLink.click();

@@ -4,14 +4,13 @@
     <h2>{USERGROUP_TITLE}</h2>
 </div>
 
-{ERROR_MSG_WRAPPER}
+{ERROR_MSG}
 
 <div id="usergroup_add" class="card card-body">
     <form action="" method="post">
         {USERGROUP_NAME}<br /><br />
 
         <table class="list" cellpadding="0" cellspacing="0">
-            <tr><td colspan="7">&nbsp;</td></tr>
             <tr>
                 <th style="width: 20px;"></th>
                 <th style="width: 40px;">{LANG_ID}</th>
@@ -29,7 +28,6 @@
                     <input class="btn btn-primary" type="submit" name="submit" value="{LANG_SAVE}" />
                 </td>
             </tr>
-            <tr><td colspan="7">&nbsp;</td></tr>
         </table>
     </form>
 </div>
