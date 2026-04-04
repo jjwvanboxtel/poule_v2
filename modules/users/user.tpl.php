@@ -3,7 +3,7 @@
 <div class="title">
     <h2>{COM_NAME}</h2>
 </div>
-<div>{USER_MSG}</div>
+{USER_MSG}
 {USER_ADD}
 <br /><br />
 {LANG_USERGROUP}:<br />

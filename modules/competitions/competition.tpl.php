@@ -3,7 +3,7 @@
 <div class="title">
     <h2>{COM_NAME}</h2>
 </div>
-<div>{COMPETITION_MSG}</div>
+{COMPETITION_MSG}
 {COMPETITION_ADD}
 <br />
 

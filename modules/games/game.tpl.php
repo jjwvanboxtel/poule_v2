@@ -3,7 +3,7 @@
 <div class="title">
     <h2>{COM_NAME}</h2>
 </div>
-<div>{GAME_MSG}</div>
+{GAME_MSG}
 {GAME_ADD}
 
 <table class="list" cellpadding="0" cellspacing="0">

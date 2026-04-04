@@ -37,7 +37,7 @@ class Users extends Component
                     try
                     {
                         Users::doEditUser();
-                        $this->showUsers('<div id="msg">{LANG_USER} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -45,7 +45,7 @@ class Users extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showUsers('<div>{LANG_USER} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -64,9 +64,9 @@ class Users extends Component
                     {
                         Users::doEditUser(true);
                         if (Usercontrol::getCurrentUserGroup()->getId() != PARTICIPANT)
-                            $this->showUsers('<div>{LANG_USER} {LANG_EDIT_OK}</div><br />' . "\n");
+                            $this->showUsers('{LANG_USER} {LANG_EDIT_OK}');
                         else
-                            Users::showEditUser(true, '<div>{LANG_USER} {LANG_EDIT_OK}</div><br />' . "\n");    
+                            Users::showEditUser(true, '{LANG_USER} {LANG_EDIT_OK}');    
                     }
                     else
                     {
@@ -79,7 +79,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -101,7 +101,7 @@ class Users extends Component
                           throw new Exception("{ERROR_DELETE_LASTADMIN}");
 
                         $user->delete();
-                        $this->showUsers('<div>{LANG_USER} {LANG_REMOVE_OK}</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -110,7 +110,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -124,7 +124,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {ERROR_SHOW}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {ERROR_SHOW}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -143,7 +143,7 @@ class Users extends Component
 
                         $enable ? $user->enable() : $user->disable();
                         $user->save();
-                        $this->showUsers('<div>{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'_OK}</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'_OK}');
                     }
                     else
                     {
@@ -152,7 +152,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -202,7 +202,7 @@ class Users extends Component
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_USERS}';
         $replaceArr['USERGROUP_LIST'] = $groupList;
-        $replaceArr['USER_MSG'] = $msg;
+        $replaceArr['USER_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['USER_ADD'] = '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" /> <a href="?com={COM_ID}&amp;option=add" class="button">{LANG_USER} {LANG_ADD}</a> 
         <img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" /> <a href="?com={COM_ID}&amp;option=newparticipant" class="button">{LANG_PARTICIPANT} {LANG_ADD}</a>';
 
