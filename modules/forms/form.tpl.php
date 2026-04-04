@@ -5,8 +5,9 @@
 </div>
 <div>{FORM_MSG}</div>
 {FORM_ADD}
-<br />
 
-<table class="list" cellpadding="0" cellspacing="0">
-    {CONTENT}
-</table>
+<div id="form" class="card card-body">
+    <table class="list" cellpadding="0" cellspacing="0">
+        {CONTENT}
+    </table>
+</div>

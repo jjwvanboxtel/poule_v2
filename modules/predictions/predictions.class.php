@@ -177,8 +177,8 @@ class Predictions extends Component
         $replaceArr['ERROR_MSG'] = ((@$edit && $edit instanceof InputException) ? $edit->getMessage() : '');
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['PREDICTION_EDIT'] = (!@$edit && @$user && $participant->getId() == $user->getId() && !$submission_date_expired ? '<img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_PREDICTION} {LANG_EDIT}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$participant->getId().'" class="button">{LANG_PREDICTION} {LANG_EDIT}</a><br /><br />' : '');        
-        $subscribe = ($participant->getSubscribed(@$_GET['competition']) == 0 ? '<input class="submit" type="submit" name="subscribe" value="{LANG_SUBSCRIBE}" />' : '');
-        $replaceArr['PREDICTION_BUTTONS'] = ($edit && (($participant->getSubscribed(@$_GET['competition']) == 0 && !$submission_date_expired) || UserControl::getCurrentUserGroup()->getId() == 1) ? '<input class="submit" type="submit" name="save" value="{LANG_SAVE_PREDICTION}" /> '.$subscribe.'' : '');
+        $subscribe = ($participant->getSubscribed(@$_GET['competition']) == 0 ? '<input class="btn btn-primary" type="submit" name="subscribe" value="{LANG_SUBSCRIBE}" />' : '');
+        $replaceArr['PREDICTION_BUTTONS'] = ($edit && (($participant->getSubscribed(@$_GET['competition']) == 0 && !$submission_date_expired) || UserControl::getCurrentUserGroup()->getId() == 1) ? '<input class="btn btn-primary" type="submit" name="save" value="{LANG_SAVE_PREDICTION}" /> '.$subscribe.'' : '');
 
         $tpl->replace($replaceArr);
         echo $tpl;

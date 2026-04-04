@@ -213,7 +213,7 @@ class Players extends Component
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
-            $content .= '<option value="' . $country->country_id . '"' . (@$edit && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
+            $content .= '<option value="' . $country->country_id . '"' . (@$edit && isset($playerCountry) && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
         }
         $content .= '</select>' . "\n";
         $content .= '</td></tr>'. "\n";
@@ -248,7 +248,7 @@ class Players extends Component
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
-            $content .= '<option value="' . $country->country_id . '"' . (@$edit && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
+            $content .= '<option value="' . $country->country_id . '"' . (@$edit && isset($playerCountry) && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
         }
         $content .= '</select>' . "\n";
         $content .= '</td></tr>'. "\n";    
