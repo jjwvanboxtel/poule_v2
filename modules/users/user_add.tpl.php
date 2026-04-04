@@ -6,7 +6,7 @@
 
 {ERROR_MSG}
 
-<div "user_add" class="card card-body">
+<div id="user_add" class="card card-body">
     <form action="" method="post">
         <table class="list" cellpadding="0" cellspacing="0">
             {CONTENT}

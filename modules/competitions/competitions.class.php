@@ -34,7 +34,7 @@ class Competitions extends Component
                     try
                     {
                         $this->doEditCompetition();
-                        $this->showCompetitions('<div id="msg">{LANG_COMPETITION} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showCompetitions('{LANG_COMPETITION} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -42,7 +42,7 @@ class Competitions extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showCompetitions('{LANG_COMPETITION} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -61,9 +61,9 @@ class Competitions extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditCompetition($competition))
-                          $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showCompetitions('{LANG_COMPETITION} {ERROR_EDIT}');
                         else
-                          $this->showCompetitions('<div>{LANG_COMPETITION} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showCompetitions('{LANG_COMPETITION} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -76,7 +76,7 @@ class Competitions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCompetitions('{LANG_COMPETITION} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -94,9 +94,9 @@ class Competitions extends Component
                             unset($_SESSION['competition']);
                         }
                         if (!$competition->delete())
-                          $this->showCompetitions('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_COMPETITION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCompetitions('{ERROR_OLD_FILE_REMOVE}<br />{LANG_COMPETITION} {LANG_REMOVE_OK}');
                         else
-                          $this->showCompetitions('<div>{LANG_COMPETITION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCompetitions('{LANG_COMPETITION} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -105,7 +105,7 @@ class Competitions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCompetitions('{LANG_COMPETITION} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -139,7 +139,7 @@ class Competitions extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_COMPETITIONS}';
-        $replaceArr['COMPETITION_MSG'] = $msg;
+        $replaceArr['COMPETITION_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $replaceArr['COMPETITION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_COMPETITION} {LANG_ADD}" class="actions_top" /> <a href="?com='.$this->componentId.'&amp;option=add" class="button">{LANG_COMPETITION} {LANG_ADD}</a>'. "\n" : '');
@@ -186,7 +186,7 @@ class Competitions extends Component
             $competitionDescription = @$_POST['competitiondescription'];
             $competitionSubmissionDate = @$_POST['competitionsubmissiondate'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
                 
         $content .= '<tr><td>{LANG_COMPETITION}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'competitionname') || (@$edit && !@$competitionName) ? 'class="error" ' : ' ') . 'type="text" name="competitionname"' . (@$competitionName ? ' value="'.@$competitionName.'"' : '') . ' /></td></tr>' . "\n";

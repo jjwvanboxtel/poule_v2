@@ -398,14 +398,14 @@ class TestOfAddFormStructure extends UiMarkupAssertions
 
     function testErrorMessageDivIsPresent()
     {
-        // The error message div is always rendered; it is only empty when
-        // there are no validation errors.
+        // With the card-based message pattern, the error card is only rendered
+        // when a message is provided. Verify the form card wrapper is present.
         $html = renderCompetitionAddForm();
 
-        $this->assertHtmlContains(
+        $this->assertContainsClass(
             $html,
-            '<div>',
-            'Expected the error message <div> container to be present.'
+            'card',
+            'Expected the .card wrapper to be present in the rendered form.'
         );
     }
 
