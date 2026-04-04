@@ -1,0 +1,6 @@
+/.copilot
+/sessions
+tests/playwright/auth-state.json
+/tests/playwright/node_modules
+/tests/playwright/playwright-report
+/tests/playwright/test-results
