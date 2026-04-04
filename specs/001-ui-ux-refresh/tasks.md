@@ -88,8 +88,8 @@
 
 ### Tests for User Story 3
 
-- [ ] T018 [P] [US3] Add the overview-readability browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\overview-readability.spec.ts`
-- [ ] T019 [P] [US3] Add overview markup regressions for tables, summaries and action regions in `C:\Github\poule_v2\tests\ui\ui_overview_render_tests.php`
+- [x] T018 [P] [US3] Add the overview-readability browser regression journey in `C:\Github\poule_v2\tests\playwright\tests\overview-readability.spec.ts`
+- [x] T019 [P] [US3] Add overview markup regressions for tables, summaries and action regions in `C:\Github\poule_v2\tests\ui\ui_overview_render_tests.php`
 
 ### Implementation for User Story 3
 
