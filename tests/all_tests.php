@@ -38,6 +38,12 @@ class AllTests extends TestSuite {
         // action rows, validation states and token replacement
         // (locks down the form contract before the T014–T017 restyling).
         $this->addFile('ui/ui_form_render_tests.php');
+
+        // T019: Overview render regressions for standings tables, competition
+        // and games lists, prediction overviews, participant and user lists,
+        // action regions and token replacement
+        // (locks down the overview contract before the T020–T023 restyling).
+        $this->addFile('ui/ui_overview_render_tests.php');
     }
 
     /* Backwards-compatible PHP4-style constructor */
