@@ -119,17 +119,12 @@ class Scorings extends Component
     private function showEditScoring($edit=false)
     {
         $tpl = new Template('scoring_add', strtolower(get_class()), 'modules');
+        if (is_bool($edit) && $edit)
+        {
+            if (!@$_GET['id'] || !Scoring::exists(@$_GET['id']))
+                throw new Exception("{ERROR_ITEMNOTEXIST}");
 
-        // Always try to load the scoring object when an ID is available so that
-        // references like $scoring->getSection()->getName() work for both the
-        // initial edit (bool true) and the error-redisplay (InputException) path.
-        if (@$_GET['id'] && Scoring::exists(@$_GET['id']))
-        {
             $scoring = new Scoring(@$_GET['id']);
-        }
-        else if (is_bool($edit) && $edit)
-        {
-            throw new Exception("{ERROR_ITEMNOTEXIST}");
         }
 
         $content = '';
