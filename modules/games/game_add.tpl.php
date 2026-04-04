@@ -4,7 +4,7 @@
     <h2>{GAME_TITLE}</h2>
 </div>
 
-<div>{ERROR_MSG}</div>
+{ERROR_MSG}
 
 <div id="game_add" class="card card-body">
     <form action="" method="post" enctype="multipart/form-data">

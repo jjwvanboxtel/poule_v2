@@ -204,7 +204,7 @@ class Games extends Component
             $gameHomeCountry = @$_POST['gamehomecountry'];
             $gameAwayCountry = @$_POST['gameawaycountry'];
             $gamePoule = @$_POST['gamepoule'];
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_DATE}:</td><td>
             <input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'gamedate') || (@$edit && !@$gameDate) ? 'class="error" ' : ' ') . 'type="text" name="gamedate"' . (@$gameDate ? ' value="'.@$gameDate.'"' : '') . ' /></td>

@@ -186,7 +186,7 @@ class Competitions extends Component
             $competitionDescription = @$_POST['competitiondescription'];
             $competitionSubmissionDate = @$_POST['competitionsubmissiondate'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
                 
         $content .= '<tr><td>{LANG_COMPETITION}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'competitionname') || (@$edit && !@$competitionName) ? 'class="error" ' : ' ') . 'type="text" name="competitionname"' . (@$competitionName ? ' value="'.@$competitionName.'"' : '') . ' /></td></tr>' . "\n";
