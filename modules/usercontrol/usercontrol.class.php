@@ -175,15 +175,7 @@ class UserControl extends Component
         $tpl = new Template('loginscreen', strtolower(get_class()), 'modules');
 
         $replaceArr = array();
-        if ($msg != '') {
-            $isError = (stripos($msg, '{ERROR_') !== false || stripos($msg, 'ERROR_') !== false || stripos($msg, 'error') !== false);
-            $bg = $isError ? '#fdecea' : '#e9f7ef';
-            $textClass = $isError ? 'text-danger' : 'text-success';
-            $borderClass = $isError ? 'border-danger' : 'border-success';
-            $replaceArr['LOGIN_MSG_WRAPPER'] = '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';"><div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
-        } else {
-            $replaceArr['LOGIN_MSG_WRAPPER'] = '';
-        }
+        $replaceArr['LOGIN_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
         $replaceArr['LOGIN_ACTION'] = '?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=login';
         $replaceArr['LOGIN_LOST'] = '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=login_lost">{LANG_LOGIN_LOST}</a>';
         $replaceArr['NEW_CUSTOMER'] = '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=newparticipant">{LANG_PARTICIPANT_NEW}</a>';
@@ -197,15 +189,7 @@ class UserControl extends Component
         $tpl = new Template('confirmation', strtolower(get_class()), 'modules');
 
         $replaceArr = array();
-        if ($msg != '') {
-            $isError = (stripos($msg, '{ERROR_') !== false || stripos($msg, 'ERROR_') !== false || stripos($msg, 'error') !== false);
-            $bg = $isError ? '#fdecea' : '#e9f7ef';
-            $textClass = $isError ? 'text-danger' : 'text-success';
-            $borderClass = $isError ? 'border-danger' : 'border-success';
-            $replaceArr['LOGIN_MSG_WRAPPER'] = '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';"><div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
-        } else {
-            $replaceArr['LOGIN_MSG_WRAPPER'] = '';
-        }
+        $replaceArr['LOGIN_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
         $tpl->replace($replaceArr);
 
         echo $tpl;
@@ -270,15 +254,7 @@ class UserControl extends Component
         $tpl = new Template('login_lost', strtolower(get_class()), 'modules');
         
         $replaceArr = array();
-        if ($msg != '') {
-            $isError = (stripos($msg, '{ERROR_') !== false || stripos($msg, 'ERROR_') !== false || stripos($msg, 'error') !== false);
-            $bg = $isError ? '#fdecea' : '#e9f7ef';
-            $textClass = $isError ? 'text-danger' : 'text-success';
-            $borderClass = $isError ? 'border-danger' : 'border-success';
-            $replaceArr['LOGIN_MSG_WRAPPER'] = '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';"><div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
-        } else {
-            $replaceArr['LOGIN_MSG_WRAPPER'] = '';
-        }
+        $replaceArr['LOGIN_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
         $replaceArr['USER_COM_ID'] = $_GET['com'];
         $tpl->replace($replaceArr);
 

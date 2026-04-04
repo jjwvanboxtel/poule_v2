@@ -366,15 +366,7 @@ class Users extends Component
 
         $replaceArr['USER_TITLE'] = "{LANG_USER} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;
-        if ($msg != '') {
-            $isError = (stripos($msg, '{ERROR_') !== false || stripos($msg, 'ERROR_') !== false || stripos($msg, 'error') !== false);
-            $bg = $isError ? '#fdecea' : '#e9f7ef';
-            $textClass = $isError ? 'text-danger' : 'text-success';
-            $borderClass = $isError ? 'border-danger' : 'border-success';
-            $replaceArr['ERROR_MSG'] = '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';"><div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
-        } else {
-            $replaceArr['ERROR_MSG'] = '';
-        }
+        $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($msg);
 
         $replaceArr['USER_COM_ID'] = $_GET['com'];
         $tpl->replace($replaceArr);

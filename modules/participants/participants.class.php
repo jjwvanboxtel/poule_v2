@@ -159,15 +159,7 @@ class Participants extends Component
         $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
         $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
         $msg = rtrim($msg);
-        if ($msg != '') {
-            $isError = (stripos($msg, '{ERROR_') !== false || stripos($msg, 'ERROR_') !== false || stripos($msg, 'error') !== false);
-            $bg = $isError ? '#fdecea' : '#e9f7ef';
-            $textClass = $isError ? 'text-danger' : 'text-success';
-            $borderClass = $isError ? 'border-danger' : 'border-success';
-            $replaceArr['ERROR_MSG_WRAPPER'] = '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';"><div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
-        } else {
-            $replaceArr['ERROR_MSG_WRAPPER'] = '';
-        }
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
 
         $tpl->replace($replaceArr);
         echo $tpl;

@@ -116,6 +116,29 @@ class Component
         
         return (boolean)App::$_DB->getRecord($record)->total;
     }
+
+    /**
+     * Wraps a status message in a styled card element.
+     *
+     * Returns an empty string when $msg is empty. When the message contains
+     * the word "error" (case-insensitive) the card is styled as a danger/error
+     * state; otherwise it is styled as a success state.
+     *
+     * @param  string $msg  The raw message text or HTML to wrap.
+     * @return string       The wrapped HTML, or '' when $msg is empty.
+     */
+    protected static function buildMsgWrapper($msg)
+    {
+        if ($msg === '') {
+            return '';
+        }
+        $isError     = stripos(strtolower($msg), 'error') !== false;
+        $borderClass = $isError ? 'border-danger'  : 'border-success';
+        $textClass   = $isError ? 'text-danger'    : 'text-success';
+        $bg          = $isError ? '#fdecea'         : '#e9f7ef';
+        return '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';">'
+             . '<div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
+    }
 }
 
 
