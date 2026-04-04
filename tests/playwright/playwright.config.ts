@@ -12,6 +12,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
 
+  /** Run global setup to authenticate as admin before any tests execute. */
+  globalSetup: './global-setup',
+
   /** Fail the build on CI if any test.only is accidentally left in. */
   forbidOnly: !!process.env.CI,
 
@@ -30,6 +33,9 @@ export default defineConfig({
   use: {
     /** The running application under test. Override via POULE_BASE_URL. */
     baseURL: process.env.POULE_BASE_URL ?? 'http://localhost:8080',
+
+    /** Reuse the admin session saved by global-setup. */
+    storageState: 'auth-state.json',
 
     /** Retain trace on first retry to ease debugging. */
     trace: 'on-first-retry',

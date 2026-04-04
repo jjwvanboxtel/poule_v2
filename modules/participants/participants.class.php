@@ -154,6 +154,13 @@ class Participants extends Component
         $replaceArr['CONTENT'] = $content;       
         $replaceArr['PARTICIPANT_COM_ID'] = $_GET['com'];
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+
+        // Create wrapped message only if non-empty; strip trailing <br> to avoid extra gap
+        $msg = isset($replaceArr['ERROR_MSG']) ? $replaceArr['ERROR_MSG'] : '';
+        $msg = preg_replace('/(<br\s*\/?>\s*)+$/i', '', $msg);
+        $msg = rtrim($msg);
+        $replaceArr['ERROR_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
+
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditParticipantGroup

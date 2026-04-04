@@ -18,7 +18,7 @@
  *
  * Test classes
  *   TestOfLoginFormStructure      — form element, method, action, fields, submit
- *   TestOfLoginFormStatusMessage  — {LOGIN_MSG} renders message content correctly
+ *   TestOfLoginFormStatusMessage  — {LOGIN_MSG_WRAPPER} renders message content correctly
  *   TestOfAddFormStructure        — admin add form element, method, table, buttons
  *   TestOfFormFieldRows           — label/input rows inserted via {CONTENT}
  *   TestOfFormActionRow           — submit and cancel in the action row
@@ -47,7 +47,7 @@ function loginFormDefaults()
     return array(
         '{LANG_LOGIN}'    => 'Inloggen',
         '{LOGIN_ACTION}'  => '/?com=2&option=login',
-        '{LOGIN_MSG}'     => '',
+        '{LOGIN_MSG_WRAPPER}' => '',
         '{LANG_EMAIL}'    => 'E-mail',
         '{LANG_PASSWORD}' => 'Wachtwoord',
         '{NEW_CUSTOMER}'  => '<a href="/?com=2&amp;option=new">Nieuw account</a>',
@@ -135,7 +135,6 @@ function userAddFormDefaults()
 {
     return array(
         '{USER_TITLE}'   => 'Gebruiker toevoegen',
-        '{USER_MSG}'     => '',
         '{ERROR_MSG}'    => '',
         '{CONTENT}'      => '<tr><td>Voornaam:</td>'
                           . '<td><input type="text" name="firstname"'
@@ -259,7 +258,7 @@ class TestOfLoginFormStructure extends UiMarkupAssertions
 // ===========================================================================
 
 /**
- * Verify that the {LOGIN_MSG} placeholder renders correctly for the three
+ * Verify that the {LOGIN_MSG_WRAPPER} placeholder renders correctly for the three
  * distinct message states used by the authentication flow:
  *
  *   – empty      (no message)
@@ -270,7 +269,7 @@ class TestOfLoginFormStatusMessage extends UiMarkupAssertions
 {
     function testEmptyLoginMsgProducesNoAlertElement()
     {
-        $html = renderLoginForm(array('{LOGIN_MSG}' => ''));
+        $html = renderLoginForm(array('{LOGIN_MSG_WRAPPER}' => ''));
 
         $this->assertNoAlert($html);
     }
@@ -278,7 +277,7 @@ class TestOfLoginFormStatusMessage extends UiMarkupAssertions
     function testLoginMsgWithPlainTextRendersTextInOutput()
     {
         $html = renderLoginForm(array(
-            '{LOGIN_MSG}' => 'Ongeldig wachtwoord of e-mail adres.',
+            '{LOGIN_MSG_WRAPPER}' => 'Ongeldig wachtwoord of e-mail adres.',
         ));
 
         $this->assertHtmlContains(
@@ -291,7 +290,7 @@ class TestOfLoginFormStatusMessage extends UiMarkupAssertions
     function testLoginMsgWithAlertHtmlRendersAlertElement()
     {
         $alertHtml = '<div class="alert alert-danger">Inloggen mislukt.</div>';
-        $html      = renderLoginForm(array('{LOGIN_MSG}' => $alertHtml));
+        $html      = renderLoginForm(array('{LOGIN_MSG_WRAPPER}' => $alertHtml));
 
         $this->assertDangerAlert($html);
         $this->assertAlertContains($html, 'Inloggen mislukt.');
@@ -656,7 +655,7 @@ class TestOfFormValidationStates extends UiMarkupAssertions
     function testUserMsgOnUserFormRendersStatusAlert()
     {
         $alertHtml = '<div class="alert alert-success">Gebruiker opgeslagen.</div>';
-        $html      = renderUserAddForm(array('{USER_MSG}' => $alertHtml));
+        $html      = renderUserAddForm(array('{ERROR_MSG}' => $alertHtml));
 
         $this->assertSuccessAlert($html);
         $this->assertAlertContains($html, 'Gebruiker opgeslagen.');

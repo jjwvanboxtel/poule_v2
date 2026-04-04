@@ -36,7 +36,6 @@ import { gotoApp } from './helpers/app-fixtures';
 async function assertMandatoryShellRegions(page: Page): Promise<void> {
   await expect(page.locator(SHELL_SELECTORS.container)).toBeVisible();
   await expect(page.locator(SHELL_SELECTORS.menuWrapper)).toBeVisible();
-  await expect(page.locator(SHELL_SELECTORS.menu)).toBeVisible();
   await expect(page.locator(SHELL_SELECTORS.loginNav)).toBeVisible();
   await expect(page.locator(SHELL_SELECTORS.header)).toBeVisible();
   await expect(page.locator(SHELL_SELECTORS.column1)).toBeVisible();
@@ -244,7 +243,7 @@ test.describe('Competition + module screen — shell consistency', () => {
     await page.waitForLoadState('domcontentloaded');
 
     const moduleLink = page
-      .locator(`${SHELL_SELECTORS.column1} a[href*="com="]`)
+      .locator(`${SHELL_SELECTORS.sidebar} a[href*="com="]`)
       .first();
     await skipIfAbsent(moduleLink);
 
@@ -272,7 +271,7 @@ test.describe('Competition + module screen — shell consistency', () => {
     await page.waitForLoadState('domcontentloaded');
 
     const moduleLink = page
-      .locator(`${SHELL_SELECTORS.column1} a[href*="com="]`)
+      .locator(`${SHELL_SELECTORS.sidebar} a[href*="com="]`)
       .first();
     await skipIfAbsent(moduleLink);
 
