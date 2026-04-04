@@ -338,8 +338,21 @@ test.describe('Form rendering at representative viewports', () => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await gotoApp(page, homeRoute());
 
+      // On mobile/tablet viewports (<992 px) the primary nav (#menu) is
+      // hidden off-screen inside the collapsed sidebar.  Open the sidebar
+      // via the hamburger button first, wait for the CSS transition, then
+      // pick the first visible module link from either menu area.
+      if (vp.width < 992) {
+        const mobileBtn = page.locator('#mobileBtn');
+        if ((await mobileBtn.count()) > 0) {
+          await mobileBtn.click();
+          await page.waitForTimeout(350); // sidebar slides in over 0.3 s
+        }
+      }
+
       const navLink = page
-        .locator(`${SHELL_SELECTORS.menu} a[href*="com="]`)
+        .locator(`${SHELL_SELECTORS.menu} a[href*="com="], #menu-mobile a[href*="com="]`)
+        .filter({ visible: true })
         .first();
       await skipIfAbsent(navLink);
       await navLink.click();
@@ -359,8 +372,21 @@ test.describe('Form rendering at representative viewports', () => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await gotoApp(page, homeRoute());
 
+      // On mobile/tablet viewports (<992 px) the primary nav (#menu) is
+      // hidden off-screen inside the collapsed sidebar.  Open the sidebar
+      // via the hamburger button first, wait for the CSS transition, then
+      // pick the first visible module link from either menu area.
+      if (vp.width < 992) {
+        const mobileBtn = page.locator('#mobileBtn');
+        if ((await mobileBtn.count()) > 0) {
+          await mobileBtn.click();
+          await page.waitForTimeout(350); // sidebar slides in over 0.3 s
+        }
+      }
+
       const navLink = page
-        .locator(`${SHELL_SELECTORS.menu} a[href*="com="]`)
+        .locator(`${SHELL_SELECTORS.menu} a[href*="com="], #menu-mobile a[href*="com="]`)
+        .filter({ visible: true })
         .first();
       await skipIfAbsent(navLink);
       await navLink.click();
