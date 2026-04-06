@@ -185,7 +185,7 @@ class Forms extends Component
                         
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_FORM}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'formname') || (@$edit && !@$formName) ? 'class="error" ' : ' ') . 'type="text" name="formname"' . (@$formName ? ' value="'.@$formName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_FORM}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'formname') || (@$edit && !@$formName)) ? ' error' : '') . '" maxlength="70" type="text" name="formname"' . (@$formName ? ' value="'.@$formName.'"' : '') . ' /></td></tr>' . "\n";
  
         if(is_bool($edit) && $edit && Form::exists(@$_GET['id']))
         {
@@ -195,7 +195,7 @@ class Forms extends Component
             $content .= '<tr><td>&nbsp;</td><td>'.$formFile.'<br />{LANG_FILE_DESC}</td></tr>';
             $_FILES['file']['name'] = $formFile;
         }
-        $content .= '<tr><td>{LANG_FORM_FILE}:</td><td><input ' . ((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file') ? 'class="error" ' : ' ') . 'type="file" name="file" id="file" style="width: 300px;" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_FORM_FILE}:</td><td><input class="form-control' . (((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file')) ? ' error' : '') . '" type="file" name="file" id="file" /></td></tr>' . "\n";
         
         $replaceArr['FORM_TITLE'] = "{LANG_FORM} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

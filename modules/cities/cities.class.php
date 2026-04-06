@@ -175,7 +175,7 @@ class Cities extends Component
                         
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_CITY_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'cityname') || (@$edit && !@$cityName) ? 'class="error" ' : ' ') . 'type="text" name="cityname"' . (@$cityName ? ' value="'.@$cityName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_CITY_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'cityname') || (@$edit && !@$cityName)) ? ' error' : '') . '" maxlength="70" type="text" name="cityname"' . (@$cityName ? ' value="'.@$cityName.'"' : '') . ' /></td></tr>' . "\n";
          
         $replaceArr['CITY_TITLE'] = "{LANG_CITY} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

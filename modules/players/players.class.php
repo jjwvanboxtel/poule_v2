@@ -206,14 +206,18 @@ class Players extends Component
                         
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_PLAYER_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'playername') || (@$edit && !@$playerName) ? 'class="error" ' : ' ') . 'type="text" name="playername"' . (@$playerName ? ' value="'.@$playerName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_PLAYER_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'playername') || (@$edit && !@$playerName)) ? ' error' : '') . '" maxlength="70" type="text" name="playername"' . (@$playerName ? ' value="'.@$playerName.'"' : '') . ' /></td></tr>' . "\n";
 
         $content .= '<tr><td>{LANG_COUNTRY}:</td><td>'."\n";
-        $content .= '<select name="playercountry">' . "\n";
+        $content .= '<select class="form-select" name="playercountry">' . "\n";
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
-            $content .= '<option value="' . $country->country_id . '"' . (@$edit && isset($playerCountry) && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
+            $selectedCountryId = null;
+            if (isset($playerCountry)) {
+                $selectedCountryId = is_object($playerCountry) ? $playerCountry->getId() : $playerCountry;
+            }
+            $content .= '<option value="' . $country->country_id . '"' . (($selectedCountryId !== null && $selectedCountryId == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
         }
         $content .= '</select>' . "\n";
         $content .= '</td></tr>'. "\n";
@@ -241,7 +245,7 @@ class Players extends Component
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_COUNTRY}:</td>' . "\n";
         $content .= '<td>'. "\n";
-        $content .= '<select name="countryid">' . "\n";
+        $content .= '<select class="form-select" name="countryid">' . "\n";
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
@@ -250,7 +254,7 @@ class Players extends Component
         $content .= '</select>' . "\n";
         $content .= '</td></tr>'. "\n";    
         
-        $content .= '<tr><td>{LANG_FORM_FILE}:</td><td><input ' . ((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file') ? 'class="error" ' : ' ') . 'type="file" name="file" id="file" accept="application/txt" style="width: 300px;" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_FORM_FILE}:</td><td><input class="form-control' . (((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file')) ? ' error' : '') . '" type="file" name="file" id="file" accept="application/txt" /></td></tr>' . "\n";
         
         $replaceArr['PLAYER_TITLE'] = "{LANG_PLAYERS} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

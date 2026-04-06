@@ -255,7 +255,7 @@ class Subleagues extends Component
         $replaceArr['ERROR_MSG'] = '';
                
         $content .= '<tr><td>{LANG_PARTICIPANT}:</td>'."\n";
-        $content .= '<td><select name="participant">' . "\n";
+        $content .= '<td><select class="form-select" name="participant">' . "\n";
         User::getAllUsers(3);
         while (($user = User::nextUser()) != null)
         {
@@ -327,7 +327,7 @@ class Subleagues extends Component
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
                 
-        $content .= '<tr><td>{LANG_SUBLEAGUE}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'subleaguename') || (@$edit && !@$subleagueName) ? 'class="error" ' : ' ') . 'type="text" name="subleaguename"' . (@$subleagueName ? ' value="'.@$subleagueName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_SUBLEAGUE}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'subleaguename') || (@$edit && !@$subleagueName)) ? ' error' : '') . '" maxlength="70" type="text" name="subleaguename"' . (@$subleagueName ? ' value="'.@$subleagueName.'"' : '') . ' /></td></tr>' . "\n";
          
         /*if(is_bool($edit) && $edit)
         {
@@ -335,8 +335,8 @@ class Subleagues extends Component
 
             $content .= '<tr><td>&nbsp;</td><td><img src="'.UPLOAD_DIR.Subleague::getHeaderDir(@$_GET['competition'], $subleague->getId()).$subleagueImage.'" alt="'.$subleagueImage.'" style="width: 200px;" /><br />{LANG_IMG_DESC}</td></tr>';
             $_FILES['file']['name'] = $subleagueImage;
-        } 
-        $content .= '<tr><td>{LANG_SUBLEAGUE_HEADER}:</td><td><input ' . ((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file') ? 'class="error" ' : ' ') . 'type="file" name="file" id="file" style="width: 300px;" /></td></tr>' . "\n";*/
+        } */
+        $content .= '<tr><td>{LANG_SUBLEAGUE_HEADER}:</td><td><input class="form-control' . (((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file')) ? ' error' : '') . '" type="file" name="file" id="file" /></td></tr>' . "\n";
          
         $replaceArr['SUBLEAGUE_TITLE'] = "{LANG_SUBLEAGUE} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

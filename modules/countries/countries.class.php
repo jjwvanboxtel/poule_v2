@@ -177,7 +177,7 @@ class Countries extends Component
                         
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_COUNTRY_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'countryname') || (@$edit && !@$countryName) ? 'class="error" ' : ' ') . 'type="text" name="countryname"' . (@$countryName ? ' value="'.@$countryName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_COUNTRY_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'countryname') || (@$edit && !@$countryName)) ? ' error' : '') . '" maxlength="70" type="text" name="countryname"' . (@$countryName ? ' value="'.@$countryName.'"' : '') . ' /></td></tr>' . "\n";
  
         if(is_bool($edit) && $edit && Country::exists(@$_GET['id']))
         {
@@ -187,7 +187,7 @@ class Countries extends Component
             $content .= '<tr><td>&nbsp;</td><td><img src="'.UPLOAD_DIR.Country::getCountryDir(@$_GET['competition']).$countryImage.'" alt="'.$countryImage.'" /><br />{LANG_IMG_DESC}</td></tr>';
             $_FILES['file']['name'] = $countryImage;
         }
-        $content .= '<tr><td>{LANG_COUNTRY_IMAGE}:</td><td><input ' . ((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file') ? 'class="error" ' : ' ') . 'type="file" name="file" id="file" style="width: 300px;" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_COUNTRY_IMAGE}:</td><td><input class="form-control' . (((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file')) ? ' error' : '') . '" type="file" name="file" id="file" /></td></tr>' . "\n";
         
         $replaceArr['COUNTRY_TITLE'] = "{LANG_COUNTRY} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

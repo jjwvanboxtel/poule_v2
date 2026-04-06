@@ -175,7 +175,7 @@ class Referees extends Component
                         
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_REFEREE_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'refereename') || (@$edit && !@$refereeName) ? 'class="error" ' : ' ') . 'type="text" name="refereename"' . (@$refereeName ? ' value="'.@$refereeName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_REFEREE_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'refereename') || (@$edit && !@$refereeName)) ? ' error' : '') . '" maxlength="70" type="text" name="refereename"' . (@$refereeName ? ' value="'.@$refereeName.'"' : '') . ' /></td></tr>' . "\n";
          
         $replaceArr['REFEREE_TITLE'] = "{LANG_REFEREE} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

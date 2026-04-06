@@ -188,12 +188,19 @@ class Question
 
     public static function add($competitionId, $question_anwser_count, $question, $type)
     {
+        // Generate comma-separated empty values based on answer count
+        $question_anwser = '';
+        for ($i=0; $i<$question_anwser_count; $i++)
+        {
+            $question_anwser .= 'empty' . ($i<($question_anwser_count-1) ? ',' : '');
+        }
+        
         App::$_DB->doSQL('INSERT INTO `question` (question_question, question_type, question_anwser_count, question_anwser, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($question).'",
                             "'.App::$_DB->escapeString($type).'",
                             '.$question_anwser_count.',
-                            "empty",
+                            "'.App::$_DB->escapeString($question_anwser).'",
                             '.$competitionId.')
                           ');
         

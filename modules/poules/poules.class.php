@@ -175,7 +175,7 @@ class Poules extends Component
                         
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_POULE_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'poulename') || (@$edit && !@$pouleName) ? 'class="error" ' : ' ') . 'type="text" name="poulename"' . (@$pouleName ? ' value="'.@$pouleName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_POULE_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'poulename') || (@$edit && !@$pouleName)) ? ' error' : '') . '" maxlength="70" type="text" name="poulename"' . (@$pouleName ? ' value="'.@$pouleName.'"' : '') . ' /></td></tr>' . "\n";
          
         $replaceArr['POULE_TITLE'] = "{LANG_POULE} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

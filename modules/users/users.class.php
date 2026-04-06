@@ -191,7 +191,7 @@ class Users extends Component
 
         //usergroup list to filter
         $groupList = '<form name="grouplist" action="?com=' . $this->componentId . '" method="post">' . "\n";
-        $groupList .= '<select onchange="document.grouplist.submit();" name="usergroup">' . "\n";
+        $groupList .= '<select class="form-select" onchange="document.grouplist.submit();" name="usergroup">' . "\n";
         $groupList .= '<option value="">{LANG_ALL}</option>';
         UserGroup::getAllUserGroups((@$_POST['usergroup'] ? $_POST['usergroup'] : false));
         while (($userGroup = UserGroup::nextUserGroup()) != null)
@@ -247,7 +247,7 @@ class Users extends Component
         {
             $content .= '<tr>' . "\n";
             $content .= '<td colspan="7" style="text-align: right;">' . "\n";
-            $content .= '<button onclick="window.location = \'?com=' . $_GET['com'] . '\';">{LANG_BACK}</button>' . "\n";
+            $content .= '<button class="btn btn-secondary" onclick="window.location = \'?com=' . $_GET['com'] . '\';">{LANG_BACK}</button>' . "\n";
             $content .= '</td>' . "\n";
             $content .= '</tr>' . "\n";
         }
@@ -339,7 +339,7 @@ class Users extends Component
         {
             $content .= '<tr>' . "\n";
             $content .= '<td>{LANG_USERGROUP}:</td>' . "\n";
-            $content .= '<td><select name="usergroup">' . "\n";
+            $content .= '<td><select class="form-select" name="usergroup">' . "\n";
             UserGroup::getAllUserGroups();
             while (($userGroup = UserGroup::nextUserGroup()) != null)
             {

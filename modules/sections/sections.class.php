@@ -126,8 +126,8 @@ class Sections extends Component
                         
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_SECTION_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'sectionname') || (@$edit && !@$sectionName) ? 'class="error" ' : ' ') . 'type="text" name="sectionname"' . (@$sectionName ? ' value="'.@$sectionName.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_ENABLED}:</td><td><input type="checkbox" name="sectionenabled" value="1" ' . (@$sectionEnabled == 1 ? ' checked' : '') . '></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_SECTION_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'sectionname') || (@$edit && !@$sectionName)) ? ' error' : '') . '" maxlength="70" type="text" name="sectionname"' . (@$sectionName ? ' value="'.@$sectionName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_ENABLED}:</td><td><input class="form-check-input" type="checkbox" name="sectionenabled" value="1" ' . (@$sectionEnabled == 1 ? ' checked' : '') . '></td></tr>' . "\n";
          
         $replaceArr['SECTION_TITLE'] = "{LANG_SECTION} {LANG_EDIT}";
         $replaceArr['CONTENT'] = $content;

@@ -93,7 +93,7 @@ class Participants extends Component
 
         //filter
         $filter  = '<form name="filterlist" action="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com=' . $this->componentId . '" method="post">' . "\n";
-        $filter .= '<select onchange="document.filterlist.submit();" name="filter">' . "\n";
+        $filter .= '<select class="form-select" onchange="document.filterlist.submit();" name="filter">' . "\n";
         $filter .= '<option value="0" '.(@$_POST['filter'] == "0" ? 'selected' : '').'>{LANG_NO_FILTER}</option>';
         $filter .= '<option value="1" '.(@$_POST['filter'] == "1" ? 'selected' : '').'>{LANG_PARTICIPANT_PAYED}</option>';
         $filter .= '<option value="2" '.(@$_POST['filter'] == "2" ? 'selected' : '').'>{LANG_PARTICIPANT_SUBSCRIBED}</option>';
@@ -148,7 +148,7 @@ class Participants extends Component
         }
         
         $content .= '<tr><td>{LANG_PARTICIPANT}:</td><td>'.$firstName . ' ' . $lastName . '</td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_PARTICIPANT_PAYED}:</td><td><input type="checkbox" name="participantpayed" value="1" ' . (@$payed == 1 ? ' checked' : '') . '></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_PARTICIPANT_PAYED}:</td><td><input class="form-check-input" type="checkbox" name="participantpayed" value="1" ' . (@$payed == 1 ? ' checked' : '') . '></td></tr>' . "\n";
         
         $replaceArr['PARTICIPANT_TITLE'] = "{LANG_PARTICIPANT} {LANG_EDIT}";
         $replaceArr['CONTENT'] = $content;       

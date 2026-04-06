@@ -7,9 +7,5 @@
 <br />
 
 <div id="scoring" class="card card-body">
-    <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
-            {CONTENT}
-        </table>
-    </div>
+    {CONTENT}
 </div>

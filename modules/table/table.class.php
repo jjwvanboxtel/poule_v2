@@ -98,7 +98,7 @@ class Table extends Component
         $replaceArr['TABLE_MSG'] = $msg;
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
-        $replaceArr['TABLE_BUTTONS'] = ($this->hasAccess(CRUD_EDIT) ? '<input class="submit" type="submit" name="submit" value="{LANG_CALCULATE}" />' : ''); 
+        $replaceArr['TABLE_BUTTONS'] = ($this->hasAccess(CRUD_EDIT) ? '<input class="btn btn-primary" type="submit" name="submit" value="{LANG_CALCULATE}" />' : ''); 
         $tpl->replace($replaceArr);
         echo $tpl;
 
