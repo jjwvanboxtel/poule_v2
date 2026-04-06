@@ -86,21 +86,14 @@ class Upload implements iUpload
     /**
      * Checks if the extention is valid.
      *
-     * @param file $file
+     * @param array $file
      * @return boolean true if the extention of a file is valid.
      */
-    private function checkExt($file)
+    private function checkExt(array $file): bool
     {
-        $exts = explode(', ', $this->ext);
-        foreach($exts as $extention)
-        {
-            if(stripos(strtolower($file['name']), $extention) !== true)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        $allowed = array_map('trim', explode(',', $this->ext));
+        $ext = '.' . strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        return in_array($ext, $allowed, true);
     } // checkExt
 
     /**
