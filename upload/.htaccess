@@ -1,0 +1,18 @@
+# Prevent PHP (and other server-side script) execution inside this directory.
+# This is the shared-hosting defence-in-depth measure for VULN-002.
+# Primary controls are: strict extension validation (VULN-001) and random
+# file names assigned on upload.
+
+# mod_php: turn off the PHP engine for every file in this tree
+php_flag engine off
+
+# FastCGI / CGI handlers: strip any PHP MIME-type mapping
+RemoveHandler .php .php3 .php4 .php5 .php6 .php7 .phtml .phar
+
+# Last resort: serve any PHP-variant file as plain text, never execute it
+AddType text/plain .php .php3 .php4 .php5 .php6 .php7 .phtml .phar
+
+# Prevent this file itself from being read via HTTP
+<Files ".htaccess">
+    Require all denied
+</Files>

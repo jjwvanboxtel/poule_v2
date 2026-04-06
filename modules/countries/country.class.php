@@ -53,9 +53,9 @@ class Country
         $curImage = $this->result->country_flag;
 
         $delete = App::$_UPL->deleteFile($curImage, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        
-        $this->result->country_flag = $file['name'];
+        $safe = App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
+
+        $this->result->country_flag = $safe;
 
         return $delete;
     }
@@ -149,12 +149,12 @@ class Country
         
     public static function add($name, $file, $competitionId)
     {
-        App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
+        $safe = App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
         
         App::$_DB->doSQL('INSERT INTO `country` (country_name, country_flag, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
-                            "'.App::$_DB->escapeString($file['name']).'",
+                            "'.App::$_DB->escapeString($safe).'",
                             '.$competitionId.')
                           ');
                          
