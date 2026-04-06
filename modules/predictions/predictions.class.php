@@ -172,13 +172,13 @@ class Predictions extends Component
                       . '<i class="bi bi-pencil-square me-1"></i>{LANG_PREDICTION} {LANG_EDIT}</a></div>';
         }
 
-        $subscribe = ($participant->getSubscribed(@$_GET['competition']) == 0
-            ? '<input class="btn btn-outline-primary" type="submit" name="subscribe" value="{LANG_SUBSCRIBE}" />'
-            : '');
         $showButtons = $edit && (
             ($participant->getSubscribed(@$_GET['competition']) == 0 && !$submission_date_expired)
             || UserControl::getCurrentUserGroup()->getId() == 1
         );
+        $subscribe = ($participant->getSubscribed(@$_GET['competition']) == 0
+            ? '<input class="btn btn-outline-primary" type="submit" name="subscribe" value="{LANG_SUBSCRIBE}" />'
+            : '');
         $predictionButtons = $showButtons
             ? '<div class="d-flex gap-2"><input class="btn btn-primary" type="submit" name="save" value="{LANG_SAVE_PREDICTION}" /> ' . $subscribe . '</div>'
             : '';
