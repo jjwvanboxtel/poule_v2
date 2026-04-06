@@ -45,9 +45,9 @@ class Table extends Component
                             throw new Exception('{ERROR_ACCESSDENIED}');
 
                         if(!Ranking::updateRanking(@$_GET['competition']))
-                          $this->showTable('<div>{LANG_TABLE} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showTable('{LANG_TABLE} {ERROR_EDIT}');
                         else
-                          $this->showTable('<div>{LANG_TABLE} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showTable('{LANG_TABLE} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -56,7 +56,7 @@ class Table extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showTable('<div>{LANG_TABLE} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showTable('{LANG_TABLE} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -76,18 +76,19 @@ class Table extends Component
         {
             $participant = new Participant($ranking->Participant_User_user_id);
 
-            $currentClass = (($c % 2) ? 'odd' : 'even');
-            $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
-            $content .= '<td>' . $ranking->table_position . '</td>' . "\n";
             if ($ranking->table_position == $ranking->table_old_position || $ranking->table_old_position == 0)
-                $content .= '<td><i class="bi bi-dash-lg text-primary"></i></td>' . "\n";
+                $positionChange = '<td><i class="bi bi-dash-lg text-primary"></i></td>' . "\n";
             else if ($ranking->table_position < $ranking->table_old_position)
-                $content .= '<td class="text-success"><i class="bi bi-arrow-up-circle-fill me-2"></i>(+'.($ranking->table_old_position-$ranking->table_position).')</td>' . "\n";
-            else if ($ranking->table_position > $ranking->table_old_position)
-                $content .= '<td class="text-danger"><i class="bi bi-arrow-down-circle-fill me-2"></i>(-'.($ranking->table_position-$ranking->table_old_position).')</td>' . "\n";
-            $content .= '<td><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.Component::getComponentId('Predictions').'&id=' . $participant->getId() . '">' . $participant->getFirstName() . ' ' . $participant->getLastName() . '</a></td>';
-            $content .= '<td>' . $ranking->table_points . '</td>' . "\n";
-            $content .= '</tr>' . "\n";
+                $positionChange = '<td class="text-success"><i class="bi bi-arrow-up-circle-fill me-2"></i>(+'.($ranking->table_old_position-$ranking->table_position).')</td>' . "\n";
+            else
+                $positionChange = '<td class="text-danger"><i class="bi bi-arrow-down-circle-fill me-2"></i>(-'.($ranking->table_position-$ranking->table_old_position).')</td>' . "\n";
+
+            $cells  = '<td>' . $ranking->table_position . '</td>' . "\n";
+            $cells .= $positionChange;
+            $cells .= '<td><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.Component::getComponentId('Predictions').'&id=' . $participant->getId() . '">' . $participant->getFirstName() . ' ' . $participant->getLastName() . '</a></td>';
+            $cells .= '<td>' . $ranking->table_points . '</td>' . "\n";
+
+            $content .= self::buildOverviewRow($cells, $c);
             $c++;
         }
 
@@ -95,7 +96,7 @@ class Table extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_TABLE}';
-        $replaceArr['TABLE_MSG'] = $msg;
+        $replaceArr['TABLE_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $replaceArr['TABLE_BUTTONS'] = ($this->hasAccess(CRUD_EDIT) ? '<input class="btn btn-primary" type="submit" name="submit" value="{LANG_CALCULATE}" />' : ''); 

@@ -121,18 +121,16 @@ class Predictions extends Component
                 $participant->getPayed(@$_GET['competition'])) ||
                 Usercontrol::getCurrentUserGroup()->getId() == ADMIN)
             {
-                $currentClass = (($c % 2) ? 'odd' : 'even');
-                $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
-                $content .= '<td><img alt="{LANG_USERGROUP}" src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'user' : 'user_red').'.png" class="icon" /></td>' . "\n";
-                $content .= '<td>' . $user->user_id . '</td>' . "\n";
-                $content .= '<td><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com=' . $this->componentId . '&id=' . $user->user_id . '">' . $user->user_firstname . ' ' . $user->user_lastname . '</a></td>' . "\n";
-                $content .= '<td>' . "\n";
+                $cells  = '<td><img alt="{LANG_USERGROUP}" src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'user' : 'user_red').'.png" class="icon" /></td>' . "\n";
+                $cells .= '<td>' . $user->user_id . '</td>' . "\n";
+                $cells .= '<td><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com=' . $this->componentId . '&id=' . $user->user_id . '">' . $user->user_firstname . ' ' . $user->user_lastname . '</a></td>' . "\n";
+                $cells .= '<td>' . "\n";
                 if ($this->hasAccess(CRUD_EDIT))
                 {
-                    $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
+                    $cells .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
                 }
-                $content .= '</td>' . "\n";
-                $content .= '</tr>' . "\n";
+                $cells .= '</td>' . "\n";
+                $content .= self::buildOverviewRow($cells, $c);
                 $c++;
             }
         }
@@ -147,8 +145,8 @@ class Predictions extends Component
         $tpl->replace($replaceArr);
         echo $tpl;
 
-    } // showUserGroups
-    
+    } // showUsers
+
     private function showPrediction($msg='', $edit=false)
     {
         $tpl = new Template('prediction', strtolower(get_class()), 'modules');
@@ -166,6 +164,25 @@ class Predictions extends Component
         if ($edit && $edit instanceof InputException)
             $post = $this->parse(@$_POST);
 
+        $editLink = '';
+        if (!@$edit && @$user && $participant->getId() == $user->getId() && !$submission_date_expired) {
+            $editHref = '?' . (@$_GET['competition'] ? 'competition=' . @$_GET['competition'] . '&amp;' : '')
+                      . 'com=' . $this->componentId . '&amp;option=edit&amp;id=' . $participant->getId();
+            $editLink = '<div class="mb-3"><a href="' . $editHref . '" class="btn btn-primary">'
+                      . '<i class="bi bi-pencil-square me-1"></i>{LANG_PREDICTION} {LANG_EDIT}</a></div>';
+        }
+
+        $subscribe = ($participant->getSubscribed(@$_GET['competition']) == 0
+            ? '<input class="btn btn-outline-primary" type="submit" name="subscribe" value="{LANG_SUBSCRIBE}" />'
+            : '');
+        $showButtons = $edit && (
+            ($participant->getSubscribed(@$_GET['competition']) == 0 && !$submission_date_expired)
+            || UserControl::getCurrentUserGroup()->getId() == 1
+        );
+        $predictionButtons = $showButtons
+            ? '<div class="d-flex gap-2"><input class="btn btn-primary" type="submit" name="save" value="{LANG_SAVE_PREDICTION}" /> ' . $subscribe . '</div>'
+            : '';
+
         $replaceArr = array();
         $replaceArr['USER_CONTENT'] = '<h3>{LANG_PARTICIPANT}: '.$participant->getFirstName().' ' .$participant->getLastName().'</h3>';
         $replaceArr['GAME_CONTENT'] = (!(!$resultSection->getEnabled(@$_GET['competition']) && !$cardsSection->getEnabled(@$_GET['competition'])) ? $this->showGames($participant, $edit, $post, false) : '');
@@ -176,9 +193,8 @@ class Predictions extends Component
         $replaceArr['SUBMISSION_MSG'] = ((@$edit && $submission_date_expired && $participant->getSubscribed(@$_GET['competition']) == 0 && UserControl::getCurrentUserGroup()->getId() != 1) ? '{LANG_SUBMISSION_EXPIRED}' : '');
         $replaceArr['ERROR_MSG'] = ((@$edit && $edit instanceof InputException) ? $edit->getMessage() : '');
         $replaceArr['COM_ID'] = $this->componentId;
-        $replaceArr['PREDICTION_EDIT'] = (!@$edit && @$user && $participant->getId() == $user->getId() && !$submission_date_expired ? '<img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_PREDICTION} {LANG_EDIT}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$participant->getId().'" class="button">{LANG_PREDICTION} {LANG_EDIT}</a><br /><br />' : '');        
-        $subscribe = ($participant->getSubscribed(@$_GET['competition']) == 0 ? '<input class="btn btn-primary" type="submit" name="subscribe" value="{LANG_SUBSCRIBE}" />' : '');
-        $replaceArr['PREDICTION_BUTTONS'] = ($edit && (($participant->getSubscribed(@$_GET['competition']) == 0 && !$submission_date_expired) || UserControl::getCurrentUserGroup()->getId() == 1) ? '<input class="btn btn-primary" type="submit" name="save" value="{LANG_SAVE_PREDICTION}" /> '.$subscribe.'' : '');
+        $replaceArr['PREDICTION_EDIT'] = $editLink;
+        $replaceArr['PREDICTION_BUTTONS'] = $predictionButtons;
 
         $tpl->replace($replaceArr);
         echo $tpl;

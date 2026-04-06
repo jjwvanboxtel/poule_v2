@@ -3,7 +3,9 @@
 <div class="title">
     <h2>{COM_NAME}</h2>
 </div>
-<div>{PREDICTION_MSG}{ERROR_MSG}{SUBMISSION_MSG}</div>
+
+{PREDICTION_MSG}{ERROR_MSG}
+{SUBMISSION_MSG}
 
 {PREDICTION_EDIT}
 {USER_CONTENT}
@@ -13,6 +15,8 @@
         {GAME_CONTENT}
         {ROUND_CONTENT}
         {QUESTION_CONTENT}
-        {PREDICTION_BUTTONS}
+        <div class="mt-3">
+            {PREDICTION_BUTTONS}
+        </div>
     </form>
 </div>
