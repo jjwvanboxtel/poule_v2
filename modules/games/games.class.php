@@ -143,8 +143,8 @@ class Games extends Component
         $content .= '<th colspan="2">{LANG_COUNTRY}</th>'."\n";
         $content .= '<th>{LANG_RESULT}</th>'."\n";
         $content .= '<th colspan="2">{LANG_COUNTRY}</th>'."\n";
-        $content .= '<th><img src="templates/{TEMPLATE_NAME}/images/yellow_card.jpg" alt="{LANG_YELLOW_CARDS}" class="icon" /></th>'."\n";
-        $content .= '<th><img src="templates/{TEMPLATE_NAME}/images/red_card.jpg" alt="{LANG_RED_CARDS}" class="icon" /></th>'."\n";
+        $content .= '<th><i class="bi bi-square-fill" style="color: #ffc107;" aria-label="{LANG_YELLOW_CARDS}"></i> {LANG_YELLOW_CARDS}</th>'."\n";
+        $content .= '<th><i class="bi bi-square-fill" style="color: #dc3545;" aria-label="{LANG_RED_CARDS}"></i> {LANG_RED_CARDS}</th>'."\n";
         $content .= '<th style="width: 75px;">{LANG_ACTIONS}</th>'."\n";
         $content .= '</tr>'."\n";
         
@@ -213,11 +213,11 @@ class Games extends Component
             $content .= '<div class="row mb-3">'."\n";
             $content .= '<div class="col-6">'."\n";
             $yellowCards = ($game->game_yellow_cards != "empty" ? $game->game_yellow_cards : "{LANG_EMPTY}");
-            $content .= '<img src="templates/{TEMPLATE_NAME}/images/yellow_card.jpg" width="16" alt="{LANG_YELLOW_CARDS}" /> '.$yellowCards."\n";
+            $content .= '<i class="bi bi-square-fill" style="color: #ffc107;"></i> '.$yellowCards."\n";
             $content .= '</div>'."\n";
             $content .= '<div class="col-6">'."\n";
             $redCards = ($game->game_red_cards != "empty" ? $game->game_red_cards : "{LANG_EMPTY}");
-            $content .= '<img src="templates/{TEMPLATE_NAME}/images/red_card.jpg" width="16" alt="{LANG_RED_CARDS}" /> '.$redCards."\n";
+            $content .= '<i class="bi bi-square-fill" style="color: #dc3545;"></i> '.$redCards."\n";
             $content .= '</div>'."\n";
             $content .= '</div>'."\n";
             

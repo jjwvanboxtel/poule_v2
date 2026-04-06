@@ -223,11 +223,11 @@ class Predictions extends Component
         $content .= '<th style="width: 40px;"></th>'."\n";
         $content .= '<th colspan="2"></th>'."\n";
         if ($resultSection->getEnabled(@$_GET['competition']))
-            $content .= '<th style="width: 130px;">{LANG_PREDICTION}</th>'."\n";
+            $content .= '<th style="width: 200px;">{LANG_PREDICTION}</th>'."\n";
         if ($cardsSection->getEnabled(@$_GET['competition']))
         {   
-            $content .= '<th colspan="2"><img src="./templates/{TEMPLATE_NAME}/images/yellow_card.jpg" alt="{LANG_YELLOW_CARDS}" /></th>'."\n";
-            $content .= '<th colspan="2"><img src="./templates/{TEMPLATE_NAME}/images/red_card.jpg" alt="{LANG_RED_CARDS}" /></th>'."\n";
+            $content .= '<th colspan="2"><i class="bi bi-square-fill" style="color: #ffc107;" aria-label="{LANG_YELLOW_CARDS}"></i></th>'."\n";
+            $content .= '<th colspan="2"><i class="bi bi-square-fill" style="color: #dc3545;" aria-label="{LANG_RED_CARDS}"></i></th>'."\n";
         }
         $content .= '</tr>'."\n";
         
@@ -263,9 +263,9 @@ class Predictions extends Component
             $content .= '<td>' . $game->home_country_name . '</td>' . "\n";
             
             if ($edit || $game->game_result == 'empty-empty' || $hideAnwsers)
-                $content .= '<td style="color: green; text-align: center !important; width: 40px;">-</td>' . "\n";
+                $content .= '<td style="color: green;">-</td>' . "\n";
             else
-                $content .= '<td style="color: green; text-align: center !important; width: 40px;">'.$game->game_result.'</td>' . "\n";
+                $content .= '<td style="color: green;">'.$game->game_result.'</td>' . "\n";
             $content .= '<td>' . '<img src="./'.UPLOAD_DIR.Country::getCountryDir(@$_GET['competition']).$game->away_country_flag.'" width="16" alt="'.$game->away_country_name.'" class="actions" /></td>' . "\n";
             $content .= '<td>' . $game->away_country_name . '</td>' . "\n";
         
@@ -273,34 +273,34 @@ class Predictions extends Component
             {
                 if ($edit)
                 {
-                    $content .= '<td style="text-align: center;"><select class="form-select" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
+                    $content .= '<td style="text-align: center;"><div class="d-flex align-items-center justify-content-center gap-2"><select class="form-select" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[0] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
                     }
-                    $content .= '</select>-' . "\n";
-                    $content .= '<select class="form-select" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
+                    $content .= '</select><span>-</span>' . "\n";
+                    $content .= '<select class="form-select" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[1] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
                     }
-                    $content .= '</select></td>' . "\n";
+                    $content .= '</select></div></td>' . "\n";
                 }
                 else
-                    $content .= '<td style="text-align: center;">'.$predictionResult[0].'-'.$predictionResult[1].'</td>';
+                    $content .= '<td>'.$predictionResult[0].'-'.$predictionResult[1].'</td>';
             }
             if ($cardsSection->getEnabled(@$_GET['competition'])) 
             {
                 if ($edit)
                 {
-                    $content .= '<td><select class="form-select" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
+                    $content .= '<td><select class="form-select" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionYellowCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
                     }
                     $content .= '</select></td>' . "\n";            
                     $content .= '<td></td>' . "\n";
-                    $content .= '<td><select class="form-select" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
+                    $content .= '<td><select class="form-select" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionRedCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -371,66 +371,64 @@ class Predictions extends Component
             $content .= '</div>'."\n";
             $content .= '</div>'."\n";
             
-            // Prediction
-            if ($resultSection->getEnabled(@$_GET['competition']))
-            {
-                if ($edit)
-                {
-                    $content .= '<div class="row mb-2">'."\n";
-                    $content .= '<div class="col-auto"><strong>{LANG_PREDICTION}:</strong></div>'."\n";
-                    $content .= '<div class="col">'."\n";
-                    $content .= '<div class="d-flex align-items-center gap-2">'."\n";
-                    $content .= '<select class="form-select form-select-sm" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: auto;">' . "\n";
-                    for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
-                    {
-                        $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[0] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
-                    }
-                    $content .= '</select>'."\n";
-                    $content .= '<span>-</span>'."\n";
-                    $content .= '<select class="form-select form-select-sm" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: auto;">' . "\n";
-                    for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
-                    {
-                        $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[1] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
-                    }
-                    $content .= '</select>'."\n";
-                    $content .= '</div>'."\n";
-                    $content .= '</div>'."\n";
-                    $content .= '</div>'."\n";
-                }
-                else
-                {
-                    $content .= '<div class="row mb-2">'."\n";
-                    $content .= '<div class="col-12"><strong>{LANG_PREDICTION}:</strong> '.$predictionResult[0].' - '.$predictionResult[1].'</div>'."\n";
-                    $content .= '</div>'."\n";
-                }
-            }
+            // Prediction and Cards on one line for mobile
+            $showPrediction = $resultSection->getEnabled(@$_GET['competition']);
+            $showCards = $cardsSection->getEnabled(@$_GET['competition']);
             
-            // Cards
-            if ($cardsSection->getEnabled(@$_GET['competition'])) 
+            if ($showPrediction || $showCards)
             {
                 if ($edit)
                 {
                     $content .= '<div class="row">'."\n";
                     $content .= '<div class="col-12">'."\n";
-                    $content .= '<div class="d-flex align-items-center gap-3">'."\n";
-                    $content .= '<div class="d-flex align-items-center gap-1">'."\n";
-                    $content .= '<img src="./templates/{TEMPLATE_NAME}/images/yellow_card.jpg" alt="{LANG_YELLOW_CARDS}" width="16" />'."\n";
-                    $content .= '<select class="form-select form-select-sm" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: auto;">' . "\n";
-                    for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
+                    $content .= '<div class="d-flex flex-wrap align-items-center gap-3">'."\n";
+                    
+                    // Prediction
+                    if ($showPrediction)
                     {
-                        $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionYellowCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
+                        $content .= '<div class="d-flex align-items-center gap-2">'."\n";
+                        $content .= '<strong class="text-nowrap">{LANG_PREDICTION}:</strong>'."\n";
+                        $content .= '<select class="form-select form-select-sm" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
+                        {
+                            $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[0] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
+                        }
+                        $content .= '</select>'."\n";
+                        $content .= '<span>-</span>'."\n";
+                        $content .= '<select class="form-select form-select-sm" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
+                        {
+                            $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[1] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
+                        }
+                        $content .= '</select>'."\n";
+                        $content .= '</div>'."\n";
                     }
-                    $content .= '</select>'."\n";
-                    $content .= '</div>'."\n";
-                    $content .= '<div class="d-flex align-items-center gap-1">'."\n";
-                    $content .= '<img src="./templates/{TEMPLATE_NAME}/images/red_card.jpg" alt="{LANG_RED_CARDS}" width="16" />'."\n";
-                    $content .= '<select class="form-select form-select-sm" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: auto;">' . "\n";
-                    for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
+                    
+                    // Cards
+                    if ($showCards)
                     {
-                        $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionRedCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
+                        $content .= '<div class="d-flex align-items-center gap-2">'."\n";
+                        $content .= '<div class="d-flex align-items-center gap-1">'."\n";
+                        $content .= '<i class="bi bi-square-fill" style="color: #ffc107;" aria-label="{LANG_YELLOW_CARDS}"></i>'."\n";
+                        $content .= '<select class="form-select form-select-sm" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
+                        {
+                            $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionYellowCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
+                        }
+                        $content .= '</select>'."\n";
+                        $content .= '</div>'."\n";
+                        $content .= '<div class="d-flex align-items-center gap-1">'."\n";
+                        $content .= '<i class="bi bi-square-fill" style="color: #dc3545;" aria-label="{LANG_RED_CARDS}"></i>'."\n";
+                        $content .= '<select class="form-select form-select-sm" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
+                        {
+                            $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionRedCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
+                        }
+                        $content .= '</select>'."\n";
+                        $content .= '</div>'."\n";
+                        $content .= '</div>'."\n";
                     }
-                    $content .= '</select>'."\n";
-                    $content .= '</div>'."\n";
+                    
                     $content .= '</div>'."\n";
                     $content .= '</div>'."\n";
                     $content .= '</div>'."\n";
@@ -438,13 +436,29 @@ class Predictions extends Component
                 else
                 {
                     $content .= '<div class="row">'."\n";
-                    $content .= '<div class="col-6">'."\n";
-                    $content .= '<img src="./templates/{TEMPLATE_NAME}/images/yellow_card.jpg" width="16" /> '.$predictionYellowCards;
-                    $content .= ($game->game_yellow_cards != 'empty' && !$hideAnwsers ? ' <span class="text-success">(' . $game->game_yellow_cards . ')</span>' : '');
+                    $content .= '<div class="col-12">'."\n";
+                    $content .= '<div class="d-flex flex-wrap align-items-center gap-3">'."\n";
+                    
+                    if ($showPrediction)
+                    {
+                        $content .= '<div><strong>{LANG_PREDICTION}:</strong> '.$predictionResult[0].' - '.$predictionResult[1].'</div>'."\n";
+                    }
+                    
+                    if ($showCards)
+                    {
+                        $content .= '<div class="d-flex gap-3">'."\n";
+                        $content .= '<div>'."\n";
+                        $content .= '<i class="bi bi-square-fill" style="color: #ffc107;"></i> '.$predictionYellowCards;
+                        $content .= ($game->game_yellow_cards != 'empty' && !$hideAnwsers ? ' <span class="text-success">(' . $game->game_yellow_cards . ')</span>' : '');
+                        $content .= '</div>'."\n";
+                        $content .= '<div>'."\n";
+                        $content .= '<i class="bi bi-square-fill" style="color: #dc3545;"></i> '.$predictionRedCards;
+                        $content .= ($game->game_red_cards != 'empty' && !$hideAnwsers ? ' <span class="text-success">(' . $game->game_red_cards . ')</span>' : '');
+                        $content .= '</div>'."\n";
+                        $content .= '</div>'."\n";
+                    }
+                    
                     $content .= '</div>'."\n";
-                    $content .= '<div class="col-6">'."\n";
-                    $content .= '<img src="./templates/{TEMPLATE_NAME}/images/red_card.jpg" width="16" /> '.$predictionRedCards;
-                    $content .= ($game->game_red_cards != 'empty' && !$hideAnwsers ? ' <span class="text-success">(' . $game->game_red_cards . ')</span>' : '');
                     $content .= '</div>'."\n";
                     $content .= '</div>'."\n";
                 }

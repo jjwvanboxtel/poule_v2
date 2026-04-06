@@ -151,9 +151,10 @@ class Sections extends Component
             if (!@$_POST[$field])
               throw new InputException('{ERROR_EMPTY_FIELD}', $field);
         }
-          
+
         $section->setName(@$_POST['sectionname']);
-        $section->setEnabled(@$_GET['competition'], @$_POST['sectionenabled']);
+        $enabled = $_POST['sectionenabled'] ? 1 : 0;
+        $section->setEnabled(@$_GET['competition'], $enabled);
         $section->save();
         
         return true;

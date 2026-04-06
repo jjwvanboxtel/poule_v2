@@ -300,7 +300,7 @@ class Rounds extends Component
             $content .= '<tr>' . "\n";
             $content .= '<td>{LANG_COUNTRY} '.($i+1).':</td>' . "\n";
             $content .= '<td><select class="form-select" name="roundcountry_'.$i.'">' . "\n";
-            $content .= '<option value="empty" ' . (@$edit && @($roundCountries[$i] == 0) ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
+            $content .= '<option value="0" ' . (@$edit && @($roundCountries[$i] == 0) ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
             Country::getAllCountries(@$_GET['competition']);
             while (($country = Country::nextCountry()) != null)
             {

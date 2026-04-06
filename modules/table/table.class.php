@@ -80,11 +80,11 @@ class Table extends Component
             $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
             $content .= '<td>' . $ranking->table_position . '</td>' . "\n";
             if ($ranking->table_position == $ranking->table_old_position || $ranking->table_old_position == 0)
-                $content .= '<td><img src="templates/{TEMPLATE_NAME}/images/straight_line_steady.png" class="icon" /></td>' . "\n";
+                $content .= '<td><i class="bi bi-dash-lg text-primary"></i></td>' . "\n";
             else if ($ranking->table_position < $ranking->table_old_position)
-                $content .= '<td style="color: green"><img src="templates/{TEMPLATE_NAME}/images/green_arrow_up.png" class="icon" style="margin-right: 10px;" />(+'.($ranking->table_old_position-$ranking->table_position).')</td>' . "\n";
+                $content .= '<td class="text-success"><i class="bi bi-arrow-up-circle-fill me-2"></i>(+'.($ranking->table_old_position-$ranking->table_position).')</td>' . "\n";
             else if ($ranking->table_position > $ranking->table_old_position)
-                $content .= '<td style="color: red"><img src="templates/{TEMPLATE_NAME}/images/red_arrow_down.png" class="icon" style="margin-right: 10px;" />(-'.($ranking->table_position-$ranking->table_old_position).')</td>' . "\n";
+                $content .= '<td class="text-danger"><i class="bi bi-arrow-down-circle-fill me-2"></i>(-'.($ranking->table_position-$ranking->table_old_position).')</td>' . "\n";
             $content .= '<td><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.Component::getComponentId('Predictions').'&id=' . $participant->getId() . '">' . $participant->getFirstName() . ' ' . $participant->getLastName() . '</a></td>';
             $content .= '<td>' . $ranking->table_points . '</td>' . "\n";
             $content .= '</tr>' . "\n";
