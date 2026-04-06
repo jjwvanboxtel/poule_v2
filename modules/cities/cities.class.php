@@ -37,7 +37,7 @@ class Cities extends Component
                     try
                     {
                         $this->doEditCity();
-                        $this->showCities('<div id="msg">{LANG_CITY} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showCities('{LANG_CITY} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -45,7 +45,7 @@ class Cities extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showCities('<div>{LANG_CITY} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showCities('{LANG_CITY} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -64,9 +64,9 @@ class Cities extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditCity($city))
-                          $this->showCities('<div>{LANG_CITY} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showCities('{LANG_CITY} {ERROR_EDIT}');
                         else
-                          $this->showCities('<div>{LANG_CITY} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showCities('{LANG_CITY} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -79,7 +79,7 @@ class Cities extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCities('<div>{LANG_CITY} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCities('{LANG_CITY} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -93,9 +93,9 @@ class Cities extends Component
                         $city = new City($_GET['id']);
 
                         if (!$city->delete())
-                          $this->showCities('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_CITY} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCities('{ERROR_OLD_FILE_REMOVE}<br />{LANG_CITY} {LANG_REMOVE_OK}');
                         else
-                          $this->showCities('<div>{LANG_CITY} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCities('{LANG_CITY} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -104,7 +104,7 @@ class Cities extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCities('<div>{LANG_CITY} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCities('{LANG_CITY} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -138,7 +138,7 @@ class Cities extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_CITIES}';
-        $replaceArr['CITY_MSG'] = $msg;
+        $replaceArr['CITY_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CITY_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_CITY} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_CITY} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -173,9 +173,9 @@ class Cities extends Component
             //the post went wrong, get previous values
             $cityName = @$_POST['cityname'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_CITY_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'cityname') || (@$edit && !@$cityName) ? 'class="error" ' : ' ') . 'type="text" name="cityname"' . (@$cityName ? ' value="'.@$cityName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_CITY_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'cityname') || (@$edit && !@$cityName)) ? ' error' : '') . '" maxlength="70" type="text" name="cityname"' . (@$cityName ? ' value="'.@$cityName.'"' : '') . ' /></td></tr>' . "\n";
          
         $replaceArr['CITY_TITLE'] = "{LANG_CITY} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

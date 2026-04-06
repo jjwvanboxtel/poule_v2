@@ -37,7 +37,7 @@ class Referees extends Component
                     try
                     {
                         $this->doEditReferee();
-                        $this->showReferees('<div id="msg">{LANG_REFEREE} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showReferees('{LANG_REFEREE} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -45,7 +45,7 @@ class Referees extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showReferees('<div>{LANG_REFEREE} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showReferees('{LANG_REFEREE} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -64,9 +64,9 @@ class Referees extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditReferee($referee))
-                          $this->showReferees('<div>{LANG_REFEREE} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showReferees('{LANG_REFEREE} {ERROR_EDIT}');
                         else
-                          $this->showReferees('<div>{LANG_REFEREE} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showReferees('{LANG_REFEREE} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -79,7 +79,7 @@ class Referees extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showReferees('<div>{LANG_REFEREE} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showReferees('{LANG_REFEREE} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -93,9 +93,9 @@ class Referees extends Component
                         $referee = new Referee($_GET['id']);
 
                         if (!$referee->delete())
-                          $this->showReferees('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_REFEREE} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showReferees('{ERROR_OLD_FILE_REMOVE}<br />{LANG_REFEREE} {LANG_REMOVE_OK}');
                         else
-                          $this->showReferees('<div>{LANG_REFEREE} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showReferees('{LANG_REFEREE} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -104,7 +104,7 @@ class Referees extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showReferees('<div>{LANG_REFEREE} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showReferees('{LANG_REFEREE} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -138,7 +138,7 @@ class Referees extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_REFEREES}';
-        $replaceArr['REFEREE_MSG'] = $msg;
+        $replaceArr['REFEREE_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['REFEREE_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_REFEREE} {LANG_ADD}" class="actions_top" />  <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_REFEREE} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -173,9 +173,9 @@ class Referees extends Component
             //the post went wrong, get previous values
             $refereeName = @$_POST['refereename'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_REFEREE_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'refereename') || (@$edit && !@$refereeName) ? 'class="error" ' : ' ') . 'type="text" name="refereename"' . (@$refereeName ? ' value="'.@$refereeName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_REFEREE_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'refereename') || (@$edit && !@$refereeName)) ? ' error' : '') . '" maxlength="70" type="text" name="refereename"' . (@$refereeName ? ' value="'.@$refereeName.'"' : '') . ' /></td></tr>' . "\n";
          
         $replaceArr['REFEREE_TITLE'] = "{LANG_REFEREE} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

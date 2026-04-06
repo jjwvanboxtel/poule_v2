@@ -6,6 +6,7 @@
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900|Varela+Round" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 <link href="templates/{TEMPLATE_NAME}/default.css" rel="stylesheet" type="text/css" media="all" />
 <link href="templates/{TEMPLATE_NAME}/fonts.css" rel="stylesheet" type="text/css" media="all" />
 <!--[if IE 6]>

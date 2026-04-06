@@ -177,7 +177,33 @@ function renderCompetitionList($replacements = array())
  */
 function gamesListDefaults()
 {
+    // {CONTENT} must come first so that PHP's sequential str_replace expands
+    // it before processing the {LANG_*} / {TEMPLATE_NAME} tokens that now live
+    // inside the class-generated table structure rather than in the template.
     return array(
+        '{CONTENT}'           => '<div class="d-none d-md-block">'
+                              . '<div class="table-responsive">'
+                              . '<table class="list" cellpadding="0" cellspacing="0">'
+                              . '<tr>'
+                              . '<th>{LANG_DATE}</th>'
+                              . '<th>{LANG_CITY}</th>'
+                              . '<th>{LANG_POULE}</th>'
+                              . '<th colspan="2">{LANG_COUNTRY}</th>'
+                              . '<th>{LANG_RESULT}</th>'
+                              . '<th colspan="2">{LANG_COUNTRY}</th>'
+                              . '<th>{LANG_YELLOW_CARDS}</th>'
+                              . '<th>{LANG_RED_CARDS}</th>'
+                              . '<th style="width: 75px;">{LANG_ACTIONS}</th>'
+                              . '</tr>'
+                              . '<tr class="odd"><td>01-06-2026</td>'
+                              . '<td>Amsterdam</td><td>A</td>'
+                              . '<td>Nederland</td><td>1 - 0</td>'
+                              . '<td>Duitsland</td><td>0</td><td>0</td>'
+                              . '<td><a href="/?com=5&amp;option=edit&amp;id=1">'
+                              . '<img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="" class="actions" /></a></td>'
+                              . '</tr>'
+                              . '<tr><td colspan="11">{LANG_COUNT}: 1</td></tr>'
+                              . '</table></div></div>',
         '{COM_NAME}'          => 'Wedstrijden',
         '{GAME_MSG}'          => '',
         '{GAME_ADD}'          => '<a href="/?com=5&amp;option=add">Toevoegen</a>',
@@ -189,13 +215,8 @@ function gamesListDefaults()
         '{LANG_YELLOW_CARDS}' => 'Gele kaarten',
         '{LANG_RED_CARDS}'    => 'Rode kaarten',
         '{LANG_ACTIONS}'      => 'Acties',
+        '{LANG_COUNT}'        => 'Aantal',
         '{TEMPLATE_NAME}'     => 'orange',
-        '{CONTENT}'           => '<tr class="odd"><td>01-06-2026</td>'
-                              . '<td>Amsterdam</td><td>A</td>'
-                              . '<td>Nederland</td><td>1 - 0</td>'
-                              . '<td>Duitsland</td><td>0</td><td>0</td>'
-                              . '<td><a href="/?com=5&amp;option=edit&amp;id=1">Wijzigen</a></td>'
-                              . '</tr>',
     );
 }
 
@@ -1190,13 +1211,21 @@ class TestOfOverviewActionRegions extends UiMarkupAssertions
     function testGamesListRendersEditAndDeleteLinksInRow()
     {
         $html = renderGamesList(array(
-            '{CONTENT}' => '<tr class="odd"><td>01-06-2026</td>'
+            '{CONTENT}' => '<div class="d-none d-md-block"><div class="table-responsive">'
+                         . '<table class="list" cellpadding="0" cellspacing="0"><tr>'
+                         . '<th>Datum</th><th>Stad</th><th>Poule</th>'
+                         . '<th colspan="2">Land</th><th>Uitslag</th>'
+                         . '<th colspan="2">Land</th><th>Gele</th><th>Rode</th>'
+                         . '<th>Acties</th></tr>'
+                         . '<tr class="odd"><td>01-06-2026</td>'
                          . '<td>Amsterdam</td><td>A</td>'
                          . '<td>Nederland</td><td>1 - 0</td><td>Duitsland</td>'
                          . '<td>0</td><td>0</td>'
                          . '<td><a href="/?com=5&amp;option=edit&amp;id=1">Wijzigen</a>'
                          . ' <a href="/?com=5&amp;option=delete&amp;id=1">Verwijderen</a></td>'
-                         . '</tr>',
+                         . '</tr>'
+                         . '<tr><td colspan="11">Aantal: 1</td></tr>'
+                         . '</table></div></div>',
         ));
 
         $this->assertListTableActionLink($html, 'option=edit');

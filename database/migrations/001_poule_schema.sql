@@ -323,7 +323,7 @@ CREATE TABLE `question` (
   `question_question` text,
   `question_type` varchar(45) NOT NULL default '',
   `question_anwser_count` int(11) NOT NULL default '1',
-  `question_anwser` varchar(45) NOT NULL default '',
+  `question_anwser` varchar(500) NOT NULL default '',
   `Competition_competition_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`question_id`),
   KEY `Competition_competition_id` (`Competition_competition_id`)

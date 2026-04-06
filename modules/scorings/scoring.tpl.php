@@ -3,8 +3,9 @@
 <div class="title">
     <h2>{COM_NAME}</h2>
 </div>
-<div>{SCORING_MSG}</div>
+{SCORING_MSG}
+<br />
 
-<table class="list" cellpadding="0" cellspacing="0">
+<div id="scoring" class="card card-body">
     {CONTENT}
-</table>
+</div>

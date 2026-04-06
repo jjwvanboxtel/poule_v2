@@ -4,6 +4,7 @@
         <title>{TITLE}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="author" content="MI3TIa" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
         <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE_NAME}/template.css" />
         {HEADERS}
     </head>

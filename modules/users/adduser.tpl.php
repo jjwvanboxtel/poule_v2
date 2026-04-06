@@ -11,7 +11,7 @@
 			</tr>
 			<tr>
 				<td>Lastname: </td>
-				<td style="text-align: right;"><input type="text" name="lastName" /></td>
+				<td style="text-align: right;"><input class="form-control" type="text" name="lastName" /></td>
 			</tr>
 			<tr>
 				<td colspan="2" style="text-align: right;"><input class="btn btn-primary" type="submit" name="submit" value="{LANG_SAVE}" /></td>

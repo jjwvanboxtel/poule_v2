@@ -38,7 +38,7 @@ class Players extends Component
                     try
                     {
                         $this->doEditPlayer();
-                        $this->showPlayers('<div id="msg">{LANG_PLAYER} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showPlayers('{LANG_PLAYER} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -46,7 +46,7 @@ class Players extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showPlayers('<div>{LANG_PLAYER} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showPlayers('{LANG_PLAYER} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -63,7 +63,7 @@ class Players extends Component
                     try
                     {
                         $this->doEditPlayers();
-                        $this->showPlayers('<div id="msg">{LANG_PLAYER} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showPlayers('{LANG_PLAYER} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -71,7 +71,7 @@ class Players extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showPlayers('<div>{LANG_PLAYER} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showPlayers('{LANG_PLAYER} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -90,9 +90,9 @@ class Players extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditPlayer($player))
-                          $this->showPlayers('<div>{LANG_PLAYER} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showPlayers('{LANG_PLAYER} {ERROR_EDIT}');
                         else
-                          $this->showPlayers('<div>{LANG_PLAYER} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showPlayers('{LANG_PLAYER} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -105,7 +105,7 @@ class Players extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showPlayers('<div>{LANG_PLAYER} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showPlayers('{LANG_PLAYER} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -119,9 +119,9 @@ class Players extends Component
                         $player = new Player($_GET['id']);
 
                         if (!$player->delete())
-                          $this->showPlayers('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_PLAYER} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showPlayers('{ERROR_OLD_FILE_REMOVE}<br />{LANG_PLAYER} {LANG_REMOVE_OK}');
                         else
-                          $this->showPlayers('<div>{LANG_PLAYER} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showPlayers('{LANG_PLAYER} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -130,7 +130,7 @@ class Players extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showPlayers('<div>{LANG_PLAYER} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showPlayers('{LANG_PLAYER} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -166,7 +166,7 @@ class Players extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_PLAYERS}';
-        $replaceArr['PLAYER_MSG'] = $msg;
+        $replaceArr['PLAYER_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['PLAYER_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_PLAYER} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_PLAYER} {LANG_ADD}</a> |'. "\n" : '');
         $replaceArr['PLAYERS_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_PLAYER} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add_more" class="button">{LANG_PLAYERS} {LANG_ADD}</a><br />'. "\n" : '');
@@ -204,16 +204,20 @@ class Players extends Component
             $playerName = @$_POST['playername'];
             $playerCountry = @$_POST['playercountry'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_PLAYER_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'playername') || (@$edit && !@$playerName) ? 'class="error" ' : ' ') . 'type="text" name="playername"' . (@$playerName ? ' value="'.@$playerName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_PLAYER_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'playername') || (@$edit && !@$playerName)) ? ' error' : '') . '" maxlength="70" type="text" name="playername"' . (@$playerName ? ' value="'.@$playerName.'"' : '') . ' /></td></tr>' . "\n";
 
         $content .= '<tr><td>{LANG_COUNTRY}:</td><td>'."\n";
-        $content .= '<select name="playercountry">' . "\n";
+        $content .= '<select class="form-select" name="playercountry">' . "\n";
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
-            $content .= '<option value="' . $country->country_id . '"' . (@$edit && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
+            $selectedCountryId = null;
+            if (isset($playerCountry)) {
+                $selectedCountryId = is_object($playerCountry) ? $playerCountry->getId() : $playerCountry;
+            }
+            $content .= '<option value="' . $country->country_id . '"' . (($selectedCountryId !== null && $selectedCountryId == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
         }
         $content .= '</select>' . "\n";
         $content .= '</td></tr>'. "\n";
@@ -236,21 +240,21 @@ class Players extends Component
 
         if ($edit && $edit instanceof InputException)
         {
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_COUNTRY}:</td>' . "\n";
         $content .= '<td>'. "\n";
-        $content .= '<select name="countryid">' . "\n";
+        $content .= '<select class="form-select" name="countryid">' . "\n";
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
-            $content .= '<option value="' . $country->country_id . '"' . (@$edit && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
+            $content .= '<option value="' . $country->country_id . '"' . (@$edit && isset($playerCountry) && ($playerCountry->getId() == $country->country_id) ? ' selected' : '') . '>' . $country->country_name . '</option>' . "\n";
         }
         $content .= '</select>' . "\n";
         $content .= '</td></tr>'. "\n";    
         
-        $content .= '<tr><td>{LANG_FORM_FILE}:</td><td><input ' . ((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file') ? 'class="error" ' : ' ') . 'type="file" name="file" id="file" accept="application/txt" style="width: 300px;" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_FORM_FILE}:</td><td><input class="form-control' . (((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file')) ? ' error' : '') . '" type="file" name="file" id="file" accept="application/txt" /></td></tr>' . "\n";
         
         $replaceArr['PLAYER_TITLE'] = "{LANG_PLAYERS} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

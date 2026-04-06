@@ -185,7 +185,7 @@ class UserGroups extends Component
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
 
-        $input = '{LANG_USERGROUP_NAME}: <input maxlength="45" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'group') || (@$edit && !@$groupName) ? 'class="error" ' : '') . ' type="text" name="group"' . (@$groupName ? ' value="'.$groupName.'"' : '') . ' />' . "\n";
+        $input = '{LANG_USERGROUP_NAME}: <input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'group') || (@$edit && !@$groupName)) ? ' error' : '') . '" maxlength="45" type="text" name="group"' . (@$groupName ? ' value="'.$groupName.'"' : '') . ' />' . "\n";
 
         $c = 0;
         $content = '';
@@ -235,10 +235,10 @@ class UserGroups extends Component
             $content .= '<td><img src="templates/{TEMPLATE_NAME}/icons/cog.png" class="icon" /></td>' . "\n";
             $content .= '<td>' . $component->com_id . '</td>' . "\n";
             $content .= '<td>' . $component->com_friendlyname . '</td>' . "\n";
-            $content .= '<td><input class="clear" type="checkbox" name="com_' . $component->com_id . '_read"'.(@$check_read ? ' checked="checked"' : "").(@!$change_read ? ' disabled="disabled"' : "").' /></td>' . "\n";
-            $content .= '<td><input class="clear" type="checkbox" name="com_' . $component->com_id . '_create"'.(@$check_create ? ' checked="checked"' : "").(@!$change_create ? ' disabled="disabled"' : "").' /></td>' . "\n";
-            $content .= '<td><input class="clear"  type="checkbox" name="com_' . $component->com_id . '_edit"'.(@$check_edit ? ' checked="checked"' : "").(@!$change_edit ? ' disabled="disabled"' : "").' /></td>' . "\n";
-            $content .= '<td><input class="clear" type="checkbox" name="com_' . $component->com_id . '_delete"'.(@$check_delete ? ' checked="checked"' : "").(@!$change_delete ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_read"'.(@$check_read ? ' checked="checked"' : "").(@!$change_read ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_create"'.(@$check_create ? ' checked="checked"' : "").(@!$change_create ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_edit"'.(@$check_edit ? ' checked="checked"' : "").(@!$change_edit ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_delete"'.(@$check_delete ? ' checked="checked"' : "").(@!$change_delete ? ' disabled="disabled"' : "").' /></td>' . "\n";
             $content .= '</tr>' . "\n";
             $c++;
         }

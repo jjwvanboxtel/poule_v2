@@ -40,7 +40,7 @@ class Rounds extends Component
                     try
                     {
                         $this->doEditRound();
-                        $this->showRounds('<div id="msg">{LANG_ROUND} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showRounds('{LANG_ROUND} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -48,7 +48,7 @@ class Rounds extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showRounds('<div>{LANG_ROUND} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showRounds('{LANG_ROUND} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -67,9 +67,9 @@ class Rounds extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditRound($round))
-                          $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {ERROR_EDIT}');
                         else
-                          $this->showRounds('<div>{LANG_ROUND} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -82,7 +82,7 @@ class Rounds extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showRounds('{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'editcountries':
@@ -96,9 +96,9 @@ class Rounds extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditRoundCountries($round))
-                          $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {ERROR_EDIT}');
                         else
-                          $this->showRounds('<div>{LANG_ROUND} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -111,7 +111,7 @@ class Rounds extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showRounds('<div>{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showRounds('{LANG_ROUND} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -125,9 +125,9 @@ class Rounds extends Component
                         $round = new Round($_GET['id']);
 
                         if (!$round->delete())
-                          $this->showRounds('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_ROUND} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showRounds('{ERROR_OLD_FILE_REMOVE}<br />{LANG_ROUND} {LANG_REMOVE_OK}');
                         else
-                          $this->showRounds('<div>{LANG_ROUND} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showRounds('{LANG_ROUND} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -136,7 +136,7 @@ class Rounds extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showRounds('<div>{LANG_ROUND} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showRounds('{LANG_ROUND} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -150,9 +150,28 @@ class Rounds extends Component
 
         Round::getAllRounds(@$_GET['competition']);
 
+        // Store rounds for both views
+        $rounds = array();
+        while (($round = Round::nextRound()) != null)
+        {
+            $rounds[] = $round;
+        }
+
         $c = 0;
         $content = '';
-        while (($round = Round::nextRound()) != null)
+        
+        // Desktop table view
+        $content .= '<div class="d-none d-md-block">'."\n";
+        $content .= '<div class="table-responsive">'."\n";
+        $content .= '<table class="list" cellpadding="0" cellspacing="0">'."\n";
+        $content .= '<tr>'."\n";
+        $content .= '<th style="width: 40px;">{LANG_ID}</th>'."\n";
+        $content .= '<th>{LANG_ROUND_FULLNAME}</th>'."\n";
+        $content .= '<th>{LANG_ROUND_COUNT}</th>'."\n";
+        $content .= '<th style="width: 75px;">{LANG_ACTIONS}</th>'."\n";
+        $content .= '</tr>'."\n";
+        
+        foreach ($rounds as $round)
         {
             $currentClass = (($c % 2) ? 'odd' : 'even');
             $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
@@ -169,10 +188,40 @@ class Rounds extends Component
         }
 
         $content .= '<tr><td colspan="4">{LANG_COUNT}: ' . $c . '</td></tr>' . "\n";
+        $content .= '</table>'."\n";
+        $content .= '</div>'."\n";
+        $content .= '</div>'."\n";
+        
+        // Mobile card view
+        $content .= '<div class="d-md-none">'."\n";
+        $c = 0;
+        foreach ($rounds as $round)
+        {
+            $content .= '<div class="card mb-3">'."\n";
+            $content .= '<div class="card-body">'."\n";
+            $content .= '<h6 class="card-title">'.$round->round_name.'</h6>'."\n";
+            $content .= '<div class="mb-2"><small class="text-muted">{LANG_ID}:</small> '.$round->round_id.'</div>'."\n";
+            $content .= '<div class="mb-2"><small class="text-muted">{LANG_ROUND_COUNT}:</small> '.$round->round_count.'</div>'."\n";
+            
+            if ($this->hasAccess(CRUD_EDIT) || $this->hasAccess(CRUD_DELETE))
+            {
+                $content .= '<div class="mt-3">'."\n";
+                ($this->hasAccess(CRUD_EDIT) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=editcountries&amp;id='.$round->round_id .'" class="btn btn-sm btn-outline-primary me-2"><img src="templates/{TEMPLATE_NAME}/icons/award_star_add.png" width="16" alt="{LANG_ROUND_COUNTRY}" /> {LANG_ROUND_COUNTRY}</a>' . "\n" : '');
+                ($this->hasAccess(CRUD_EDIT) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$round->round_id .'" class="btn btn-sm btn-outline-secondary me-2"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" width="16" alt="{LANG_ROUND} {LANG_EDIT}" /> {LANG_EDIT}</a>' . "\n" : '');
+                ($this->hasAccess(CRUD_DELETE) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=delete&amp;id='.$round->round_id.'" onclick="return confirm(\'{LANG_CONFIRM_DELETE}\');" class="btn btn-sm btn-outline-danger"><img src="templates/{TEMPLATE_NAME}/icons/page_delete.png" width="16" alt="{LANG_ROUND} {LANG_REMOVE}" /> {LANG_REMOVE}</a>' . "\n" : '');
+                $content .= '</div>'."\n";
+            }
+            
+            $content .= '</div>'."\n";
+            $content .= '</div>'."\n";
+            $c++;
+        }
+        $content .= '<div class="text-muted mt-2">{LANG_COUNT}: ' . $c . '</div>'."\n";
+        $content .= '</div>'."\n";
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_ROUNDS}';
-        $replaceArr['ROUND_MSG'] = $msg;
+        $replaceArr['ROUND_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['ROUND_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_ROUND} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_ROUND} {LANG_ADD}</a><br />'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
@@ -209,12 +258,12 @@ class Rounds extends Component
             $roundName = @$_POST['roundname'];
             $roundCount = @$_POST['roundcount'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_ROUND_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'roundname') || (@$edit && !@$roundName) ? 'class="error" ' : ' ') . 'type="text" name="roundname"' . (@$roundName ? ' value="'.@$roundName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_ROUND_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'roundname') || (@$edit && !@$roundName)) ? ' error' : '') . '" maxlength="70" type="text" name="roundname"' . (@$roundName ? ' value="'.@$roundName.'"' : '') . ' /></td></tr>' . "\n";
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_ROUND_COUNT}:</td>' . "\n";
-        $content .= '<td><select name="roundcount">' . "\n";
+        $content .= '<td><select class="form-select" name="roundcount">' . "\n";
         for ($i=0; $i<100; $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($roundCount == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -250,8 +299,8 @@ class Rounds extends Component
         {
             $content .= '<tr>' . "\n";
             $content .= '<td>{LANG_COUNTRY} '.($i+1).':</td>' . "\n";
-            $content .= '<td><select name="roundcountry_'.$i.'">' . "\n";
-            $content .= '<option value="empty" ' . (@$edit && @($roundCountries[$i] == 0) ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
+            $content .= '<td><select class="form-select" name="roundcountry_'.$i.'">' . "\n";
+            $content .= '<option value="0" ' . (@$edit && @($roundCountries[$i] == 0) ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
             Country::getAllCountries(@$_GET['competition']);
             while (($country = Country::nextCountry()) != null)
             {

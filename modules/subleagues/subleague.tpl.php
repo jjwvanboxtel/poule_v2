@@ -3,10 +3,15 @@
 <div class="title">
     <h2>{COM_NAME}</h2>
 </div>
-<div>{SUBLEAGUE_MSG}</div>
+{SUBLEAGUE_MSG}
+<br />
 {SUBLEAGUE_ADD}
 <br />
 
-<table class="list" cellpadding="0" cellspacing="0">
-    {CONTENT}
-</table>
+<div id="subleague" class="card card-body">
+    <div class="table-responsive">
+        <table class="list" cellpadding="0" cellspacing="0">
+            {CONTENT}
+        </table>
+    </div>
+</div>

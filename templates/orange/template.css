@@ -778,6 +778,38 @@ div#map {
   padding: 0.5rem 0;
 }
 
+/* ── Feedback / message wrapper utilities (used by buildMsgWrapper) ─── */
+.border-danger {
+  border: 1px solid #dc3545 !important;
+}
+
+.border-success {
+  border: 1px solid #198754 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.text-success {
+  color: #198754 !important;
+}
+
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+/* Card icons styling */
+.bi-square-fill {
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+/* ── Confirmation form card ────────────────────────────────────────── */
+#subscribe_confirmation.card {
+  margin-top: 1rem;
+}
+
 .d-none {
   display: none !important;
 }
@@ -807,5 +839,39 @@ div#map {
   }
   .d-lg-block {
     display: block !important;
+  }
+}
+
+/* Mobile optimizations for form elements */
+@media (max-width: 767px) {
+  .form-select,
+  .form-select-sm {
+    font-size: 16px !important;
+    padding: 0.5rem 0.75rem !important;
+    min-height: 44px !important;
+    min-width: 70px !important;
+    line-height: 1.5;
+  }
+  
+  select,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    font-size: 16px !important;
+    padding: 0.5rem 0.75rem !important;
+    min-height: 44px;
+  }
+  
+  /* Ensure prediction dropdowns are readable */
+  select[name^="gameprediction"],
+  select[name^="roundprediction"],
+  select[name^="questionanwser"] {
+    font-size: 18px !important;
+    padding: 0.6rem 0.75rem !important;
+    min-height: 48px !important;
+    min-width: 80px !important;
+    font-weight: 600;
+    text-align: center;
   }
 }

@@ -122,9 +122,33 @@ class Games extends Component
 
         Game::getAllGames(@$_GET['competition']);
 
+        // Store games for both views
+        $games = array();
+        while (($game = Game::nextGame()) != null)
+        {
+            $games[] = $game;
+        }
+
         $c = 0;
         $content = '';
-        while (($game = Game::nextGame()) != null)
+        
+        // Desktop table view
+        $content .= '<div class="d-none d-md-block">'."\n";
+        $content .= '<div class="table-responsive">'."\n";
+        $content .= '<table class="list" cellpadding="0" cellspacing="0">'."\n";
+        $content .= '<tr>'."\n";
+        $content .= '<th>{LANG_DATE}</th>'."\n";
+        $content .= '<th>{LANG_CITY}</th>'."\n";
+        $content .= '<th>{LANG_POULE}</th>'."\n";
+        $content .= '<th colspan="2">{LANG_COUNTRY}</th>'."\n";
+        $content .= '<th>{LANG_RESULT}</th>'."\n";
+        $content .= '<th colspan="2">{LANG_COUNTRY}</th>'."\n";
+        $content .= '<th><i class="bi bi-square-fill" style="color: #ffc107;" aria-label="{LANG_YELLOW_CARDS}"></i> {LANG_YELLOW_CARDS}</th>'."\n";
+        $content .= '<th><i class="bi bi-square-fill" style="color: #dc3545;" aria-label="{LANG_RED_CARDS}"></i> {LANG_RED_CARDS}</th>'."\n";
+        $content .= '<th style="width: 75px;">{LANG_ACTIONS}</th>'."\n";
+        $content .= '</tr>'."\n";
+        
+        foreach ($games as $game)
         {
             $currentClass = (($c % 2) ? 'odd' : 'even');
             $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
@@ -150,6 +174,67 @@ class Games extends Component
         }
 
         $content .= '<tr><td colspan="11">{LANG_COUNT}: ' . $c . '</td></tr>' . "\n";
+        $content .= '</table>'."\n";
+        $content .= '</div>'."\n";
+        $content .= '</div>'."\n";
+        
+        // Mobile card view
+        $content .= '<div class="d-md-none">'."\n";
+        $c = 0;
+        foreach ($games as $game)
+        {
+            $content .= '<div class="card mb-3">'."\n";
+            $content .= '<div class="card-body">'."\n";
+            $content .= '<div class="row mb-2">'."\n";
+            $content .= '<div class="col-6"><small class="text-muted">{LANG_DATE}</small><br/>'.$game->game_date.'</div>'."\n";
+            $content .= '<div class="col-6"><small class="text-muted">{LANG_POULE}</small><br/>'.$game->poule_name.'</div>'."\n";
+            $content .= '</div>'."\n";
+            $content .= '<div class="row mb-3">'."\n";
+            $content .= '<div class="col-12"><small class="text-muted">{LANG_CITY}</small><br/>'.$game->city_name.'</div>'."\n";
+            $content .= '</div>'."\n";
+            
+            // Match
+            $content .= '<div class="row mb-3">'."\n";
+            $content .= '<div class="col-5 text-end">'."\n";
+            $content .= '<img src="'.UPLOAD_DIR.Country::getCountryDir(@$_GET['competition']).$game->home_country_flag.'" width="24" alt="'.$game->home_country_name.'" class="me-2" />'."\n";
+            $content .= '<strong>'.$game->home_country_name.'</strong>'."\n";
+            $content .= '</div>'."\n";
+            $content .= '<div class="col-2 text-center">'."\n";
+            $result = ($game->game_result != "empty-empty" ? $game->game_result : "{LANG_EMPTY}");
+            $content .= '<strong>'.$result.'</strong>'."\n";
+            $content .= '</div>'."\n";
+            $content .= '<div class="col-5">'."\n";
+            $content .= '<img src="'.UPLOAD_DIR.Country::getCountryDir(@$_GET['competition']).$game->away_country_flag.'" width="24" alt="'.$game->away_country_name.'" class="me-2" />'."\n";
+            $content .= '<strong>'.$game->away_country_name.'</strong>'."\n";
+            $content .= '</div>'."\n";
+            $content .= '</div>'."\n";
+            
+            // Cards
+            $content .= '<div class="row mb-3">'."\n";
+            $content .= '<div class="col-6">'."\n";
+            $yellowCards = ($game->game_yellow_cards != "empty" ? $game->game_yellow_cards : "{LANG_EMPTY}");
+            $content .= '<i class="bi bi-square-fill" style="color: #ffc107;"></i> '.$yellowCards."\n";
+            $content .= '</div>'."\n";
+            $content .= '<div class="col-6">'."\n";
+            $redCards = ($game->game_red_cards != "empty" ? $game->game_red_cards : "{LANG_EMPTY}");
+            $content .= '<i class="bi bi-square-fill" style="color: #dc3545;"></i> '.$redCards."\n";
+            $content .= '</div>'."\n";
+            $content .= '</div>'."\n";
+            
+            if ($this->hasAccess(CRUD_EDIT) || $this->hasAccess(CRUD_DELETE))
+            {
+                $content .= '<div class="mt-3">'."\n";
+                ($this->hasAccess(CRUD_EDIT) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$game->game_id .'" class="btn btn-sm btn-outline-secondary me-2"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" width="16" alt="{LANG_GAME} {LANG_EDIT}" /> {LANG_EDIT}</a>' . "\n" : '');
+                ($this->hasAccess(CRUD_DELETE) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=delete&amp;id='.$game->game_id.'" onclick="return confirm(\'{LANG_CONFIRM_DELETE}\');" class="btn btn-sm btn-outline-danger"><img src="templates/{TEMPLATE_NAME}/icons/page_delete.png" width="16" alt="{LANG_GAME} {LANG_REMOVE}" /> {LANG_REMOVE}</a>' . "\n" : '');
+                $content .= '</div>'."\n";
+            }
+            
+            $content .= '</div>'."\n";
+            $content .= '</div>'."\n";
+            $c++;
+        }
+        $content .= '<div class="text-muted mt-2">{LANG_COUNT}: ' . $c . '</div>'."\n";
+        $content .= '</div>'."\n";
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_GAMES}';
@@ -207,12 +292,12 @@ class Games extends Component
             $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         $content .= '<tr><td>{LANG_DATE}:</td><td>
-            <input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'gamedate') || (@$edit && !@$gameDate) ? 'class="error" ' : ' ') . 'type="text" name="gamedate"' . (@$gameDate ? ' value="'.@$gameDate.'"' : '') . ' /></td>
+            <input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'gamedate') || (@$edit && !@$gameDate)) ? ' error' : '') . '" maxlength="70" type="text" name="gamedate"' . (@$gameDate ? ' value="'.@$gameDate.'"' : '') . ' /></td>
         </tr>' . "\n";
 
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_POULE}:</td>' . "\n";
-        $content .= '<td><select name="gamepoule">' . "\n";
+        $content .= '<td><select class="form-select" name="gamepoule">' . "\n";
         Poule::getAllPoules(@$_GET['competition']);
         while (($poule = Poule::nextPoule()) != null)
         {
@@ -223,7 +308,7 @@ class Games extends Component
         
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_CITY}:</td>' . "\n";
-        $content .= '<td><select name="gamecity">' . "\n";
+        $content .= '<td><select class="form-select" name="gamecity">' . "\n";
         City::getAllCities(@$_GET['competition']);
         while (($city = City::nextCity()) != null)
         {
@@ -234,7 +319,7 @@ class Games extends Component
 
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_GAME_HOME_COUNTRY}:</td>' . "\n";
-        $content .= '<td><select name="gamehomecountry">' . "\n";
+        $content .= '<td><select class="form-select" name="gamehomecountry">' . "\n";
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
@@ -245,7 +330,7 @@ class Games extends Component
         
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_GAME_AWAY_COUNTRY}:</td>' . "\n";
-        $content .= '<td><select name="gameawaycountry">' . "\n";
+        $content .= '<td><select class="form-select" name="gameawaycountry">' . "\n";
         Country::getAllCountries(@$_GET['competition']);
         while (($country = Country::nextCountry()) != null)
         {
@@ -256,14 +341,14 @@ class Games extends Component
 
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_GAME_RESULT}:</td>' . "\n";
-        $content .= '<td><select name="gameresulthome">' . "\n";
+        $content .= '<td><select class="form-select" name="gameresulthome">' . "\n";
         $content .= '<option value="empty" ' . (@$edit && ($gameResultHome == "empty") ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($gameResultHome == "$i") ? ' selected' : '') . '>' . $i . '</option>' . "\n";
         }
         $content .= '</select>-' . "\n";
-        $content .= '<select name="gameresultaway">' . "\n";
+        $content .= '<select class="form-select" name="gameresultaway">' . "\n";
         $content .= '<option value="empty" ' . (@$edit && ($gameResultAway == "emtpy") ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
         {
@@ -276,7 +361,7 @@ class Games extends Component
         
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_GAME_YELLOW_CARDS}:</td>' . "\n";
-        $content .= '<td><select name="gameyellowcards">' . "\n";
+        $content .= '<td><select class="form-select" name="gameyellowcards">' . "\n";
         $content .= '<option value="empty" ' . (@$edit && ($gameYellowCards == "empty") ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
         {
@@ -287,7 +372,7 @@ class Games extends Component
  
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_GAME_RED_CARDS}:</td>' . "\n";
-        $content .= '<td><select name="gameredcards">' . "\n";
+        $content .= '<td><select class="form-select" name="gameredcards">' . "\n";
         $content .= '<option value="empty" ' . (@$edit && ($gameRedCards == "empty") ? ' selected' : '') . '>{LANG_EMPTY}</option>' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
         {

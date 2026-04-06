@@ -229,3 +229,29 @@ table.list a
 {
     color               : blue;
 }
+
+/* Mobile optimizations for form elements */
+@media (max-width: 767px) {
+  select,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    font-size: 16px !important;
+    padding: 8px 10px !important;
+    min-height: 44px;
+    min-width: 70px;
+  }
+  
+  /* Ensure prediction dropdowns are readable */
+  select[name^="gameprediction"],
+  select[name^="roundprediction"],
+  select[name^="questionanwser"] {
+    font-size: 18px !important;
+    padding: 10px 12px !important;
+    min-height: 48px !important;
+    min-width: 80px !important;
+    font-weight: 600;
+    text-align: center;
+  }
+}
