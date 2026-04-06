@@ -132,7 +132,7 @@ class User
                             VALUES ('.$enabled.', 
                                 "'.App::$_DB->escapeString($email).'",
                                 "'.App::$_DB->escapeString($password).'",
-                                "'.md5(self::randomPassword()).'",
+                                "'.bin2hex(random_bytes(32)).'",
                                 "'.App::$_DB->escapeString($firstName).'",
                                 "'.App::$_DB->escapeString($lastName).'",
                                 "'.App::$_DB->escapeString($phoneNr).'",
@@ -452,13 +452,34 @@ class User
         if(isset($_POST['wac'],  $_POST['geb']))
         {
             $username = App::$_DB->escapeString($_POST['geb']);
-            $password = md5($_POST['wac']);
+            $plainPassword = $_POST['wac'];
 
             $result = App::$_DB->doSQL('SELECT `user_enabled`, `user_id`, `user_password` FROM `user`
                                         WHERE `user_email`="'.$username.'";');
 
             $row = App::$_DB->getRecord($result);
-            if($row != null && $row->user_password == $password)
+
+            $authenticated = false;
+            if ($row != null)
+            {
+                $stored = $row->user_password;
+                if (strlen($stored) === 32 && hash_equals($stored, md5($plainPassword)))
+                {
+                    // Legacy MD5 hash — migrate to Argon2id on successful login
+                    $authenticated = true;
+                    $user = new User($row->user_id);
+                    $user->setPassword(password_hash($plainPassword, PASSWORD_ARGON2ID, [
+                        'memory_cost' => 65536, 'time_cost' => 4, 'threads' => 2,
+                    ]));
+                }
+                elseif (password_verify($plainPassword, $stored))
+                {
+                    $authenticated = true;
+                    $user = new User($row->user_id);
+                }
+            }
+
+            if ($authenticated)
             {
                 if ($row->user_enabled != 1)
                   throw new Exception('{LANG_ACCOUNT_DISABLED}');
@@ -466,7 +487,6 @@ class User
                 $_SESSION['user_id'] = $row->user_id;
                 $_SESSION['logged_in'] = true;
 
-                $user = new User($row->user_id);
                 $user->incrementLoginCount();
                 $user->setLastLogin(time());
                 $user->save();
@@ -502,9 +522,9 @@ class User
         if(!self::emailExists($email))
           throw new Exception('{ERROR_EMAIL_NOT_EXISTS}');
 
-       $password = self::randomPassword();
+       $password = bin2hex(random_bytes(32));
        App::$_DB->doSQL('UPDATE `user` SET
-                            `user_temp_password` = "'.md5($password).'"
+                            `user_temp_password` = "'.App::$_DB->escapeString($password).'"
                          WHERE `user_email` = "'.$email.'" LIMIT 1;');
 
         return $password;
