@@ -4,13 +4,13 @@
     <h2>{COM_NAME}</h2>
 </div>
 {COMPETITION_MSG}
-<br />
-{COMPETITION_ADD}
-<br />
+<div class="action-row">
+    {COMPETITION_ADD}
+</div>
 
-<div id="competition" class="card card-body">
+<div id="competition" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             <tr>
                 <th style="width: 40px;">{LANG_ID}</th>
                 <th>{LANG_COMPETITION}</th>

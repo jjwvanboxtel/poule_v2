@@ -4,10 +4,10 @@
     <h2>{COM_NAME}</h2>
 </div>
 {GAME_MSG}
-<br />
-{GAME_ADD}
-<br />
+<div class="action-row">
+    {GAME_ADD}
+</div>
 
-<div id="game" class="card card-body">
+<div id="game" class="card">
     {CONTENT}
 </div>

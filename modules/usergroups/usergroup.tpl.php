@@ -5,13 +5,13 @@
 </div>
 
 {USERGROUP_MSG}
-<br />
-{LINK_ADD}
-<br />
+<div class="action-row">
+    {LINK_ADD}
+</div>
 
-<div id="usergroup" class="card card-body">
+<div id="usergroup" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             <tr>
                 <th style="width: 20px;"></th>
                 <th style="width: 40px;">{LANG_ID}</th>
