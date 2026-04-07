@@ -4,8 +4,7 @@
     <h2>{COM_NAME}</h2>
 </div>
 
-<small>{LAST_UPDATED}</small>
-
-<br /><br />
-
-{CONTENT}
+<div id="statistic" class="card">
+    <p class="text-muted mb-3"><small>{LAST_UPDATED}</small></p>
+    {CONTENT}
+</div>

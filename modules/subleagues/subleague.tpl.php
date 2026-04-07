@@ -4,13 +4,13 @@
     <h2>{COM_NAME}</h2>
 </div>
 {SUBLEAGUE_MSG}
-<br />
-{SUBLEAGUE_ADD}
-<br />
+<div class="action-row">
+    {SUBLEAGUE_ADD}
+</div>
 
-<div id="subleague" class="card card-body">
+<div id="subleague" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             {CONTENT}
         </table>
     </div>

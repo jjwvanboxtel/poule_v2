@@ -223,7 +223,7 @@ class Rounds extends Component
         $replaceArr['COM_NAME'] = '{LANG_ROUNDS}';
         $replaceArr['ROUND_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
-        $replaceArr['ROUND_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_ROUND} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_ROUND} {LANG_ADD}</a><br />'. "\n" : '');
+        $replaceArr['ROUND_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="btn btn-primary mb-2"><i class="bi bi-plus-lg me-1"></i>{LANG_ROUND} {LANG_ADD}</a>'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
         echo $tpl;

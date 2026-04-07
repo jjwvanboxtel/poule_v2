@@ -4,11 +4,10 @@
     <h2>{COM_NAME}</h2>
 </div>
 {SECTION_MSG}
-<br />
 
-<div id="section" class="card card-body">
+<div id="section" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             <tr>
                 <th style="width: 40px;">{LANG_ID}</th>
                 <th>{LANG_SECTION_FULLNAME}</th>

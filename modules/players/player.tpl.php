@@ -4,13 +4,13 @@
     <h2>{COM_NAME}</h2>
 </div>
 {PLAYER_MSG}
-<br />
-{PLAYER_ADD} {PLAYERS_ADD}
-<br />
+<div class="action-row">
+    {PLAYER_ADD} {PLAYERS_ADD}
+</div>
 
-<div id="player" class="card card-body">
+<div id="player" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             <tr>
                 <th style="width: 40px;">{LANG_ID}</th>
                 <th>{LANG_PLAYER_FULLNAME}</th>
