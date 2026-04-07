@@ -3,8 +3,8 @@
 <div class="title">
     <h2>{COM_NAME}</h2>
 </div>
+
 {USER_MSG}
-<br />
 
 <div id="prediction_user" class="card card-body">
     <div class="table-responsive">

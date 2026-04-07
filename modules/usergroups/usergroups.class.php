@@ -147,7 +147,8 @@ class UserGroups extends Component
         $replaceArr['ACTIONS'] = '';
         $replaceArr['LINK_ADD'] = '';
         if($this->hasAccess(CRUD_CREATE))
-          $replaceArr['LINK_ADD'] = '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" />  <a href="?com='.$this->componentId.'&amp;option=add" class="button">{LANG_USERGROUP} {LANG_ADD}</a>';
+          $replaceArr['LINK_ADD'] = '<a href="?com='.$this->componentId.'&amp;option=add" class="btn btn-primary mb-2">'
+                                  . '<i class="bi bi-plus-lg me-1"></i>{LANG_USERGROUP} {LANG_ADD}</a>';
         if ($this->hasAccess(CRUD_EDIT) || $this->hasAccess(CRUD_DELETE))
           $replaceArr['ACTIONS'] = '<th style="width: 50px;">{LANG_ACTIONS}</th>';
 

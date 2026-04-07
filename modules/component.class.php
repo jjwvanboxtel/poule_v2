@@ -139,6 +139,25 @@ class Component
         return '<div class="card ' . $borderClass . ' mb-3" style="background-color:' . $bg . ';">'
              . '<div class="card-body ' . $textClass . '">' . $msg . '</div></div>';
     }
+
+    /**
+     * Builds a table row with the proper even/odd class based on a zero-based row index.
+     *
+     * Use this helper instead of repeating the inline <tr> construction pattern
+     * throughout class-based overview builders.
+     *
+     * @param string $cells  The inner HTML (one or more <td> elements) for this row.
+     * @param int    $index  Zero-based row index to determine the even/odd class.
+     * @return string        The complete <tr> HTML string.
+     */
+    protected static function buildOverviewRow($cells, $index)
+    {
+        $cls = ($index % 2) ? 'odd' : 'even';
+        return '<tr class="' . $cls . '" onmouseover="this.className = \'hover\';" '
+             . 'onmouseout="this.className = \'' . $cls . '\';">' . "\n"
+             . $cells
+             . '</tr>' . "\n";
+    }
 }
 
 

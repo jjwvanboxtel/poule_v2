@@ -4,15 +4,16 @@
     <h2>{COM_NAME}</h2>
 </div>
 {USER_MSG}
-<br />
-{USER_ADD}
-<br /><br />
-{LANG_USERGROUP}:<br />
-{USERGROUP_LIST}
+<div class="action-row">
+    {USER_ADD}
+</div>
+<div class="mb-3">
+    {LANG_USERGROUP}: {USERGROUP_LIST}
+</div>
 
-<div id="user" class="card card-body">
+<div id="user" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
         <tr>
             <th style="width: 20px;"></th>
             <th style="width: 40px;">{LANG_ID}</th>
