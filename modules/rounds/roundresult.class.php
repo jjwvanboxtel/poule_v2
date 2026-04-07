@@ -82,8 +82,8 @@ class RoundResult
     {
         App::$_DB->doSQL('INSERT INTO `round_result` (Country_country_id, Round_round_id)
                           VALUES (
-                            "'.(int)$countryId.'",
-                            "'.(int)$roundId.'")
+                            '.(int)$countryId.',
+                            '.(int)$roundId.')
                           ');
     }
 

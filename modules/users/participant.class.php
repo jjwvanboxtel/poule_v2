@@ -16,6 +16,7 @@ class Participant extends User
     
     public function __construct($id)
     {       
+        $id = (int)$id;
         parent::__construct($id);
 
         $this->result = App::$_DB->doSQL('SELECT *

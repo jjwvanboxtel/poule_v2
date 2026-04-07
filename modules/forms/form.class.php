@@ -101,7 +101,7 @@ class Form
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
                             "'.App::$_DB->escapeString($safe).'",
-                            '. (int)$competitionId.')
+                            '.(int)$competitionId.')
                           ');
     }
 

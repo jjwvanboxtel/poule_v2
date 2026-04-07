@@ -195,7 +195,7 @@ class Subleague
     
     public static function getHeaderDir($competitionId, $subleagueId)
     {
-        return $competitionId.'/'.self::$header_dir.'/'.(int)$subleagueId.'/';
+        return $competitionId.'/'.self::$header_dir.'/'.$subleagueId.'/';
     }
     
 }
