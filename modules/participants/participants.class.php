@@ -77,14 +77,12 @@ class Participants extends Component
                     || @$_POST['filter'] == "5" && !$participant->getPayed(@$_GET['competition']) && $participant->getSubscribed(@$_GET['competition'])
                     || @$_POST['filter'] == "6" && !$participant->getPayed(@$_GET['competition']) && !$participant->getSubscribed(@$_GET['competition']))
             {
-                $currentClass = (($c % 2) ? 'odd' : 'even');
-                $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
-                $content .= '<td>' . $user->user_id . '</td>' . "\n";
-                $content .= '<td>' . $user->user_firstname . ' ' . $user->user_lastname . '</td>' . "\n";
-                $content .= '<td>' . "\n";
-                $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
-                $content .= '</td>' . "\n";
-                $content .= '</tr>' . "\n";
+                $cells  = '<td>' . $user->user_id . '</td>' . "\n";
+                $cells .= '<td>' . $user->user_firstname . ' ' . $user->user_lastname . '</td>' . "\n";
+                $cells .= '<td>' . "\n";
+                $cells .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
+                $cells .= '</td>' . "\n";
+                $content .= self::buildOverviewRow($cells, $c);
                 $c++;
             }
         }
