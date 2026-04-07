@@ -19,7 +19,7 @@ class Scoring
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `scoring`
                                           WHERE `scoring_id` = ' . $this->id . ' LIMIT 1;');
@@ -97,7 +97,7 @@ class Scoring
                                 `Scoring_Competition_enabled` = "'.$scoring['enabled'].'",
                                 `Scoring_Competition_points` = "'.$scoring['points'].'"
                                 WHERE `Scoring_scoring_id` = ' . $this->id . ' 
-                                AND `Competition_competition_id` = ' . $competitionId . ' LIMIT 1;');
+                                AND `Competition_competition_id` = ' . (int)$competitionId . ' LIMIT 1;');
         }
     }
 
@@ -107,19 +107,19 @@ class Scoring
                           VALUES (
                             "'.App::$_DB->escapeString($roundName).'",
                             4,
-                            '.$roundId.',
-                            '.$competitionId.')
+                            '.(int)$roundId.',
+                            '.(int)$competitionId.')
                           ');              
                           
         $scoringId = App::$_DB->getLastId();
         
         App::$_DB->doSQL('INSERT INTO `scoring_competition` (Scoring_scoring_id, Competition_competition_id, Scoring_Competition_enabled, Scoring_Competition_points, Round_round_id)
                           VALUES (
-                            '.$scoringId.',
-                            '.$competitionId.',
+                            '.(int)$scoringId.',
+                            '.(int)$competitionId.',
                             0,
                             0,
-                            '.$roundId.')
+                            '.(int)$roundId.')
                           '); 
         
         return $scoringId;
@@ -128,9 +128,9 @@ class Scoring
     public static function deleteScoringByRound($roundId)
     {
         App::$_DB->doSQL('DELETE FROM `scoring_competition` 
-                            WHERE `Round_round_id` = ' . $roundId . '');
+                            WHERE `Round_round_id` = ' . (int)$roundId . '');
         App::$_DB->doSQL('DELETE FROM `scoring` 
-                            WHERE `Round_round_id` = ' . $roundId . '');
+                            WHERE `Round_round_id` = ' . (int)$roundId . '');
 
         return true;
     }
@@ -138,9 +138,9 @@ class Scoring
     public static function deleteAllScoringCompetitionByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `scoring_competition`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
         App::$_DB->doSQL('DELETE FROM `scoring`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');    
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');    
     }
     
     public static function getAllScorings($competitionId=0, $section=false)
@@ -149,13 +149,13 @@ class Scoring
         {
             $query = '';
             if ($section)
-              $query = 'AND `Section_section_id` = ' . $section;
+              $query = 'AND `Section_section_id` = ' . (int)$section;
 
             self::$resultList = App::$_DB->doSQL('SELECT `scoring`.*, `scoring_competition`.`Scoring_Competition_enabled`, `scoring_competition`.`Scoring_Competition_points`, `scoring_competition`.`Round_round_id`, `section`.`section_name`
                                                 FROM `scoring`
                                                 INNER JOIN `section` ON `section`.`section_id` = `scoring`.`Section_section_id`
                                                 INNER JOIN `scoring_competition` ON `scoring_competition`.`Scoring_scoring_id` = `scoring`.`scoring_id`
-                                                WHERE `scoring_competition`.`Competition_competition_id` = '.$competitionId.'
+                                                WHERE `scoring_competition`.`Competition_competition_id` = '.(int)$competitionId.'
                                                 '.$query.'
                                                 ORDER BY `scoring_id` ASC');          
         }
@@ -173,7 +173,7 @@ class Scoring
                                         FROM `scoring`
                                         INNER JOIN `section` ON `section`.`section_id` = `scoring`.`Section_section_id`
                                         INNER JOIN `scoring_competition` ON `scoring_competition`.`Scoring_scoring_id` = `scoring`.`scoring_id`
-                                        WHERE `scoring`.`Round_round_id` = '.$roundId);  
+                                        WHERE `scoring`.`Round_round_id` = '.(int)$roundId);  
         return App::$_DB->getRecord(self::$resultList);
     }
     
@@ -193,7 +193,7 @@ class Scoring
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `scoring`
-                                    WHERE `scoring_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `scoring_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }
@@ -202,8 +202,8 @@ class Scoring
     {
             App::$_DB->doSQL('INSERT INTO `scoring_competition` (Scoring_scoring_id, Competition_competition_id, Scoring_Competition_enabled, Scoring_Competition_points, Round_round_id)
                           VALUES (
-                            '.$scoringId.',
-                            '.$competitionId.',
+                            '.(int)$scoringId.',
+                            '.(int)$competitionId.',
                             0,
                             0,
                             0)

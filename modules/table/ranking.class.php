@@ -13,8 +13,8 @@ class Ranking
     
     public function __construct($userId, $competitionId)
     {
-        $this->userId = App::$_DB->escapeString($userId);
-        $this->competitionId = App::$_DB->escapeString($competitionId);
+        $this->userId = (int)$userId;
+        $this->competitionId = (int)$competitionId;
 
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `table`
@@ -87,19 +87,19 @@ class Ranking
     public static function deleteAllByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `table`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
 
     public static function deleteAllByUser($userId)
     {
         App::$_DB->doSQL('DELETE FROM `table`
-                          WHERE `Participant_User_user_id` = ' . $userId . '');
+                          WHERE `Participant_User_user_id` = ' . (int)$userId . '');
     }
     
     public static function getAllRankings($competitionId)
     {
        self::$resultList = App::$_DB->doSQL('SELECT * FROM `table`
-                                             WHERE `Competition_competition_id` = '.$competitionId.'
+                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
                                              ORDER BY `table_position` ASC');
     }
 
@@ -107,8 +107,8 @@ class Ranking
     {
         App::$_DB->doSQL('INSERT INTO `table` (Participant_User_user_id, Competition_competition_id, table_points, table_position, table_old_position)
                           VALUES (
-                            '.$userId.',
-                            '.$competitionId.',
+                            '.(int)$userId.',
+                            '.(int)$competitionId.',
                             '.$points.',
                             '.$position.',
                             '.$oldPosition.')
@@ -152,8 +152,8 @@ class Ranking
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `table`
-                                    WHERE `Participant_User_user_id` = '.$userId .'
-                                    AND `Competition_competition_id` = '.$competitionId);
+                                    WHERE `Participant_User_user_id` = '.(int)$userId.'
+                                    AND `Competition_competition_id` = '.(int)$competitionId);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

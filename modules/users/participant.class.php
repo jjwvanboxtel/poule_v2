@@ -16,7 +16,7 @@ class Participant extends User
     
     public function __construct($id)
     {       
-        App::$_DB->escapeString($id);
+        $id = (int)$id;
         parent::__construct($id);
 
         $this->result = App::$_DB->doSQL('SELECT *
@@ -62,7 +62,7 @@ class Participant extends User
                                 `Participant_Competition_payed` = "'.$participant['payed'].'",
                                 `Participant_Competition_subscribed` = "'.$participant['subscribed'].'"
                                 WHERE `Participant_User_user_id` = ' . $this->id . ' 
-                                AND `Competition_competition_id` = ' . $competitionId . ' LIMIT 1;');
+                                AND `Competition_competition_id` = ' . (int)$competitionId . ' LIMIT 1;');
         }
     } //save
 
@@ -299,21 +299,21 @@ class Participant extends User
     public static function deleteAllParticipantCompetitionByUser($userId)
     {
         App::$_DB->doSQL('DELETE FROM `participant_competition`
-                          WHERE `Participant_User_user_id` = ' . $userId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId);
     }
     
     public static function deleteAllParticipantCompetitionByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `participant_competition`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public static function addCompetition($userId, $competitionId)
     {
             App::$_DB->doSQL('INSERT INTO `participant_competition` (Participant_User_user_id, Competition_competition_id, Participant_Competition_payed, Participant_Competition_subscribed)
                           VALUES (
-                            '.$userId.',
-                            '.$competitionId.',
+                            '.(int)$userId.',
+                            '.(int)$competitionId.',
                             0,
                             0)
                           ');
@@ -329,7 +329,7 @@ class Participant extends User
             
         $record = App::$_DB->doSQL('SELECT count( * ) AS total 
                           FROM `participant_competition` 
-                          WHERE `Competition_competition_id` = '.$competitionId .'
+                          WHERE `Competition_competition_id` = '.(int)$competitionId.'
                           '.$sql);
         return App::$_DB->getRecord($record)->total;
     } 

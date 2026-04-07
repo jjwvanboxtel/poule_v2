@@ -13,7 +13,7 @@ class Form
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `form`
                                           WHERE `form_id` = ' . $this->id . ' LIMIT 1;');
@@ -75,7 +75,7 @@ class Form
     public static function deleteAllByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `form`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -89,7 +89,7 @@ class Form
     public static function getAllForms($competitionId)
     {
        self::$resultList = App::$_DB->doSQL('SELECT * FROM `form`
-                                             WHERE `Competition_competition_id` = '.$competitionId.'
+                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
                                              ORDER BY `form_name` ASC');
     }
 
@@ -101,7 +101,7 @@ class Form
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
                             "'.App::$_DB->escapeString($safe).'",
-                            '.$competitionId.')
+                            '.(int)$competitionId.')
                           ');
     }
 
@@ -121,7 +121,7 @@ class Form
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `form`
-                                    WHERE `form_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `form_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

@@ -12,7 +12,7 @@ class Game
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `game`
                                           WHERE `game_id` = ' . $this->id . ' LIMIT 1;');
@@ -137,7 +137,7 @@ class Game
         }
         
         App::$_DB->doSQL('DELETE FROM `game`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -158,7 +158,7 @@ class Game
     {
         $query = '';
         if ($competitionId)
-            $query = 'WHERE `game`.`Competition_competition_id` = ' . $competitionId;
+            $query = 'WHERE `game`.`Competition_competition_id` = ' . (int)$competitionId;
     
        self::$resultList = App::$_DB->doSQL('SELECT `game`.*, `home`.`country_name` AS `home_country_name`, `home`.`country_flag` AS `home_country_flag`, `away`.`country_name` AS `away_country_name`, `away`.`country_flag` AS `away_country_flag`, `city`.`city_name`, `poule`.`poule_name` 
                 FROM `game` 
@@ -178,11 +178,11 @@ class Game
                             "'.App::$_DB->escapeString($result).'",
                             "'.App::$_DB->escapeString($red_cards).'",
                             "'.App::$_DB->escapeString($yellow_cards).'",
-                            '.$city_id.',
-                            '.$country_id_home.',
-                            '.$country_id_away.',
-                            '.$poule_id.',
-                            '.$competitionId.')
+                            '.(int)$city_id.',
+                            '.(int)$country_id_home.',
+                            '.(int)$country_id_away.',
+                            '.(int)$poule_id.',
+                            '.(int)$competitionId.')
                           ');
 
         $gameId = App::$_DB->getLastId();
@@ -224,7 +224,7 @@ class Game
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `game`
-                                    WHERE `game_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `game_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

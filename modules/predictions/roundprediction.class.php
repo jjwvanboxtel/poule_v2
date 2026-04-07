@@ -14,9 +14,9 @@ class RoundPrediction
     
     public function __construct($userId, $roundId, $predictionId)
     {
-        $this->userId = App::$_DB->escapeString($userId);
-        $this->roundId = App::$_DB->escapeString($roundId);
-        $this->predictionId = App::$_DB->escapeString($predictionId);
+        $this->userId = (int)$userId;
+        $this->roundId = (int)$roundId;
+        $this->predictionId = (int)$predictionId;
         
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `participant_round_prediction`
@@ -87,14 +87,14 @@ class RoundPrediction
     public static function getAllPredictions($userId)
     {
         self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_round_prediction`
-                          WHERE `Participant_User_user_id` = ' . $userId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId);
     }
     
     public static function getAllPredictionsByRound($userId, $roundId)
     {
         self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_round_prediction`
-                          WHERE `Participant_User_user_id` = ' . $userId . '
-                          AND `Round_round_id` = ' . $roundId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId . '
+                          AND `Round_round_id` = ' . (int)$roundId);
     }
     
     public static function getPredictionCountryCount($roundId)
@@ -103,7 +103,7 @@ class RoundPrediction
                           FROM  `participant_round_prediction` 
                           INNER JOIN `participant_competition`
                           ON `participant_round_prediction`.`Participant_User_user_id`=`participant_competition`.`Participant_User_user_id`
-                          WHERE  `Round_round_id` = ' . $roundId . '
+                          WHERE  `Round_round_id` = ' . (int)$roundId . '
                           AND `participant_competition`.`Participant_Competition_payed` = 1 
                           AND `participant_competition`.`Participant_Competition_subscribed` = 1
                           GROUP BY  `Country_country_id`
@@ -114,23 +114,23 @@ class RoundPrediction
     public static function deleteAllPredictionsByUser($userId)
     {
         self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_round_prediction`
-                          WHERE `Participant_User_user_id` = ' . $userId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId);
     }
     
     public static function deleteAllPredictionsByRound($roundId)
     {
         self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_round_prediction`
-                          WHERE `Round_round_id` = ' . $roundId . '');
+                          WHERE `Round_round_id` = ' . (int)$roundId . '');
     }
     
     public static function add($userId, $roundId, $predictionId, $country)
     {
         App::$_DB->doSQL('INSERT INTO `participant_round_prediction` (Participant_User_user_id, Round_round_id, Round_prediction_id, Country_country_id)
                           VALUES (
-                            '.$userId.',
-                            '.$roundId.',
-                            '.$predictionId.',
-                            '.$country.')
+                            '.(int)$userId.',
+                            '.(int)$roundId.',
+                            '.(int)$predictionId.',
+                            '.(int)$country.')
                           ');
     }
 
@@ -150,8 +150,8 @@ class RoundPrediction
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `participant_round_prediction`
-                                    WHERE `Participant_User_user_id` = ' . $userId . '
-                                    AND `Round_round_id` = ' . $roundId . '');
+                                    WHERE `Participant_User_user_id` = ' . (int)$userId . '
+                                    AND `Round_round_id` = ' . (int)$roundId . '');
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }
