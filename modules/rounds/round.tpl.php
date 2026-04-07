@@ -4,10 +4,10 @@
     <h2>{COM_NAME}</h2>
 </div>
 {ROUND_MSG}
-<br />
-{ROUND_ADD}
-<br />
+<div class="action-row">
+    {ROUND_ADD}
+</div>
 
-<div id="round" class="card card-body">
+<div id="round" class="card">
     {CONTENT}
 </div>

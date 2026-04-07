@@ -4,13 +4,13 @@
     <h2>{COM_NAME}</h2>
 </div>
 {POULE_MSG}
-<br />
-{POULE_ADD}
-<br />
+<div class="action-row">
+    {POULE_ADD}
+</div>
 
-<div id="poule" class="card card-body">
+<div id="poule" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             <tr>
                 <th style="width: 40px;">{LANG_ID}</th>
                 <th>{LANG_POULE_FULLNAME}</th>

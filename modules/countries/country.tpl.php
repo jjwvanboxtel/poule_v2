@@ -4,13 +4,13 @@
     <h2>{COM_NAME}</h2>
 </div>
 {COUNTRY_MSG}
-<br />
-{COUNTRY_ADD}
-<br />
+<div class="action-row">
+    {COUNTRY_ADD}
+</div>
 
-<div id="country" class="card card-body">
+<div id="country" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             <tr>
                 <th style="width: 40px;">{LANG_ID}</th>
                 <th style="width: 20px;"></th>
