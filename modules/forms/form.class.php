@@ -53,9 +53,9 @@ class Form
         $curFile = $this->result->form_file;
 
         $delete = App::$_UPL->deleteFile($curFile, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        
-        $this->result->form_file = $file['name'];
+        $safe = App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
+
+        $this->result->form_file = $safe;
 
         return $delete;
     }
@@ -95,12 +95,12 @@ class Form
 
     public static function add($name, $file, $competitionId)
     {
-        App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
+        $safe = App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
         
         App::$_DB->doSQL('INSERT INTO `form` (form_name, form_file, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
-                            "'.App::$_DB->escapeString($file['name']).'",
+                            "'.App::$_DB->escapeString($safe).'",
                             '.$competitionId.')
                           ');
     }
