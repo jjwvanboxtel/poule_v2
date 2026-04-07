@@ -142,7 +142,8 @@ class Competitions extends Component
         $replaceArr['COMPETITION_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
-        $replaceArr['COMPETITION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_COMPETITION} {LANG_ADD}" class="actions_top" /> <a href="?com='.$this->componentId.'&amp;option=add" class="button">{LANG_COMPETITION} {LANG_ADD}</a>'. "\n" : '');
+        $replaceArr['COMPETITION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<a href="?com='.$this->componentId.'&amp;option=add" class="btn btn-primary mb-2">'
+                                . '<i class="bi bi-plus-lg me-1"></i>{LANG_COMPETITION} {LANG_ADD}</a>' : '');
         $tpl->replace($replaceArr);
         echo $tpl;
 
