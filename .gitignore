@@ -4,3 +4,5 @@ tests/playwright/auth-state.json
 /tests/playwright/node_modules
 /tests/playwright/playwright-report
 /tests/playwright/test-results
+.copilot/command-history-state.json
+.copilot/config.json

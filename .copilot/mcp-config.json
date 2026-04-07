@@ -6,6 +6,10 @@
       "args": ["@playwright/mcp@latest"],
       "env": {},
       "tools": ["*"]
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
     }
   }
 }
