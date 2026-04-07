@@ -170,20 +170,18 @@ class Users extends Component
         $content = '';
         while (($user = User::nextUser()) != null)
         {
-            $currentClass = (($c % 2) ? 'odd' : 'even');
-            $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
-            $content .= '<td><img alt="{LANG_USERGROUP}" src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'user' : 'user_red').'.png" class="icon" /></td>' . "\n";
-            $content .= '<td>' . $user->user_id . '</td>' . "\n";
-            $content .= '<td><a href="?com=' . $this->componentId . '&option=show&id=' . $user->user_id . '">' . $user->user_firstname . ' ' . $user->user_lastname . '</a></td>' . "\n";
-            $content .= '<td>' . $user->group_name . '</td>' . "\n";
-            $content .= '<td>' . "\n";
-            $content .= '<a href="?com='.$this->componentId.'&amp;option='.($user->user_enabled ? 'disable' : 'enable').'&amp;id='.$user->user_id.'"><img src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'lock' : 'lock_open').'.png" alt="{LANG_USER} {LANG_'.($user->user_enabled ? 'DISABLE' : 'ENABLE').'}" class="actions" /></a>' . "\n";
-            $content .= '<a href="?com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
+            $cells  = '<td><img alt="{LANG_USERGROUP}" src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'user' : 'user_red').'.png" class="icon" /></td>' . "\n";
+            $cells .= '<td>' . $user->user_id . '</td>' . "\n";
+            $cells .= '<td><a href="?com=' . $this->componentId . '&option=show&id=' . $user->user_id . '">' . $user->user_firstname . ' ' . $user->user_lastname . '</a></td>' . "\n";
+            $cells .= '<td>' . $user->group_name . '</td>' . "\n";
+            $cells .= '<td>' . "\n";
+            $cells .= '<a href="?com='.$this->componentId.'&amp;option='.($user->user_enabled ? 'disable' : 'enable').'&amp;id='.$user->user_id.'"><img src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'lock' : 'lock_open').'.png" alt="{LANG_USER} {LANG_'.($user->user_enabled ? 'DISABLE' : 'ENABLE').'}" class="actions" /></a>' . "\n";
+            $cells .= '<a href="?com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
 
             if (UserControl::getCurrentUser()->getId() != $user->user_id)
-              $content .= '<a href="?com='.$this->componentId.'&amp;option=delete&amp;id='.$user->user_id.'" onclick="return confirm(\'{LANG_CONFIRM_DELETE}\');"><img src="templates/{TEMPLATE_NAME}/icons/page_delete.png" class="actions" alt="{LANG_USER} {LANG_REMOVE}" class="actions" /></a>' . "\n";
-            $content .= '</td>' . "\n";
-            $content .= '</tr>' . "\n";
+              $cells .= '<a href="?com='.$this->componentId.'&amp;option=delete&amp;id='.$user->user_id.'" onclick="return confirm(\'{LANG_CONFIRM_DELETE}\');"><img src="templates/{TEMPLATE_NAME}/icons/page_delete.png" class="actions" alt="{LANG_USER} {LANG_REMOVE}" /></a>' . "\n";
+            $cells .= '</td>' . "\n";
+            $content .= self::buildOverviewRow($cells, $c);
             $c++;
         }
 
@@ -203,15 +201,17 @@ class Users extends Component
         $replaceArr['COM_NAME'] = '{LANG_USERS}';
         $replaceArr['USERGROUP_LIST'] = $groupList;
         $replaceArr['USER_MSG'] = self::buildMsgWrapper($msg);
-        $replaceArr['USER_ADD'] = '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" /> <a href="?com={COM_ID}&amp;option=add" class="button">{LANG_USER} {LANG_ADD}</a> 
-        <img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" /> <a href="?com={COM_ID}&amp;option=newparticipant" class="button">{LANG_PARTICIPANT} {LANG_ADD}</a>';
+        $replaceArr['USER_ADD'] = '<a href="?com={COM_ID}&amp;option=add" class="btn btn-primary mb-2 me-2">'
+                                . '<i class="bi bi-plus-lg me-1"></i>{LANG_USER} {LANG_ADD}</a>'
+                                . '<a href="?com={COM_ID}&amp;option=newparticipant" class="btn btn-primary mb-2">'
+                                . '<i class="bi bi-plus-lg me-1"></i>{LANG_PARTICIPANT} {LANG_ADD}</a>';
 
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
         echo $tpl;
 
-    } // showUserGroups
+    } // showUsers
 
     public static function showUser($id)
     {
