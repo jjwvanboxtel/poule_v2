@@ -61,7 +61,7 @@ class Predictions extends Component
                     if(isset($_POST['save']) || isset($_POST['subscribe']))
                     {
                         if(!$this->doEditPrediction())
-                            $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}<br />' . "\n", true);
+                            $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}', true);
                         else
                         {
                             if (isset($_POST['subscribe']))
@@ -71,16 +71,16 @@ class Predictions extends Component
                             else
                             {
                                 $msg = '{LANG_EDIT_OK}';
-                                $this->showPrediction('{LANG_PREDICTION} ' . $msg . '<br />' . "\n", true);
+                                $this->showPrediction('{LANG_PREDICTION} ' . $msg, true);
                             }
                         }
                     }
                     else if (isset($_POST['subscribe_confirmation']))
                     {
                         if (!$this->doSubcribePrediction())
-                            $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}<br />' . "\n", true);
+                            $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}', true);
                         else
-                            $this->showPrediction('{LANG_PREDICTION} {LANG_SUBSCRIBE_OK}<br />' . "\n", true);
+                            $this->showPrediction('{LANG_PREDICTION} {LANG_SUBSCRIBE_OK}', true);
                     }
                     else
                     {
@@ -93,7 +93,7 @@ class Predictions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}: ' . $ex->getMessage() . '<br />' . "\n", true);
+                    $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}: ' . $ex->getMessage(), true);
                 }
                 break;
             default:
@@ -139,7 +139,7 @@ class Predictions extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_PREDICTIONS}';
-        $replaceArr['USER_MSG'] = $msg;
+        $replaceArr['USER_MSG'] = $msg !== '' ? self::buildMsgWrapper($msg) : '';
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
@@ -189,9 +189,10 @@ class Predictions extends Component
         $replaceArr['ROUND_CONTENT'] = ($knockoutSection->getEnabled(@$_GET['competition']) ? $this->showRounds($participant, $edit, $post, false) : '');
         $replaceArr['QUESTION_CONTENT'] = ($questionSection->getEnabled(@$_GET['competition']) ? $this->showQuestions($participant, $edit, $post, false) : '');
         $replaceArr['COM_NAME'] = '{LANG_PREDICTIONS}';
-        $replaceArr['PREDICTION_MSG'] = $msg . '<br />' . (!$submission_date_expired ? 'Inschrijfgeld kan betaald worden via de volgende betaallink: <a href="' . App::$_CONF->getValue('PAYMENT_LINK') . '" target="new">klik hier om te betalen</a>.<br />' : '');
-        $replaceArr['SUBMISSION_MSG'] = ((@$edit && $submission_date_expired && $participant->getSubscribed(@$_GET['competition']) == 0 && UserControl::getCurrentUserGroup()->getId() != 1) ? '{LANG_SUBMISSION_EXPIRED}' : '');
-        $replaceArr['ERROR_MSG'] = ((@$edit && $edit instanceof InputException) ? $edit->getMessage() : '');
+        $replaceArr['PREDICTION_MSG'] = ($msg !== '' ? self::buildMsgWrapper(trim($msg)) : '');
+        $replaceArr['SUBMISSION_MSG'] = ((@$edit && $submission_date_expired && $participant->getSubscribed(@$_GET['competition']) == 0 && UserControl::getCurrentUserGroup()->getId() != 1) ? '<div class="alert alert-warning">{LANG_SUBMISSION_EXPIRED}</div>' : '');
+        $replaceArr['ERROR_MSG'] = ((@$edit && $edit instanceof InputException) ? '<div class="alert alert-danger">' . $edit->getMessage() . '</div>' : '');
+        $replaceArr['PAYMENT_MSG'] = (!$submission_date_expired ? '<div class="alert alert-info">Inschrijfgeld kan betaald worden via de volgende betaallink: <a href="' . App::$_CONF->getValue('PAYMENT_LINK') . '" target="new">klik hier om te betalen</a>.</div>' : '');
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['PREDICTION_EDIT'] = $editLink;
         $replaceArr['PREDICTION_BUTTONS'] = $predictionButtons;
@@ -230,7 +231,7 @@ class Predictions extends Component
         
         // Desktop table view (hidden on mobile)
         $content .= '<div class="table-responsive d-none d-md-block">'."\n";
-        $content .= '<table class="list" cellpadding="0" cellspacing="0">'."\n";
+        $content .= '<table class="list">'."\n";
         $content .= '<tr>'."\n";
         $content .= '<th style="width: 120px;">{LANG_DATE}</th>'."\n";
         $content .= '<th>{LANG_CITY}</th>'."\n";
@@ -242,8 +243,8 @@ class Predictions extends Component
             $content .= '<th style="width: 200px;">{LANG_PREDICTION}</th>'."\n";
         if ($cardsSection->getEnabled(@$_GET['competition']))
         {   
-            $content .= '<th colspan="2"><i class="bi bi-square-fill" style="color: #ffc107;" aria-label="{LANG_YELLOW_CARDS}"></i></th>'."\n";
-            $content .= '<th colspan="2"><i class="bi bi-square-fill" style="color: #dc3545;" aria-label="{LANG_RED_CARDS}"></i></th>'."\n";
+            $content .= '<th colspan="2"><i class="bi bi-square-fill card-yellow" aria-label="{LANG_YELLOW_CARDS}"></i></th>'."\n";
+            $content .= '<th colspan="2"><i class="bi bi-square-fill card-red" aria-label="{LANG_RED_CARDS}"></i></th>'."\n";
         }
         $content .= '</tr>'."\n";
         
@@ -279,9 +280,9 @@ class Predictions extends Component
             $content .= '<td>' . $game->home_country_name . '</td>' . "\n";
             
             if ($edit || $game->game_result == 'empty-empty' || $hideAnwsers)
-                $content .= '<td style="color: green;">-</td>' . "\n";
+                $content .= '<td class="text-success">-</td>' . "\n";
             else
-                $content .= '<td style="color: green;">'.$game->game_result.'</td>' . "\n";
+                $content .= '<td class="text-success">'.$game->game_result.'</td>' . "\n";
             $content .= '<td>' . '<img src="./'.UPLOAD_DIR.Country::getCountryDir(@$_GET['competition']).$game->away_country_flag.'" width="16" alt="'.$game->away_country_name.'" class="actions" /></td>' . "\n";
             $content .= '<td>' . $game->away_country_name . '</td>' . "\n";
         
@@ -289,13 +290,13 @@ class Predictions extends Component
             {
                 if ($edit)
                 {
-                    $content .= '<td style="text-align: center;"><div class="d-flex align-items-center justify-content-center gap-2"><select class="form-select" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                    $content .= '<td class="text-center"><div class="d-flex align-items-center justify-content-center gap-2"><select class="form-select select-score" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[0] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
                     }
                     $content .= '</select><span>-</span>' . "\n";
-                    $content .= '<select class="form-select" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                    $content .= '<select class="form-select select-score" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[1] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -309,14 +310,14 @@ class Predictions extends Component
             {
                 if ($edit)
                 {
-                    $content .= '<td><select class="form-select" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                    $content .= '<td><select class="form-select select-score" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionYellowCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
                     }
                     $content .= '</select></td>' . "\n";            
                     $content .= '<td></td>' . "\n";
-                    $content .= '<td><select class="form-select" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                    $content .= '<td><select class="form-select select-score" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                     for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
                     {
                         $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionRedCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -328,9 +329,9 @@ class Predictions extends Component
                 else
                 {
                     $content .= '<td>'.$predictionYellowCards.'</td>'."\n";
-                    $content .= ($game->game_yellow_cards != 'empty' && !$hideAnwsers ? '<td style="color: green;">(' . $game->game_yellow_cards . ')</td>' . "\n" : '<td></td>');
+                    $content .= ($game->game_yellow_cards != 'empty' && !$hideAnwsers ? '<td class="text-success">(' . $game->game_yellow_cards . ')</td>' . "\n" : '<td></td>');
                     $content .= '<td>'.$predictionRedCards.'</td>'."\n";
-                    $content .= ($game->game_red_cards != 'empty' && !$hideAnwsers ? '<td style="color: green;">(' . $game->game_red_cards . ')</td>' . "\n" : '<td></td>');
+                    $content .= ($game->game_red_cards != 'empty' && !$hideAnwsers ? '<td class="text-success">(' . $game->game_red_cards . ')</td>' . "\n" : '<td></td>');
                 }
             }
             $content .= '</tr>' . "\n";
@@ -404,14 +405,14 @@ class Predictions extends Component
                     {
                         $content .= '<div class="d-flex align-items-center gap-2">'."\n";
                         $content .= '<strong class="text-nowrap">{LANG_PREDICTION}:</strong>'."\n";
-                        $content .= '<select class="form-select form-select-sm" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        $content .= '<select class="form-select form-select-sm select-score" name="gamepredictionhome_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
                         {
                             $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[0] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
                         }
                         $content .= '</select>'."\n";
                         $content .= '<span>-</span>'."\n";
-                        $content .= '<select class="form-select form-select-sm" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        $content .= '<select class="form-select form-select-sm select-score" name="gamepredictionaway_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_RESULT'); $i++)
                         {
                             $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionResult[1] == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -425,8 +426,8 @@ class Predictions extends Component
                     {
                         $content .= '<div class="d-flex align-items-center gap-2">'."\n";
                         $content .= '<div class="d-flex align-items-center gap-1">'."\n";
-                        $content .= '<i class="bi bi-square-fill" style="color: #ffc107;" aria-label="{LANG_YELLOW_CARDS}"></i>'."\n";
-                        $content .= '<select class="form-select form-select-sm" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        $content .= '<i class="bi bi-square-fill card-yellow" aria-label="{LANG_YELLOW_CARDS}"></i>'."\n";
+                        $content .= '<select class="form-select form-select-sm select-score" name="gamepredictionyellowcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
                         {
                             $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionYellowCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -434,8 +435,8 @@ class Predictions extends Component
                         $content .= '</select>'."\n";
                         $content .= '</div>'."\n";
                         $content .= '<div class="d-flex align-items-center gap-1">'."\n";
-                        $content .= '<i class="bi bi-square-fill" style="color: #dc3545;" aria-label="{LANG_RED_CARDS}"></i>'."\n";
-                        $content .= '<select class="form-select form-select-sm" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').' style="width: 80px;">' . "\n";
+                        $content .= '<i class="bi bi-square-fill card-red" aria-label="{LANG_RED_CARDS}"></i>'."\n";
+                        $content .= '<select class="form-select form-select-sm select-score" name="gamepredictionredcards_'.$game->game_id.'" '.($subscribed && $userGroupId != 1 ? 'disabled' : '').'>' . "\n";
                         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_GAME_CARDS'); $i++)
                         {
                             $content .= '<option value="' . $i . '" ' . (@$edit && ($predictionRedCards == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -464,11 +465,11 @@ class Predictions extends Component
                     {
                         $content .= '<div class="d-flex gap-3">'."\n";
                         $content .= '<div>'."\n";
-                        $content .= '<i class="bi bi-square-fill" style="color: #ffc107;"></i> '.$predictionYellowCards;
+                        $content .= '<i class="bi bi-square-fill card-yellow"></i> '.$predictionYellowCards;
                         $content .= ($game->game_yellow_cards != 'empty' && !$hideAnwsers ? ' <span class="text-success">(' . $game->game_yellow_cards . ')</span>' : '');
                         $content .= '</div>'."\n";
                         $content .= '<div>'."\n";
-                        $content .= '<i class="bi bi-square-fill" style="color: #dc3545;"></i> '.$predictionRedCards;
+                        $content .= '<i class="bi bi-square-fill card-red"></i> '.$predictionRedCards;
                         $content .= ($game->game_red_cards != 'empty' && !$hideAnwsers ? ' <span class="text-success">(' . $game->game_red_cards . ')</span>' : '');
                         $content .= '</div>'."\n";
                         $content .= '</div>'."\n";
@@ -486,9 +487,7 @@ class Predictions extends Component
         }
         $content .= '<div class="text-muted mt-2">{LANG_COUNT}: ' . $c . '</div>'."\n";
         $content .= '</div>'."\n";
-        
-        $content .= '<br /><br />'."\n";
-        
+
         return $content;
     }
     
@@ -505,7 +504,7 @@ class Predictions extends Component
             $content .= '<h3>'.$round->round_name.'</h3>';
 
             $currentClass = 'odd';
-            $content .= '<table class="list" cellpadding="0" cellspacing="0">'."\n";
+            $content .= '<table class="list">'."\n";
             $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
             $content .= '<td>'."\n";
 
@@ -556,7 +555,7 @@ class Predictions extends Component
 
             if (!$edit && !$hideAnwsers)
             {
-                $answer = '<div style="color: green;">{LANG_GAME_ANWSER}: ';
+                $answer = '<div class="text-success">{LANG_GAME_ANWSER}: ';
                 RoundResult::getAllRoundResults($round->round_id);
                 $i=0;
                 while (($roundResult = RoundResult::nextRoundResult()) != null)
@@ -572,8 +571,8 @@ class Predictions extends Component
             }
             $content .= '</td>'."\n";
             $content .= '</tr>'."\n";
-            $content .= '<tr><td colspan="4">{LANG_COUNT}: ' . $round->round_count . '</td></tr>' . "\n";            
-            $content .= '</table><br /><br />'."\n";
+            $content .= '<tr><td colspan="4">{LANG_COUNT}: ' . $round->round_count . '</td></tr>' . "\n";
+            $content .= '</table>'."\n";
         }
         
         return $content;
@@ -598,7 +597,7 @@ class Predictions extends Component
         
         // Desktop table view
         $content .= '<div class="d-none d-md-block">'."\n";
-        $content .= '<table class="list" cellpadding="0" cellspacing="0">'."\n";
+        $content .= '<table class="list">'."\n";
         $content .= '<tr>'."\n";
         $content .= '<th>{LANG_QUESTION}</th>'."\n";
         $content .= '<th>{LANG_PREDICTION}</th>'."\n";
@@ -695,9 +694,9 @@ class Predictions extends Component
                         if (!$hideAnwsers)
                         {
                             if ($question->question_anwser == "0")
-                                $content .= '<td style="color: green;">{LANG_NO}</td>'."\n";
+                                $content .= '<td class="text-success">{LANG_NO}</td>'."\n";
                             else if ($question->question_anwser == "1")
-                                $content .= '<td style="color: green;">{LANG_YES}</td>'."\n";
+                                $content .= '<td class="text-success">{LANG_YES}</td>'."\n";
                             else
                                 $content .= '<td>&nbsp;</td>'."\n";
                         }
@@ -713,7 +712,7 @@ class Predictions extends Component
                             $content .= '<td>'.$predictionQuestion.'</td>'."\n";
                             
                         if (!$hideAnwsers)
-                            $content .= '<td style="color: green;">'.(strstr($question->question_anwser, 'empty') === false ? $question->question_anwser : '').'</td>'."\n";
+                            $content .= '<td class="text-success">'.(strstr($question->question_anwser, 'empty') === false ? $question->question_anwser : '').'</td>'."\n";
                         break;
                 }
             }
@@ -853,9 +852,7 @@ class Predictions extends Component
         }
         $content .= '<div class="text-muted mt-2">{LANG_COUNT}: ' . $c . '</div>'."\n";
         $content .= '</div>'."\n";
-        
-        $content .= '<br />' . "\n";
-        
+
         return $content;
     }
 

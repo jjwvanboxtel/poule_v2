@@ -61,7 +61,6 @@ p {
 }
 
 table {
-  margin-top: 1.5rem;
   line-height: 1.8;
 }
 
@@ -96,9 +95,6 @@ table.list a {
   color: #0066cc;
 }
 
-th {
-  text-decoration: underline;
-}
 
 input,
 button,
@@ -106,7 +102,6 @@ select,
 textarea {
   border: 1px solid #d4d4d4;
   background-color: #ffffff;
-  padding: 2px;
   font-family: "Poppins", "Trebuchet MS", "Verdana", sans-serif;
 }
 
@@ -805,6 +800,19 @@ div#map {
   vertical-align: middle;
 }
 
+.bi-square-fill.card-yellow {
+  color: #ffc107;
+}
+
+.bi-square-fill.card-red {
+  color: #dc3545;
+}
+
+/* Score/cards select width — used in prediction dropdowns */
+.select-score {
+  width: 80px;
+}
+
 /* ── Confirmation form card ────────────────────────────────────────── */
 #subscribe_confirmation.card {
   margin-top: 1rem;
@@ -820,6 +828,18 @@ div#map {
 
 .ms-auto {
   margin-left: auto !important;
+}
+
+.text-end {
+  text-align: right !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-start {
+  text-align: left !important;
 }
 
 @media (min-width: 768px) {

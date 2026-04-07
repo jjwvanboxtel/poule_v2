@@ -106,9 +106,9 @@
 
 **Purpose**: Finish cross-story edge cases, reduce duplication and document final verification.
 
-- [ ] T024 [P] Tune empty, error and success presentation consistency across `C:\Github\poule_v2\index.php`, `C:\Github\poule_v2\templates\orange\template.css`, `C:\Github\poule_v2\modules\usercontrol\loginscreen.tpl.php` and `C:\Github\poule_v2\modules\table\table.tpl.php`
-- [ ] T025 [P] Remove leftover legacy spacing and duplicated table/button helper styling in `C:\Github\poule_v2\templates\orange\template.css`, `C:\Github\poule_v2\modules\predictions\predictions.class.php` and `C:\Github\poule_v2\modules\table\table.class.php`
-- [ ] T026 Update the final validation checklist and rollout notes in `C:\Github\poule_v2\specs\001-ui-ux-refresh\quickstart.md`
+- [x] T024 [P] Tune empty, error and success presentation consistency across `C:\Github\poule_v2\index.php`, `C:\Github\poule_v2\templates\orange\template.css`, `C:\Github\poule_v2\modules\usercontrol\loginscreen.tpl.php` and `C:\Github\poule_v2\modules\table\table.tpl.php`
+- [x] T025 [P] Remove leftover legacy spacing and duplicated table/button helper styling in `C:\Github\poule_v2\templates\orange\template.css`, `C:\Github\poule_v2\modules\predictions\predictions.class.php` and `C:\Github\poule_v2\modules\table\table.class.php`
+- [x] T026 Update the final validation checklist and rollout notes in `C:\Github\poule_v2\specs\001-ui-ux-refresh\quickstart.md`
 
 ---
 

@@ -143,7 +143,7 @@ final class App
             }
             catch (Exception $e)
             {
-                echo 'Warning: ' . $e->getMessage();
+                echo '<div class="alert alert-warning">' . htmlspecialchars($e->getMessage()) . '</div>';
             }
 
 
@@ -236,7 +236,7 @@ final class App
         }
         catch (Exception $ex)
         {
-            echo 'Error: ' . $ex->getMessage();
+            echo '<div class="alert alert-danger">' . htmlspecialchars($ex->getMessage()) . '</div>';
         }
 
     } //main
