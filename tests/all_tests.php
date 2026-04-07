@@ -21,6 +21,7 @@ class AllTests extends TestSuite {
         $this->addFile('rounds_tests.php');
         $this->addFile('scorings_tests.php');
         $this->addFile('table_tests.php');
+        $this->addFile('upload_tests.php');
     }
 }
 ?>
