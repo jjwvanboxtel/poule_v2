@@ -12,7 +12,7 @@ class Round
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `round`
                                           WHERE `round_id` = ' . $this->id . ' LIMIT 1;');
@@ -142,7 +142,7 @@ class Round
         }
         
         App::$_DB->doSQL('DELETE FROM `round`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -157,7 +157,7 @@ class Round
     {
         $query = '';
         if ($competitionId)
-            $query = 'WHERE `Competition_competition_id` = ' . $competitionId;
+            $query = 'WHERE `Competition_competition_id` = ' . (int)$competitionId;
 
         self::$resultList = App::$_DB->doSQL('SELECT * FROM `round`
                                               '.$query);
@@ -169,7 +169,7 @@ class Round
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
                             "'.App::$_DB->escapeString($count).'",
-                            '.$competitionId.')
+                            '.(int)$competitionId.')
                           ');
         
         $roundId = App::$_DB->getLastId();
@@ -224,7 +224,7 @@ class Round
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `round`
-                                    WHERE `round_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `round_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

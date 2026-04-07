@@ -18,7 +18,7 @@ class Section
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `section`
                                           WHERE `section_id` = ' . $this->id . ' LIMIT 1;');
@@ -77,7 +77,7 @@ class Section
             App::$_DB->doSQL('UPDATE `section_competition` SET
                                 `Section_Competition_enabled` = "'.$section['enabled'].'"
                                 WHERE `Section_section_id` = ' . $this->id . ' 
-                                AND `Competition_competition_id` = ' . $competitionId . ' LIMIT 1;');
+                                AND `Competition_competition_id` = ' . (int)$competitionId . ' LIMIT 1;');
         }
     }
     
@@ -88,7 +88,7 @@ class Section
             self::$resultList = App::$_DB->doSQL('SELECT `section`.*, `section_competition`.`Section_Competition_enabled`
                                                   FROM `section`
                                                   INNER JOIN `section_competition` ON `section`.`section_id` = `section_competition`.`Section_section_id`
-                                                  WHERE `section_competition`.`Competition_competition_id` = '.$competitionId.'');
+                                                  WHERE `section_competition`.`Competition_competition_id` = '.(int)$competitionId.'');
         }
         else
         {
@@ -112,14 +112,14 @@ class Section
     public static function deleteAllSectionCompetitionByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `section_competition`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public static function exists($id)
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `section`
-                                    WHERE `section_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `section_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }
@@ -128,8 +128,8 @@ class Section
     {
             App::$_DB->doSQL('INSERT INTO `section_competition` (Section_section_id, Competition_competition_id, Section_Competition_enabled)
                           VALUES (
-                            '.$sectionId.',
-                            '.$competitionId.',
+                            '.(int)$sectionId.',
+                            '.(int)$competitionId.',
                             0)
                           ');
     }

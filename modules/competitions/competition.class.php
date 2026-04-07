@@ -13,7 +13,7 @@ class Competition
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `competition`
                                           WHERE `competition_id` = ' . $this->id . ' LIMIT 1;');
@@ -245,7 +245,7 @@ class Competition
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `competition`
-                                    WHERE `competition_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `competition_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

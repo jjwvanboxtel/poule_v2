@@ -39,7 +39,7 @@ class Component
     {
         $query = '';
         if (is_numeric($parent))
-          $query = ' WHERE `com_menu_parent` = ' . App::$_DB->escapeString($parent);
+          $query = ' WHERE `com_menu_parent` = ' . (int)$parent;
 
         self::$resultList = App::$_DB->doSQL('SELECT *
                                              FROM `component` 
@@ -85,7 +85,7 @@ class Component
     {
         $record = App::$_DB->doSQL('SELECT `com_defchrights`
                                     FROM `component`
-                                    WHERE `com_id` = ' . App::$_DB->escapeString($com_id) . '
+                                    WHERE `com_id` = ' . (int)$com_id . '
                                     LIMIT 1;');
         $rights = (int)App::$_DB->getRecord($record)->com_defchrights;
         if (($rights&$option) == $option)
@@ -98,7 +98,7 @@ class Component
     {
         $record = App::$_DB->doSQL('SELECT `com_defrights`
                                     FROM `component`
-                                    WHERE `com_id` = ' . App::$_DB->escapeString($com_id) . '
+                                    WHERE `com_id` = ' . (int)$com_id . '
                                     LIMIT 1;');
         
         $rights = (int)App::$_DB->getRecord($record)->com_defrights;
@@ -112,7 +112,7 @@ class Component
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `component`
-                                    WHERE `com_menu_parent` = ' . App::$_DB->escapeString($com_id));
+                                    WHERE `com_menu_parent` = ' . (int)$com_id);
         
         return (boolean)App::$_DB->getRecord($record)->total;
     }

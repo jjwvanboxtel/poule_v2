@@ -13,8 +13,8 @@ class GamePrediction
     
     public function __construct($userId, $gameId)
     {
-        $this->userId = App::$_DB->escapeString($userId);
-        $this->gameId = App::$_DB->escapeString($gameId);
+        $this->userId = (int)$userId;
+        $this->gameId = (int)$gameId;
         
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `participant_game_prediction`
@@ -94,30 +94,30 @@ class GamePrediction
     public static function getAllPredictions($userId)
     {
         self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_game_prediction`
-                          WHERE `Participant_User_user_id` = ' . $userId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId);
     }
     
     public static function deleteAllPredictionsByUser($userId)
     {
         self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_game_prediction`
-                          WHERE `Participant_User_user_id` = ' . $userId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId);
     }
 
     public static function deleteAllPredictionsByGame($gameId)
     {
         self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_game_prediction`
-                          WHERE `Game_game_id` = ' . $gameId . '');
+                          WHERE `Game_game_id` = ' . (int)$gameId . '');
     }
         
     public static function add($userId, $gameId, $result, $red_cards, $yellow_cards)
     {
         App::$_DB->doSQL('INSERT INTO `participant_game_prediction` (Participant_User_user_id, Game_game_id, Participant_Game_result, Participant_Game_red_cards, Participant_Game_yellow_cards)
                           VALUES (
-                            '.$userId.',
-                            '.$gameId.',
+                            '.(int)$userId.',
+                            '.(int)$gameId.',
                             "'.App::$_DB->escapeString($result).'",
-                            '.App::$_DB->escapeString($red_cards).',
-                            '.App::$_DB->escapeString($yellow_cards).')
+                            '.(int)$red_cards.',
+                            '.(int)$yellow_cards.')
                           ');                         
     }
 
@@ -137,8 +137,8 @@ class GamePrediction
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `participant_game_prediction`
-                                    WHERE `Participant_User_user_id` = ' . $userId . '
-                                    AND `Game_game_id` = ' . $gameId . '');
+                                    WHERE `Participant_User_user_id` = ' . (int)$userId . '
+                                    AND `Game_game_id` = ' . (int)$gameId . '');
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

@@ -27,7 +27,7 @@ class UserGroup
      */
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `usergroup`
                                           WHERE `group_id` = ' . $this->id . ' LIMIT 1;');
@@ -240,8 +240,8 @@ class UserGroup
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `rights`
-                                    WHERE `Component_com_id` = ' . App::$_DB->escapeString($componentId) . '
-                                    AND `UserGroup_group_id` = ' . App::$_DB->escapeString($userGroupId));
+                                    WHERE `Component_com_id` = ' . (int)$componentId . '
+                                    AND `UserGroup_group_id` = ' . (int)$userGroupId);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }
@@ -316,7 +316,7 @@ class UserGroup
 
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `usergroup`
-                                    WHERE `group_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `group_id` = ' . (int)$id);
         
         return (boolean)App::$_DB->getRecord($record)->total;
     } //exists
@@ -330,7 +330,7 @@ class UserGroup
     {
         $record = App::$_DB->doSQL('SELECT COUNT(`UserGroup_group_id`) AS `member_count`
                                     FROM `user`
-                                    WHERE `Usergroup_group_id` = '. $id . '
+                                    WHERE `Usergroup_group_id` = '. (int)$id . '
                                     AND `user_enabled` = 1
                                     GROUP BY `Usergroup_group_id`;');
 
@@ -346,7 +346,7 @@ class UserGroup
     {
         $record = App::$_DB->doSQL('SELECT COUNT(`UserGroup_group_id`) AS `member_count`
                                     FROM `user`
-                                    WHERE `Usergroup_group_id` = '. $id . ' AND `user_enabled` = 1
+                                    WHERE `Usergroup_group_id` = '. (int)$id . ' AND `user_enabled` = 1
                                     GROUP BY `Usergroup_group_id`;');
 
         $r = App::$_DB->getRecord($record);
