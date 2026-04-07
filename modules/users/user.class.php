@@ -463,6 +463,7 @@ class User
                 if ($row->user_enabled != 1)
                   throw new Exception('{LANG_ACCOUNT_DISABLED}');
 
+                session_regenerate_id(true);
                 $_SESSION['user_id'] = $row->user_id;
                 $_SESSION['logged_in'] = true;
 
