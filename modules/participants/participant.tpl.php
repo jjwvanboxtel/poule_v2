@@ -4,13 +4,13 @@
     <h2>{COM_NAME}</h2>
 </div>
 {PARTICIPANT_MSG}
-<br />
-{LANG_FILTER}:<br />
-{FILTER_LIST}
+<div class="mb-3">
+    {LANG_FILTER}: {FILTER_LIST}
+</div>
 
-<div id="participant" class="card card-body">
+<div id="participant" class="card">
     <div class="table-responsive">
-        <table class="list" cellpadding="0" cellspacing="0">
+        <table class="list">
             <tr>
                 <th style="width: 40px;">{LANG_ID}</th>
                 <th>{LANG_PARTICIPANT}</th>
