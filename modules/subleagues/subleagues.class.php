@@ -199,7 +199,7 @@ class Subleagues extends Component
         $replaceArr['SUBLEAGUE_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
-        $replaceArr['SUBLEAGUE_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_SUBLEAGUE} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_SUBLEAGUE} {LANG_ADD}</a>'. "\n" : '');
+        $replaceArr['SUBLEAGUE_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="btn btn-primary mb-2"><i class="bi bi-plus-lg me-1"></i>{LANG_SUBLEAGUE} {LANG_ADD}</a>'. "\n" : '');
         $tpl->replace($replaceArr);
         echo $tpl;
 
