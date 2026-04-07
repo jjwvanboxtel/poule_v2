@@ -112,12 +112,12 @@ class Database
     /**
      * Escapes illegal characters to store it safely in the database
      *
-     * @param String $var The string to be escaped
-     * @return String the escaped string
+     * @param string $var The string to be escaped
+     * @return string the escaped string
      */
-    public static function escapeString($var)
+    public function escapeString(string $var): string
     {
-        return htmlspecialchars(addslashes($var));
+        return $this->conn->real_escape_string($var);
     } //escapeString
 
     /**
