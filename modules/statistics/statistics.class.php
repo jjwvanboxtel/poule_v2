@@ -22,8 +22,7 @@ class Statistics extends Component
         
         if(!isset($_GET['competition']))
             throw new Exception('{ERROR_NO_COMPETITION_SELECTED}');
-
-        
+ 
         switch(@$_GET['option'])
         {
             case '':

@@ -46,7 +46,7 @@ class Statistic
         mkdir($path, 0777, true);
 
         $time = time();
-        
+
         $rounds = self::generateRoundStatistics($competitionId, $path, $time);
         $questions = self::generateQuestionStatistics($competitionId, $path, $time);
 

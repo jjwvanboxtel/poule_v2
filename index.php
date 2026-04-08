@@ -218,13 +218,17 @@ final class App
                 $replaceArr['LOGO'] = '';
                 $replaceArr['SUB_TITLE'] = '';
                 
-                $competitions .= '<ul>';
+                $competitions = '';
+                $competitionItems = '';
                 Competition::getAllCompetitions();
                 while (($competition = Competition::nextCompetition()) != null)
                 {
-                    $competitions .= '<li><a href="?competition='.$competition->competition_id.'"><i class="bi bi-trophy nav-icon"></i><span class="nav-text">'.$competition->competition_name.'</span></a></li>';
+                    $competitionItems .= '<li><a href="?competition='.$competition->competition_id.'"><i class="bi bi-trophy nav-icon"></i><span class="nav-text">'.$competition->competition_name.'</span></a></li>';
                 }
-                $competitions .= '</ul>';
+                
+                if ($competitionItems) {
+                    $competitions = '<ul>' . $competitionItems . '</ul>';
+                }
 
                 $replaceArr['INFORMATION'] = $competitions;
             }

@@ -373,8 +373,12 @@ div#map {
 }
 
 #submenu {
-  border-top: 1px solid #e5e5e5;
   padding: 0.5rem 0;
+}
+/* Show separator only when there are menu items above AND below */
+.sidebar:has(#menu li) #submenu:has(li),
+.sidebar:has(#menu-mobile li) #submenu:has(li) {
+  border-top: 1px solid #e5e5e5;
 }
 #submenu .title {
   padding: 0.5rem 1rem 0.25rem 1rem;
