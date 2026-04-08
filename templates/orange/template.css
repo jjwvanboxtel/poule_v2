@@ -191,6 +191,10 @@ div#map {
 .topbar #menu a .nav-icon {
   font-size: 16px;
 }
+#login a .nav-icon {
+  font-size: 14px;
+  vertical-align: -0.125em;
+}
 .topbar #menu a:hover,
 .topbar #menu li.current_page_item a {
   background-color: #ff6d29;

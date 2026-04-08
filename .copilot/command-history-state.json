@@ -1,5 +1,7 @@
 {
   "commandHistory": [
+    "het side menu bevat ook een home menu item voeg ook een bootstrap icon toe",
+    "zorg dat alle menu items in de side bar en top bar unieke bootstrap iconen hebben. probeer een icoon te zoeken die bij het menu item past. gebruik de bootstrap skill.",
     "zorg er voor dat Uiterste inleverdatum bij het aanmaken / aanpassen van een compititeit een datepicker heeft",
     "vul in",
     "# Constitution Prompt\n## Voetbalpoule & Voorspelsysteem (WK / EK / Toernooien)\n\n## 1. Doel\nEen webapplicatie (PHP, shared hosting) voor het beheren van voetbalpoules (zoals WK en EK), waarin deelnemers volledige voorspellingen indienen, punten verdienen volgens configureerbare regels en publieke standen worden weergegeven. Sub-competities maken ranglijsten binnen groepen mogelijk.\n\n## 2. Technische Eisen\n\n- PHP 8.4\n- MySQL\n- Shared hosting (LAMP)\n- Server-side rendering\n- CSRF-beveiliging\n\n## 2. Niet-functionele Eisen\n- Responsive UI\n- Goede performance\n\n## 3. Testen\n- Gebruik Test driven development\n- Schrijf unit testen\n- Gebruik Playwright om te valideren of dat de applicatie werkt en dat de UI/UX er goed uit ziet\n\n## 4. Documentatie\n\n- Schrijf documentatie, bv instructie om applicatie uitvoeren, architecture, database model etc\n- Plaats documentatie in /docs\n- Beschrijf documentatie in markdown files.\n- Voor diagrammen gebruik mermaid.",

@@ -89,7 +89,7 @@
 
             <!-- Footer -->
             <div id="copyright">
-                Copyright &copy; 2024 vvalem.nl. All rights reserved.
+                Copyright &copy; 2026 vvalem.nl. All rights reserved.
             </div>
         </div>
 

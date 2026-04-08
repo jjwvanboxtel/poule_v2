@@ -166,16 +166,15 @@ final class App
                 $user_information = '';
                 if (Usercontrol::getCurrentUserGroup()->getId() == PARTICIPANT)
                 {
-                    $user_information .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.Component::getComponentId('Users').'&amp;option=edit&amp;id='.UserControl::getCurrentUser()->getId().'">'.self::$_LANG->getValue('LANG_PARTICIPANT_INFORMATION') . '</a></li>'."\n";
+                    $user_information .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.Component::getComponentId('Users').'&amp;option=edit&amp;id='.UserControl::getCurrentUser()->getId().'"><i class="bi bi-info-circle-fill nav-icon"></i><span class="nav-text">'.self::$_LANG->getValue('LANG_PARTICIPANT_INFORMATION') . '</span></a></li>'."\n";
                 }
                 $replaceArr['INFORMATION'] = '<div class="title">
                     <h2>Menu</h2>
                 </div>
                 <ul>
-                <li><a href="?competition='.@$_GET['competition'].'">'.App::$_LANG->getValue('LANG_HOME').'</a></li>
+                <li><a href="?competition='.@$_GET['competition'].'"><i class="bi bi-house-fill nav-icon"></i><span class="nav-text">'.App::$_LANG->getValue('LANG_HOME').'</span></a></li>
                 '.$user_information.'
                 '.$menu->getMenuHTML('menu', Component::getComponentId('Competitions')).'
-                '.$menu->getMenuHTML('login').'
                 </ul>
                 <div class="title">
                     <h2>'.self::$_LANG->getValue('LANG_COMPETITION') . ':<br /> ' . $competition->getName() .' </h2>
@@ -203,7 +202,7 @@ final class App
                 Competition::getAllCompetitions();
                 while (($competition = Competition::nextCompetition()) != null)
                 {
-                    $competitions .= '<li><a href="?competition='.$competition->competition_id.'">'.$competition->competition_name.'</a></li>';
+                    $competitions .= '<li><a href="?competition='.$competition->competition_id.'"><i class="bi bi-trophy nav-icon"></i><span class="nav-text">'.$competition->competition_name.'</span></a></li>';
                 }
                 $competitions .= $menu->getMenuHTML('login');
                 $competitions .= '</ul>';
