@@ -4,6 +4,8 @@
     <h2>{COM_NAME}</h2>
 </div>
 
+<br />
+
 {PREDICTION_MSG}{ERROR_MSG}
 {SUBMISSION_MSG}
 {PAYMENT_MSG}
