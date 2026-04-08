@@ -130,8 +130,6 @@ final class App
                         $prize2 = round(($competition->getSecondPlace() / 100) * $total, 2);
                         $prize3 = round(($competition->getThirdPlace() / 100) * $total, 2);
 
-                        echo '<div class="title"><h2>' . $competition->getName() . '</h2></div>' . "\n";
-
                         // Stat cards row — 2 per row on small screens, 4 per row on large
                         echo '<div class="row g-3 mb-5">' . "\n";
 
@@ -175,10 +173,10 @@ final class App
                     }
                     else 
                     {
-                        echo '<div class="title">
-                        <h2>' . self::$_LANG->getValue('LANG_HOME') . '</h2>
-                        </div>' . "\n";
-                        echo self::$_CONF->getValue('HOME_CONTENT') . "<br /><br />\n";
+                        echo '<div class="card stat-card">'
+                           . '<div class="card-header"><h5 class="mb-0"><i class="bi bi-house-fill me-2"></i>' . self::$_LANG->getValue('LANG_HOME') . '</h5></div>'
+                           . '<div class="card-body">' . self::$_CONF->getValue('HOME_CONTENT') . '</div>'
+                           . '</div>' . "\n";
                     }
                 }
 
@@ -219,9 +217,6 @@ final class App
             {
                 $replaceArr['LOGO'] = '';
                 $replaceArr['SUB_TITLE'] = '';
-       			$competitions = '<div class="title">
-                    <h2>'.self::$_LANG->getValue('LANG_COMPETITIONS') . '</h2>
-                </div>';
                 
                 $competitions .= '<ul>';
                 Competition::getAllCompetitions();
@@ -229,7 +224,6 @@ final class App
                 {
                     $competitions .= '<li><a href="?competition='.$competition->competition_id.'"><i class="bi bi-trophy nav-icon"></i><span class="nav-text">'.$competition->competition_name.'</span></a></li>';
                 }
-                $competitions .= $menu->getMenuHTML('login');
                 $competitions .= '</ul>';
 
                 $replaceArr['INFORMATION'] = $competitions;

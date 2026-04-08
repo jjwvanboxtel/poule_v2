@@ -402,16 +402,21 @@ div#map {
 }
 #submenu a {
   color: #404040;
-  padding: 7px 10px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
-  font-size: 0.8125rem;
-  gap: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  gap: 12px;
   white-space: nowrap;
   margin: 1px 12px;
   border-radius: 8px;
   text-decoration: none;
   transition: color 0.15s, background-color 0.15s;
+}
+#submenu a .nav-icon {
+  font-size: 18px;
+  flex-shrink: 0;
 }
 #submenu a:hover {
   color: #ff6d29;
@@ -820,6 +825,12 @@ div#map {
 /* ── Competition home stat cards ─────────────────────────────────────── */
 .stat-card {
   border-top: 4px solid #ff6d29;
+}
+
+.stat-card .card-header {
+  background-color: rgba(255, 109, 41, 0.08);
+  border-bottom: 1px solid rgba(255, 109, 41, 0.2);
+  color: #ff6d29;
 }
 
 .stat-card .card-body {

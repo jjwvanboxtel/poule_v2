@@ -368,7 +368,8 @@ class Users extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($msg);
 
-        $replaceArr['USER_COM_ID'] = $_GET['com'];
+        $replaceArr['USER_COM_ID'] =  @$_GET['competition'] ? '' : $_GET['com'];
+        $replaceArr['COMPETITION'] = @$_GET['competition'] ? '&competition=' . $_GET['competition'] . '&' : '';
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditUserGroup
