@@ -124,11 +124,54 @@ final class App
                     if (@$_GET['competition'] && Competition::exists($_GET['competition']))
                     {
                         $competition = new Competition($_GET['competition']);
-                        echo '<div class="title">
-                        <h2>' . $competition->getName() . '</h2>
-                        </div>' . "\n";
-                        echo '<br />'."\n";
-                        echo $competition->getDescription() . "<br /><br />\n";                    
+                        $countParticipants = Participant::getNumberOfParticipants($_GET['competition'], true, true);
+                        $total = $countParticipants * $competition->getMoney();
+                        $prize1 = round(($competition->getFirstPlace() / 100) * $total, 2);
+                        $prize2 = round(($competition->getSecondPlace() / 100) * $total, 2);
+                        $prize3 = round(($competition->getThirdPlace() / 100) * $total, 2);
+
+                        echo '<div class="title"><h2>' . $competition->getName() . '</h2></div>' . "\n";
+
+                        // Stat cards row — 2 per row on small screens, 4 per row on large
+                        echo '<div class="row g-3 mb-5">' . "\n";
+
+                        echo '<div class="col-6 col-lg-3">'
+                           . '<div class="card stat-card text-center h-100"><div class="card-body">'
+                           . '<div class="stat-icon-wrap"><i class="bi bi-person-plus-fill"></i></div>'
+                           . '<div class="fs-3 fw-bold">' . Participant::getNumberOfParticipants($_GET['competition'], false, false) . '</div>'
+                           . '<div class="text-muted small">' . self::$_LANG->getValue('LANG_PARTICIPANT_ENTRIES') . '</div>'
+                           . '</div></div></div>' . "\n";
+
+                        echo '<div class="col-6 col-lg-3">'
+                           . '<div class="card stat-card text-center h-100"><div class="card-body">'
+                           . '<div class="stat-icon-wrap"><i class="bi bi-people-fill"></i></div>'
+                           . '<div class="fs-3 fw-bold">' . $countParticipants . '</div>'
+                           . '<div class="text-muted small">' . self::$_LANG->getValue('LANG_PARTICIPANT_COUNT') . '</div>'
+                           . '</div></div></div>' . "\n";
+
+                        echo '<div class="col-6 col-lg-3">'
+                           . '<div class="card stat-card text-center h-100"><div class="card-body">'
+                           . '<div class="stat-icon-wrap"><i class="bi bi-cash-stack"></i></div>'
+                           . '<div class="fs-3 fw-bold">' . $total . ' ' . self::$_LANG->getValue('LANG_MONETARY_UNIT') . '</div>'
+                           . '<div class="text-muted small">' . self::$_LANG->getValue('LANG_TOTAL_DEPOSITS') . '</div>'
+                           . '</div></div></div>' . "\n";
+
+                        echo '<div class="col-6 col-lg-3">'
+                           . '<div class="card stat-card text-center h-100"><div class="card-body">'
+                           . '<div class="stat-icon-wrap"><i class="bi bi-trophy-fill"></i></div>'
+                           . '<div class="text-muted small fw-bold mb-1">' . self::$_LANG->getValue('LANG_PRIZE') . '</div>'
+                           . '<div class="small">🥇 ' . self::$_LANG->getValue('LANG_COMPETITION_FIRST_PLACE') . ': &euro;' . $prize1 . '</div>'
+                           . '<div class="small">🥈 ' . self::$_LANG->getValue('LANG_COMPETITION_SECOND_PLACE') . ': &euro;' . $prize2 . '</div>'
+                           . '<div class="small">🥉 ' . self::$_LANG->getValue('LANG_COMPETITION_THIRD_PLACE') . ': &euro;' . $prize3 . '</div>'
+                           . '</div></div></div>' . "\n";
+
+                        echo '</div>' . "\n"; // end stat row
+
+                        // Description card
+                        echo '<div class="card stat-card">'
+                           . '<div class="card-header"><h5 class="mb-0">' . htmlspecialchars($competition->getName()) . '</h5></div>'
+                           . '<div class="card-body">' . $competition->getDescription() . '</div>'
+                           . '</div>' . "\n";
                     }
                     else 
                     {
@@ -161,34 +204,16 @@ final class App
                 $replaceArr['LOGO'] = '<img src="./'.UPLOAD_DIR.Competition::getHeaderDir(@$_GET['competition']).$competition->getImage().'" alt="'.$competition->getName().'" class="logo" />';
                 $replaceArr['SUB_TITLE'] = $competition->getName();
                 
-                $total = (Participant::getNumberOfParticipants($_GET['competition'], true, true)*$competition->getMoney());
-       			
                 $user_information = '';
                 if (Usercontrol::getCurrentUserGroup()->getId() == PARTICIPANT)
                 {
                     $user_information .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.Component::getComponentId('Users').'&amp;option=edit&amp;id='.UserControl::getCurrentUser()->getId().'"><i class="bi bi-info-circle-fill nav-icon"></i><span class="nav-text">'.self::$_LANG->getValue('LANG_PARTICIPANT_INFORMATION') . '</span></a></li>'."\n";
                 }
-                $replaceArr['INFORMATION'] = '<div class="title">
-                    <h2>Menu</h2>
-                </div>
-                <ul>
+                $replaceArr['INFORMATION'] = '<ul>
                 <li><a href="?competition='.@$_GET['competition'].'"><i class="bi bi-house-fill nav-icon"></i><span class="nav-text">'.App::$_LANG->getValue('LANG_HOME').'</span></a></li>
                 '.$user_information.'
                 '.$menu->getMenuHTML('menu', Component::getComponentId('Competitions')).'
-                </ul>
-                <div class="title">
-                    <h2>'.self::$_LANG->getValue('LANG_COMPETITION') . ':<br /> ' . $competition->getName() .' </h2>
-                </div>
-                <p>
-                    '.self::$_LANG->getValue('LANG_PARTICIPANT_ENTRIES') .': '.Participant::getNumberOfParticipants($_GET['competition'], false, false).'<br />
-                    '.self::$_LANG->getValue('LANG_PARTICIPANT_COUNT') .': '.Participant::getNumberOfParticipants($_GET['competition'], true, true).'<br />
-                    '.self::$_LANG->getValue('LANG_TOTAL_DEPOSITS') .': '.$total.' '.self::$_LANG->getValue('LANG_MONETARY_UNIT') .'<br />
-                    <br />
-                    '.self::$_LANG->getValue('LANG_PRIZE').':<br />
-                    '.self::$_LANG->getValue('LANG_COMPETITION_FIRST_PLACE') .' ('.$competition->getFirstPlace().'%): '.(($competition->getFirstPlace()/100)*$total). ' ' .self::$_LANG->getValue('LANG_MONETARY_UNIT') .'<br />
-                    '.self::$_LANG->getValue('LANG_COMPETITION_SECOND_PLACE') .' ('.$competition->getSecondPlace().'%): '.(($competition->getSecondPlace()/100)*$total). ' '.self::$_LANG->getValue('LANG_MONETARY_UNIT') .'<br />
-                    '.self::$_LANG->getValue('LANG_COMPETITION_THIRD_PLACE') .' ('.$competition->getThirdPlace().'%): '.(($competition->getThirdPlace()/100)*$total). ' '.self::$_LANG->getValue('LANG_MONETARY_UNIT') .'
-                </p>';
+                </ul>';
             }
             else
             {

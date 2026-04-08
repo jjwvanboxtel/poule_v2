@@ -817,6 +817,36 @@ div#map {
   width: 80px;
 }
 
+/* ── Competition home stat cards ─────────────────────────────────────── */
+.stat-card {
+  border-top: 4px solid #ff6d29;
+}
+
+.stat-card .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Flex centering only for stat number cards, not description card */
+.stat-card:not(.text-center) .card-body {
+  display: block;
+}
+
+.stat-icon-wrap {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 109, 41, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.75rem;
+  color: #ff6d29;
+  font-size: 1.5rem;
+}
+
 /* ── Confirmation form card ────────────────────────────────────────── */
 #subscribe_confirmation.card {
   margin-top: 1rem;
