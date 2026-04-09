@@ -174,7 +174,7 @@ class Competitions extends Component
             $competitionSecondPlace = $competition->getSecondPlace(); 
             $competitionThirdPlace = $competition->getThirdPlace(); 
             $competitionDescription = $competition->getDescription();
-            $competitionSubmissionDate = date('d-m-Y', $competition->getFinalSubmissionDate());
+            $competitionSubmissionDate = date('Y-m-d', $competition->getFinalSubmissionDate());
         }
         else if ($edit && $edit instanceof InputException)
         {
@@ -192,7 +192,7 @@ class Competitions extends Component
                 
         $content .= '<tr><td>{LANG_COMPETITION}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'competitionname') || (@$edit && !@$competitionName)) ? ' error' : '') . '" maxlength="70" type="text" name="competitionname"' . (@$competitionName ? ' value="'.@$competitionName.'"' : '') . ' /></td></tr>' . "\n";
         $content .= '<tr><td valign="top">{LANG_COMPETITION_DESCRIPTION}:</td><td><textarea class="editor" ' . (@$edit && !@$competitionDescription ? 'style="background-color: red;" ' : ' ') . 'cols="80" rows="10" name="competitiondescription">' . (@$competitionDescription ? ''.@$competitionDescription.'' : '') . '</textarea></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_COMPETITION_FINAL_SUBMISSION_DATE}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'competitionsubmissiondate') || (@$edit && !@$competitionSubmissionDate)) ? ' error' : '') . '" maxlength="70" type="text" name="competitionsubmissiondate"' . (@$competitionSubmissionDate ? ' value="'.@$competitionSubmissionDate.'"' : '') . ' /> (d-m-Y)</td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION_FINAL_SUBMISSION_DATE}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'competitionsubmissiondate') || (@$edit && !@$competitionSubmissionDate)) ? ' error' : '') . '" type="date" name="competitionsubmissiondate"' . (@$competitionSubmissionDate ? ' value="'.@$competitionSubmissionDate.'"' : '') . ' /></td></tr>' . "\n";
         $content .= '<tr><td>{LANG_COMPETITION_MONEY}:</td><td><select class="form-select" name="competitionmoney">' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_MONEY'); $i++)
         {

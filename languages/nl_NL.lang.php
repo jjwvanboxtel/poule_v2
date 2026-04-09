@@ -272,3 +272,7 @@ LANG_SUBMISSION_EXPIRED = Inleverdatum is verstreken, het is niet meer mogelijk 
 LANG_SUBLEAGUE          = Sub-competitie
 LANG_SUBLEAGUES         = Sub-competities         
 LANG_SUBLEAGUE_HEADER   = Header
+LANG_STATISTICS_GENERATE     = Statistieken genereren
+LANG_STATISTICS_GENERATED    = Statistieken succesvol gegenereerd.
+LANG_STATISTICS_EMPTY        = Er zijn nog geen statistieken gegenereerd. Klik op "Statistieken genereren" om te starten.
+LANG_STATISTICS_NOT_GENERATED = Nog niet gegenereerd
