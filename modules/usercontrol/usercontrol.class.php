@@ -94,9 +94,11 @@ class UserControl extends Component
                   throw new Exception('{ERROR_ITEMNOTEXIST}');
 
                 $user = new User($_GET['userId']);
-                if ($user->getTempPassword() == @$_GET['hash'])
+                if (hash_equals((string)$user->getTempPassword(), (string)@$_GET['hash']))
                 {
-                    $user->setPassword($user->getTempPassword());
+                    $user->setPassword(password_hash($user->getTempPassword(), PASSWORD_ARGON2ID, [
+                        'memory_cost' => 65536, 'time_cost' => 4, 'threads' => 2,
+                    ]));
                     $user->save();
                     $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {LANG_LOGIN_LOST_SUCCES}</div><br />' . "\n");
                 }
@@ -113,7 +115,7 @@ class UserControl extends Component
                 $user = new User($_GET['userId']);
                 if (!$user->getEnabled())
                 {
-                    if ($user->getTempPassword() == @$_GET['hash'])
+                    if (hash_equals((string)$user->getTempPassword(), (string)@$_GET['hash']))
                     {
                         $user->enable();
                         $user->save();
@@ -273,7 +275,7 @@ class UserControl extends Component
 		$body .= '' . App::$_CONF->getValue('LOGIN_LOST_BODY') . ''."\n";
         $body .= '<br /><br />'."\n";
         $body .= App::$_LANG->getValue('LANG_NEW_PASSWORD').': ' . $password . '<br />'."\n";
-        $body .= '<a href="' . App::$_CONF->getValue('DOMAIN') . '?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=accept&amp;userId='.$userId.'&amp;hash='.md5($password).'">'.App::$_LANG->getValue('LANG_ACCEPT_PASSWORD').'</a>'."\n";
+        $body .= '<a href="' . App::$_CONF->getValue('DOMAIN') . '?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=accept&amp;userId='.$userId.'&amp;hash='.$password.'">'.App::$_LANG->getValue('LANG_ACCEPT_PASSWORD').'</a>'."\n";
         
 		if(mail($email, $subject, $body, $header))
           return true;
