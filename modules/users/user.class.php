@@ -132,7 +132,7 @@ class User
                             VALUES ('.(int)$enabled.', 
                                 "'.App::$_DB->escapeString($email).'",
                                 "'.App::$_DB->escapeString($password).'",
-                                "'.bin2hex(random_bytes(32)).'",
+                                "'.hash('sha256', bin2hex(random_bytes(32))).'",
                                 "'.App::$_DB->escapeString($firstName).'",
                                 "'.App::$_DB->escapeString($lastName).'",
                                 "'.App::$_DB->escapeString($phoneNr).'",
@@ -523,12 +523,13 @@ class User
         if(!self::emailExists($email))
           throw new Exception('{ERROR_EMAIL_NOT_EXISTS}');
 
-       $password = bin2hex(random_bytes(32));
-       App::$_DB->doSQL('UPDATE `user` SET
-                            `user_temp_password` = "'.App::$_DB->escapeString($password).'"
-                         WHERE `user_email` = "'.$email.'" LIMIT 1;');
+        $token = bin2hex(random_bytes(32));
+        $hash  = hash('sha256', $token);
+        App::$_DB->doSQL('UPDATE `user` SET
+                             `user_temp_password` = "'.App::$_DB->escapeString($hash).'"
+                          WHERE `user_email` = "'.$email.'" LIMIT 1;');
 
-        return $password;
+        return $token;
     } //setTempPassword
     
     /**
@@ -557,7 +558,7 @@ class User
         // Generate the random password
         for ($i = 0; $i < $length; $i++)
         {
-            $password .= $chars[rand(0, count($chars)-1)];
+            $password .= $chars[random_int(0, count($chars)-1)];
         }
 
         return $password;

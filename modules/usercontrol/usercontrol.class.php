@@ -89,9 +89,10 @@ class UserControl extends Component
                   throw new Exception('{ERROR_ITEMNOTEXIST}');
 
                 $user = new User($_GET['userId']);
-                if (hash_equals((string)$user->getTempPassword(), (string)@$_GET['hash']))
+                $hashParam = isset($_GET['hash']) ? (string)$_GET['hash'] : '';
+                if ($hashParam !== '' && hash_equals((string)$user->getTempPassword(), hash('sha256', $hashParam)))
                 {
-                    $user->setPassword(password_hash($user->getTempPassword(), PASSWORD_ARGON2ID, [
+                    $user->setPassword(password_hash($hashParam, PASSWORD_ARGON2ID, [
                         'memory_cost' => 65536, 'time_cost' => 4, 'threads' => 2,
                     ]));
                     $user->save();
@@ -110,7 +111,8 @@ class UserControl extends Component
                 $user = new User($_GET['userId']);
                 if (!$user->getEnabled())
                 {
-                    if (hash_equals((string)$user->getTempPassword(), (string)@$_GET['hash']))
+                    $hashParam = isset($_GET['hash']) ? (string)$_GET['hash'] : '';
+                    if ($hashParam !== '' && hash_equals((string)$user->getTempPassword(), hash('sha256', $hashParam)))
                     {
                         $user->enable();
                         $user->save();
