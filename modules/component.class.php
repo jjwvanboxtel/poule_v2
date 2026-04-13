@@ -237,14 +237,15 @@ class Component
         $allowedAttributes = [
             'a'   => ['href', 'title', 'target'],
             'img' => ['src', 'alt', 'width', 'height', 'title'],
-            '*'   => ['class', 'align', 'style'],
+            '*'   => ['class', 'align'],
         ];
 
         $doc = new DOMDocument('1.0', 'UTF-8');
         libxml_use_internal_errors(true);
+        // LIBXML_NONET prevents network access during parsing (e.g. external DTD/entity fetches).
         $doc->loadHTML(
             '<?xml encoding="UTF-8"><html><head><meta charset="UTF-8"/></head><body>' . $html . '</body></html>',
-            LIBXML_HTML_NODEFDTD
+            LIBXML_HTML_NODEFDTD | LIBXML_NONET
         );
         libxml_clear_errors();
 
@@ -301,9 +302,11 @@ class Component
                         $attrsToRemove[] = $name;
                         continue;
                     }
-                    // Block javascript: URIs in href/src.
+                    // Enforce an allowlist of safe URI schemes for href/src.
                     if (in_array($name, ['href', 'src'], true)) {
-                        if (preg_match('/^\s*javascript\s*:/i', $attr->nodeValue)) {
+                        $val = trim($attr->nodeValue);
+                        // Allow relative URLs and safe absolute schemes only.
+                        if ($val !== '' && !preg_match('/^(https?:|mailto:|#|\/)/i', $val)) {
                             $attrsToRemove[] = $name;
                         }
                     }
