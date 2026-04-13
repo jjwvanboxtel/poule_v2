@@ -34,6 +34,12 @@ class Upload implements iUpload
      */
     private function fileUpload($file, $map='')
     {
+        // Reject any map value that contains a path-traversal sequence so an
+        // attacker cannot escape the upload root via the sub-directory parameter.
+        if (strpos($map, '..') !== false) {
+            throw new InputException('{ERROR_UPLOAD}', 'file');
+        }
+
         $path = $this->directory.$map;
 
         if (!file_exists($path)) {
@@ -46,7 +52,10 @@ class Upload implements iUpload
         // stored path even if a malicious file passes extension validation.
         // Strip any non-alphanumeric characters from the extension to prevent
         // null-byte, double-extension, or other injection tricks.
-        $rawExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        // NOTE: $file['name'] is never used as the stored filename — only its
+        // extension is extracted here — eliminating the path-traversal risk
+        // described in VULN-013 (CWE-22).
+        $rawExt = strtolower(pathinfo(basename($file['name']), PATHINFO_EXTENSION));
         $ext    = preg_replace('/[^a-z0-9]/', '', $rawExt);
         $safe   = bin2hex(random_bytes(16)) . ($ext !== '' ? '.' . $ext : '');
 
