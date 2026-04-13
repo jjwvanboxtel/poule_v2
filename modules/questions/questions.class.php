@@ -38,6 +38,7 @@ class Questions extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditQuestion();
@@ -67,6 +68,7 @@ class Questions extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditQuestion($question))
                           $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}');
                         else
@@ -99,6 +101,7 @@ class Questions extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditAnwser($question))
                           $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}');
                         else
@@ -320,6 +323,7 @@ class Questions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['QUESTION_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditQuestion
@@ -439,6 +443,7 @@ class Questions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
         $replaceArr['QUESTION_COM_ID'] = $this->componentId;
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditAnwser

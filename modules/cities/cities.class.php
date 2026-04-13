@@ -34,6 +34,7 @@ class Cities extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditCity();
@@ -63,6 +64,7 @@ class Cities extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditCity($city))
                           $this->showCities('{LANG_CITY} {ERROR_EDIT}');
                         else
@@ -181,6 +183,7 @@ class Cities extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['CITY_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditCity

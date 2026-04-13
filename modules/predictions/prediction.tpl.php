@@ -15,6 +15,7 @@
 
 <div id="prediction" class="card card-body">
     <form action="" method="post" enctype="multipart/form-data">
+        {CSRF_TOKEN}
         {GAME_CONTENT}
         {ROUND_CONTENT}
         {QUESTION_CONTENT}

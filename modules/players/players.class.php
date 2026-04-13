@@ -35,6 +35,7 @@ class Players extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditPlayer();
@@ -60,6 +61,7 @@ class Players extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditPlayers();
@@ -89,6 +91,7 @@ class Players extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditPlayer($player))
                           $this->showPlayers('{LANG_PLAYER} {ERROR_EDIT}');
                         else
@@ -226,6 +229,7 @@ class Players extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['PLAYER_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditPlayer
@@ -260,6 +264,7 @@ class Players extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['PLAYER_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditPlayers  

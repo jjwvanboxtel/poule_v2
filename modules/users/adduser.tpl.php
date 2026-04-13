@@ -4,6 +4,7 @@
 
 <div id= "add_user" class="card card-body">
 	<form action="?option=add" method="post">
+		{CSRF_TOKEN}
 		<table class="listAddEdit" cellpadding="0" cellspacing="0">
 			<tr>
 				<td style="width: 145px;">Firstname: </td>

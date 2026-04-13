@@ -34,6 +34,7 @@ class Subleagues extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditSubleague();
@@ -63,6 +64,7 @@ class Subleagues extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditSubleague($subleague))
                           $this->showSubleagues('{LANG_SUBLEAGUE} {ERROR_EDIT}');
                         else
@@ -92,6 +94,7 @@ class Subleagues extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditSubleagueParticipants($subleague))
                           $this->showEditSubleagueParticipants('{LANG_SUBLEAGUE} {LANG_PARTICIPANT} {ERROR_ADD}');
                         else
@@ -293,6 +296,7 @@ class Subleagues extends Component
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
         $replaceArr['SUBLEAGUE_ID'] = @$_GET['id'];
         $replaceArr['SUBLEAGUE_MSG'] = self::buildMsgWrapper($msg);
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
 
@@ -342,6 +346,7 @@ class Subleagues extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['SUBLEAGUE_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditSubleague

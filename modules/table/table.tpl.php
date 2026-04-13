@@ -7,6 +7,7 @@
 
 <div id="table-standings" class="card card-body">
     <form action="" method="post" enctype="multipart/form-data">
+        {CSRF_TOKEN}
         <div class="table-responsive">
             <table class="list" cellpadding="0" cellspacing="0">
                 <tr>

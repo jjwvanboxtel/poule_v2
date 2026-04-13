@@ -35,6 +35,7 @@ class Forms extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditForm();
@@ -64,6 +65,7 @@ class Forms extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditForm($form))
                           $this->showForms('{LANG_FORM} {ERROR_EDIT}');
                         else
@@ -201,6 +203,7 @@ class Forms extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['FORM_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditForm

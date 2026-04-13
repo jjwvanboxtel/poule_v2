@@ -39,6 +39,7 @@ class Scorings extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditScoring($scoring))
                           $this->showScorings('{LANG_SCORING} {ERROR_EDIT}');
                         else
@@ -225,6 +226,7 @@ class Scorings extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['SCORING_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditScoring

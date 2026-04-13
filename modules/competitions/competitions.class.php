@@ -31,6 +31,7 @@ class Competitions extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditCompetition();
@@ -60,6 +61,7 @@ class Competitions extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditCompetition($competition))
                           $this->showCompetitions('{LANG_COMPETITION} {ERROR_EDIT}');
                         else
@@ -231,6 +233,7 @@ class Competitions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['COMPETITION_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditCompetition

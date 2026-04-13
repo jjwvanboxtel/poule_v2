@@ -8,6 +8,7 @@
 
 <div id="subleague_participant_add" class="card card-body">
     <form action="?competition={COMPETITION_ID}&com={SUBLEAGUE_COM_ID}&id={SUBLEAGUE_ID}&option=user_edit" method="post">
+        {CSRF_TOKEN}
         <table class="list" cellpadding="0" cellspacing="0">
             <tr><td colspan="3">&nbsp;</td></tr>
             {CONTENT}

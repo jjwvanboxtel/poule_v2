@@ -8,6 +8,7 @@
 
 <div id="usergroup_add" class="card card-body">
     <form action="" method="post">
+        {CSRF_TOKEN}
         {USERGROUP_NAME}<br /><br />
 
         <table class="list" cellpadding="0" cellspacing="0">

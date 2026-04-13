@@ -60,6 +60,7 @@ class Predictions extends Component
                 {
                     if(isset($_POST['save']) || isset($_POST['subscribe']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditPrediction())
                             $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}', true);
                         else
@@ -77,6 +78,7 @@ class Predictions extends Component
                     }
                     else if (isset($_POST['subscribe_confirmation']))
                     {
+                        self::validateCsrfToken();
                         if (!$this->doSubcribePrediction())
                             $this->showPrediction('{LANG_PREDICTION} {ERROR_EDIT}', true);
                         else
@@ -196,7 +198,7 @@ class Predictions extends Component
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['PREDICTION_EDIT'] = $editLink;
         $replaceArr['PREDICTION_BUTTONS'] = $predictionButtons;
-
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
 
@@ -211,6 +213,7 @@ class Predictions extends Component
         $replaceArr['CONFIRMATION_MESSAGE'] = '{LANG_CONFIRMATION_MESSAGE}';
         $replaceArr['PREDICTION_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
 
