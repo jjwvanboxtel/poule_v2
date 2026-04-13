@@ -1,3 +1,5 @@
+/vendor
+/composer.lock
 /.copilot
 /templates/orange/node_modules
 /templates/orange/package-lock.json
