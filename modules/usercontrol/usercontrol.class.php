@@ -157,11 +157,31 @@ class UserControl extends Component
 
     /**
      * Logs the current user out.
+     *
+     * Fully destroys the session: clears the session data, expires the session
+     * cookie, calls session_destroy(), and regenerates the session ID to prevent
+     * session fixation and hijacking with a captured cookie.
      */
-    public static function logOut()
+    public static function logOut(): void
     {
-        unset($_SESSION['user_id']);
-        unset($_SESSION['logged_in']);
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $cookieParams = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 3600,
+                $cookieParams['path'],
+                $cookieParams['domain'],
+                $cookieParams['secure'],
+                $cookieParams['httponly']
+            );
+        }
+
+        session_destroy();
+        session_start();
+        session_regenerate_id(true);
 
         self::$currentUser = null;
     } // logOut
