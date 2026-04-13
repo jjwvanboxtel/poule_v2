@@ -132,7 +132,7 @@ class User
                             VALUES ('.(int)$enabled.', 
                                 "'.App::$_DB->escapeString($email).'",
                                 "'.App::$_DB->escapeString($password).'",
-                                "'.bin2hex(random_bytes(32)).'",
+                                "'.hash('sha256', bin2hex(random_bytes(32))).'",
                                 "'.App::$_DB->escapeString($firstName).'",
                                 "'.App::$_DB->escapeString($lastName).'",
                                 "'.App::$_DB->escapeString($phoneNr).'",
@@ -523,45 +523,14 @@ class User
         if(!self::emailExists($email))
           throw new Exception('{ERROR_EMAIL_NOT_EXISTS}');
 
-       $password = bin2hex(random_bytes(32));
-       App::$_DB->doSQL('UPDATE `user` SET
-                            `user_temp_password` = "'.App::$_DB->escapeString($password).'"
-                         WHERE `user_email` = "'.$email.'" LIMIT 1;');
+        $token = bin2hex(random_bytes(32));
+        $hash  = hash('sha256', $token);
+        App::$_DB->doSQL('UPDATE `user` SET
+                             `user_temp_password` = "'.App::$_DB->escapeString($hash).'"
+                          WHERE `user_email` = "'.$email.'" LIMIT 1;');
 
-        return $password;
+        return $token;
     } //setTempPassword
-    
-    /**
-     * Generates a randomPassword.
-     *
-     * @param int $length
-     * @return String $password
-     */
-    public static function randomPassword($length=10)
-    {
-        if (!is_Numeric($length))
-        {
-            $length = 10;
-        }
-
-        $password = '';
-
-        // Array with characters for the password
-        $integers  = range('0', '9');
-        $lowercase = range('a', 'z');
-        $uppercase = range('A', 'Z');
-
-        // Merge all arrays to one array with al the characters
-        $chars = array_merge($integers, $lowercase, $uppercase);
-
-        // Generate the random password
-        for ($i = 0; $i < $length; $i++)
-        {
-            $password .= $chars[rand(0, count($chars)-1)];
-        }
-
-        return $password;
-    } // randomPassword
 
 
 } //User
