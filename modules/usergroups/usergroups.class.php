@@ -33,7 +33,7 @@ class UserGroups extends Component
                     try
                     {
                         $this->doEditUserGroup();
-                        $this->showUserGroups('<div id="msg">{LANG_USERGROUP} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -41,7 +41,7 @@ class UserGroups extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showUserGroups('<div>{LANG_USERGROUP} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -62,7 +62,7 @@ class UserGroups extends Component
 
                         $this->doEditUserGroup($userGroup);
                         $userGroup->save();
-                        $this->showUserGroups('<div>{LANG_USERGROUP} {LANG_EDIT_OK}</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -75,7 +75,7 @@ class UserGroups extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUserGroups('<div>{LANG_USERGROUP} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUserGroups('{LANG_USERGROUP} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 
                 break;
@@ -93,7 +93,7 @@ class UserGroups extends Component
                           throw new Exception("{ERROR_ACCESSDENIED}");
 
                         $usergroup->delete();
-                        $this->showUserGroups('<div>{LANG_USERGROUP} {LANG_REMOVE_OK}</div><br />' . "\n");
+                        $this->showUserGroups('{LANG_USERGROUP} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -102,7 +102,7 @@ class UserGroups extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUserGroups('<div>{LANG_USERGROUP} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUserGroups('{LANG_USERGROUP} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 
                 break;
@@ -142,12 +142,13 @@ class UserGroups extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_USERGROUPS}';
-        $replaceArr['USERGROUP_MSG'] = $msg;
+        $replaceArr['USERGROUP_MSG'] = self::buildMsgWrapper($msg);
 
         $replaceArr['ACTIONS'] = '';
         $replaceArr['LINK_ADD'] = '';
         if($this->hasAccess(CRUD_CREATE))
-          $replaceArr['LINK_ADD'] = '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" />  <a href="?com='.$this->componentId.'&amp;option=add" class="button">{LANG_USERGROUP} {LANG_ADD}</a>';
+          $replaceArr['LINK_ADD'] = '<a href="?com='.$this->componentId.'&amp;option=add" class="btn btn-primary mb-2">'
+                                  . '<i class="bi bi-plus-lg me-1"></i>{LANG_USERGROUP} {LANG_ADD}</a>';
         if ($this->hasAccess(CRUD_EDIT) || $this->hasAccess(CRUD_DELETE))
           $replaceArr['ACTIONS'] = '<th style="width: 50px;">{LANG_ACTIONS}</th>';
 
@@ -182,10 +183,10 @@ class UserGroups extends Component
             {
                 case 'group': $groupName = @$_POST['group']; break;
             }
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
 
-        $input = '{LANG_USERGROUP_NAME}: <input maxlength="45" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'group') || (@$edit && !@$groupName) ? 'class="error" ' : '') . ' type="text" name="group"' . (@$groupName ? ' value="'.$groupName.'"' : '') . ' />' . "\n";
+        $input = '{LANG_USERGROUP_NAME}: <input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'group') || (@$edit && !@$groupName)) ? ' error' : '') . '" maxlength="45" type="text" name="group"' . (@$groupName ? ' value="'.$groupName.'"' : '') . ' />' . "\n";
 
         $c = 0;
         $content = '';
@@ -235,10 +236,10 @@ class UserGroups extends Component
             $content .= '<td><img src="templates/{TEMPLATE_NAME}/icons/cog.png" class="icon" /></td>' . "\n";
             $content .= '<td>' . $component->com_id . '</td>' . "\n";
             $content .= '<td>' . $component->com_friendlyname . '</td>' . "\n";
-            $content .= '<td><input class="clear" type="checkbox" name="com_' . $component->com_id . '_read"'.(@$check_read ? ' checked="checked"' : "").(@!$change_read ? ' disabled="disabled"' : "").' /></td>' . "\n";
-            $content .= '<td><input class="clear" type="checkbox" name="com_' . $component->com_id . '_create"'.(@$check_create ? ' checked="checked"' : "").(@!$change_create ? ' disabled="disabled"' : "").' /></td>' . "\n";
-            $content .= '<td><input class="clear"  type="checkbox" name="com_' . $component->com_id . '_edit"'.(@$check_edit ? ' checked="checked"' : "").(@!$change_edit ? ' disabled="disabled"' : "").' /></td>' . "\n";
-            $content .= '<td><input class="clear" type="checkbox" name="com_' . $component->com_id . '_delete"'.(@$check_delete ? ' checked="checked"' : "").(@!$change_delete ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_read"'.(@$check_read ? ' checked="checked"' : "").(@!$change_read ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_create"'.(@$check_create ? ' checked="checked"' : "").(@!$change_create ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_edit"'.(@$check_edit ? ' checked="checked"' : "").(@!$change_edit ? ' disabled="disabled"' : "").' /></td>' . "\n";
+            $content .= '<td><input class="form-check-input" type="checkbox" name="com_' . $component->com_id . '_delete"'.(@$check_delete ? ' checked="checked"' : "").(@!$change_delete ? ' disabled="disabled"' : "").' /></td>' . "\n";
             $content .= '</tr>' . "\n";
             $c++;
         }

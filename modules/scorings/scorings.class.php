@@ -40,9 +40,9 @@ class Scorings extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditScoring($scoring))
-                          $this->showScorings('<div>{LANG_SCORING} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showScorings('{LANG_SCORING} {ERROR_EDIT}');
                         else
-                          $this->showScorings('<div>{LANG_SCORING} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showScorings('{LANG_SCORING} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -55,7 +55,7 @@ class Scorings extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showScorings('<div>{LANG_SCORING} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showScorings('{LANG_SCORING} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -69,8 +69,21 @@ class Scorings extends Component
 
         Scoring::getAllScorings(@$_GET['competition']);
 
+        // Store scorings for both views
+        $scorings = array();
+        while (($scoring = Scoring::nextScoring()) != null)
+        {
+            $scorings[] = $scoring;
+        }
+
         $c = 0;
-        $content  = '<tr>'."\n";
+        $content = '';
+        
+        // Desktop table view
+        $content .= '<div class="d-none d-md-block">'."\n";
+        $content .= '<div class="table-responsive">'."\n";
+        $content .= '<table class="list" cellpadding="0" cellspacing="0">'."\n";
+        $content .= '<tr>'."\n";
         $content .= '<th style="width: 40px;">{LANG_ID}</th>'."\n";
         $content .= '<th>{LANG_SCORING_FULLNAME}</th>'."\n";
         if ($this->hasAccess(CRUD_EDIT))
@@ -82,7 +95,8 @@ class Scorings extends Component
             $content .= '<th style="width: 75px;">{LANG_ACTIONS}</th>'."\n";
         }
         $content .= '</tr>'."\n";
-        while (($scoring = Scoring::nextScoring()) != null)
+        
+        foreach ($scorings as $scoring)
         {
             $currentClass = (($c % 2) ? 'odd' : 'even');
             $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
@@ -104,11 +118,58 @@ class Scorings extends Component
             $c++;
         }
 
-        $content .= '<tr><td colspan="4">{LANG_COUNT}: ' . $c . '</td></tr>' . "\n";
+        $content .= '<tr><td colspan="6">{LANG_COUNT}: ' . $c . '</td></tr>' . "\n";
+        $content .= '</table>'."\n";
+        $content .= '</div>'."\n";
+        $content .= '</div>'."\n";
+        
+        // Mobile card view
+        $content .= '<div class="d-md-none">'."\n";
+        $c = 0;
+        foreach ($scorings as $scoring)
+        {
+            $content .= '<div class="card mb-3">'."\n";
+            $content .= '<div class="card-body">'."\n";
+            $content .= '<div class="row mb-2">'."\n";
+            $content .= '<div class="col-6"><small class="text-muted">{LANG_ID}</small><br/><strong>'.$scoring->scoring_id.'</strong></div>'."\n";
+            if ($this->hasAccess(CRUD_EDIT))
+            {
+                $enabledIcon = $scoring->Scoring_Competition_enabled ? '<img src="templates/{TEMPLATE_NAME}/icons/tick.png" alt="{LANG_ENABLED}" width="16" />' : '<img src="templates/{TEMPLATE_NAME}/icons/cross.png" alt="{LANG_DISABLED}" width="16" />';
+                $content .= '<div class="col-6"><small class="text-muted">{LANG_ENABLED}</small><br/>'.$enabledIcon.'</div>'."\n";
+            }
+            else
+            {
+                $content .= '<div class="col-6"><small class="text-muted">{LANG_SCORING_POINTS}</small><br/><strong>'.$scoring->Scoring_Competition_points.'</strong></div>'."\n";
+            }
+            $content .= '</div>'."\n";
+            $content .= '<div class="row mb-2">'."\n";
+            $content .= '<div class="col-12"><small class="text-muted">{LANG_SCORING_FULLNAME}</small><br/><strong>'.$scoring->scoring_name.'</strong></div>'."\n";
+            $content .= '</div>'."\n";
+            $content .= '<div class="row mb-2">'."\n";
+            $content .= '<div class="col-6"><small class="text-muted">{LANG_SCORING_POINTS}</small><br/>'.$scoring->Scoring_Competition_points.'</div>'."\n";
+            if ($this->hasAccess(CRUD_EDIT))
+            {
+                $content .= '<div class="col-6"><small class="text-muted">{LANG_SECTION}</small><br/>'.$scoring->section_name.'</div>'."\n";
+            }
+            $content .= '</div>'."\n";
+            
+            if ($this->hasAccess(CRUD_EDIT))
+            {
+                $content .= '<div class="mt-3">'."\n";
+                $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$scoring->scoring_id .'" class="btn btn-sm btn-outline-secondary"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" width="16" alt="{LANG_SCORING} {LANG_EDIT}" /> {LANG_EDIT}</a>' . "\n";
+                $content .= '</div>'."\n";
+            }
+            
+            $content .= '</div>'."\n";
+            $content .= '</div>'."\n";
+            $c++;
+        }
+        $content .= '<div class="text-muted mt-2">{LANG_COUNT}: ' . $c . '</div>'."\n";
+        $content .= '</div>'."\n";
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_SCORINGS}';
-        $replaceArr['SCORING_MSG'] = $msg;
+        $replaceArr['SCORING_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
@@ -148,11 +209,11 @@ class Scorings extends Component
             $scoringPoints = @$_POST['scoringpionts'];
             $sectionName = $scoring->getSection()->getName();
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_SCORING_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'scoringname') || (@$edit && !@$scoringName) ? 'class="error" ' : ' ') . 'type="text" name="scoringname"' . (@$scoringName ? ' value="'.@$scoringName.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_ENABLED}:</td><td><input type="checkbox" name="scoringenabled" value="1" ' . (@$scoringEnabled == 1 ? ' checked' : '') . '></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_SCORING_POINTS}:</td><td><select name="scoringpoints">' . "\n";
+        $content .= '<tr><td>{LANG_SCORING_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'scoringname') || (@$edit && !@$scoringName)) ? ' error' : '') . '" maxlength="70" type="text" name="scoringname"' . (@$scoringName ? ' value="'.@$scoringName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_ENABLED}:</td><td><input class="form-check-input" type="checkbox" name="scoringenabled" value="1" ' . (@$scoringEnabled == 1 ? ' checked' : '') . '></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_SCORING_POINTS}:</td><td><select class="form-select" name="scoringpoints">' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_SCORING'); $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($scoringPoints == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";

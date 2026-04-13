@@ -13,7 +13,7 @@ class Competition
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `competition`
                                           WHERE `competition_id` = ' . $this->id . ' LIMIT 1;');
@@ -108,9 +108,9 @@ class Competition
         $curImage = $this->result->competition_header;
 
         $delete = App::$_UPL->deleteFile($curImage, $this->result->competition_id.'/'.self::$header_dir);
-        App::$_UPL->loadUp($file, $this->result->competition_id.'/'.self::$header_dir);
-        
-        $this->result->competition_header = $file['name'];
+        $safe = App::$_UPL->loadUp($file, $this->result->competition_id.'/'.self::$header_dir);
+
+        $this->result->competition_header = $safe;
 
         return $delete;
     }
@@ -184,11 +184,14 @@ class Competition
 
     public static function add($name, $description, $header, $submission_date, $money, $first_place, $second_place, $third_place)
     {
+        // Insert with an empty header placeholder first so we have the
+        // competition ID available for the upload path, then update the
+        // header field with the safe (randomised) filename after upload.
         App::$_DB->doSQL('INSERT INTO `competition` (competition_name, competition_description, competition_header, competition_final_submission_date, competition_money, competition_first_place, competition_second_place, competition_third_place)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
                             "'.addslashes($description).'",
-                            "'.App::$_DB->escapeString($header['name']).'",
+                            "",
                             '.$submission_date.',
                             '.App::$_DB->escapeString($money).',
                             '.App::$_DB->escapeString($first_place).',
@@ -198,7 +201,9 @@ class Competition
         
         $competitionId = App::$_DB->getLastId();
 
-        App::$_UPL->loadUp($header, $competitionId.'/'.self::$header_dir);
+        $safe = App::$_UPL->loadUp($header, $competitionId.'/'.self::$header_dir);
+
+        App::$_DB->doSQL('UPDATE `competition` SET `competition_header` = "'.App::$_DB->escapeString($safe).'" WHERE `competition_id` = '.intval($competitionId).' LIMIT 1;');
         
         App::openClass('Participant', 'modules/users');
         User::getAllUsers(3);
@@ -240,7 +245,7 @@ class Competition
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `competition`
-                                    WHERE `competition_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `competition_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

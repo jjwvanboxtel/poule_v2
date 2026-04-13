@@ -34,7 +34,7 @@ class Competitions extends Component
                     try
                     {
                         $this->doEditCompetition();
-                        $this->showCompetitions('<div id="msg">{LANG_COMPETITION} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showCompetitions('{LANG_COMPETITION} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -42,7 +42,7 @@ class Competitions extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showCompetitions('{LANG_COMPETITION} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -61,9 +61,9 @@ class Competitions extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditCompetition($competition))
-                          $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showCompetitions('{LANG_COMPETITION} {ERROR_EDIT}');
                         else
-                          $this->showCompetitions('<div>{LANG_COMPETITION} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showCompetitions('{LANG_COMPETITION} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -76,7 +76,7 @@ class Competitions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCompetitions('{LANG_COMPETITION} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -94,9 +94,9 @@ class Competitions extends Component
                             unset($_SESSION['competition']);
                         }
                         if (!$competition->delete())
-                          $this->showCompetitions('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_COMPETITION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCompetitions('{ERROR_OLD_FILE_REMOVE}<br />{LANG_COMPETITION} {LANG_REMOVE_OK}');
                         else
-                          $this->showCompetitions('<div>{LANG_COMPETITION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showCompetitions('{LANG_COMPETITION} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -105,7 +105,7 @@ class Competitions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showCompetitions('<div>{LANG_COMPETITION} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showCompetitions('{LANG_COMPETITION} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -139,10 +139,11 @@ class Competitions extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_COMPETITIONS}';
-        $replaceArr['COMPETITION_MSG'] = $msg;
+        $replaceArr['COMPETITION_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
-        $replaceArr['COMPETITION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_COMPETITION} {LANG_ADD}" class="actions_top" /> <a href="?com='.$this->componentId.'&amp;option=add" class="button">{LANG_COMPETITION} {LANG_ADD}</a>'. "\n" : '');
+        $replaceArr['COMPETITION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<a href="?com='.$this->componentId.'&amp;option=add" class="btn btn-primary mb-2">'
+                                . '<i class="bi bi-plus-lg me-1"></i>{LANG_COMPETITION} {LANG_ADD}</a>' : '');
         $tpl->replace($replaceArr);
         echo $tpl;
 
@@ -173,7 +174,7 @@ class Competitions extends Component
             $competitionSecondPlace = $competition->getSecondPlace(); 
             $competitionThirdPlace = $competition->getThirdPlace(); 
             $competitionDescription = $competition->getDescription();
-            $competitionSubmissionDate = date('d-m-Y', $competition->getFinalSubmissionDate());
+            $competitionSubmissionDate = date('Y-m-d', $competition->getFinalSubmissionDate());
         }
         else if ($edit && $edit instanceof InputException)
         {
@@ -186,31 +187,31 @@ class Competitions extends Component
             $competitionDescription = @$_POST['competitiondescription'];
             $competitionSubmissionDate = @$_POST['competitionsubmissiondate'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
                 
-        $content .= '<tr><td>{LANG_COMPETITION}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'competitionname') || (@$edit && !@$competitionName) ? 'class="error" ' : ' ') . 'type="text" name="competitionname"' . (@$competitionName ? ' value="'.@$competitionName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'competitionname') || (@$edit && !@$competitionName)) ? ' error' : '') . '" maxlength="70" type="text" name="competitionname"' . (@$competitionName ? ' value="'.@$competitionName.'"' : '') . ' /></td></tr>' . "\n";
         $content .= '<tr><td valign="top">{LANG_COMPETITION_DESCRIPTION}:</td><td><textarea class="editor" ' . (@$edit && !@$competitionDescription ? 'style="background-color: red;" ' : ' ') . 'cols="80" rows="10" name="competitiondescription">' . (@$competitionDescription ? ''.@$competitionDescription.'' : '') . '</textarea></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_COMPETITION_FINAL_SUBMISSION_DATE}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'competitionsubmissiondate') || (@$edit && !@$competitionSubmissionDate) ? 'class="error" ' : ' ') . 'type="text" name="competitionsubmissiondate"' . (@$competitionSubmissionDate ? ' value="'.@$competitionSubmissionDate.'"' : '') . ' /> (d-m-Y)</td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_COMPETITION_MONEY}:</td><td><select name="competitionmoney">' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION_FINAL_SUBMISSION_DATE}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'competitionsubmissiondate') || (@$edit && !@$competitionSubmissionDate)) ? ' error' : '') . '" type="date" name="competitionsubmissiondate"' . (@$competitionSubmissionDate ? ' value="'.@$competitionSubmissionDate.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION_MONEY}:</td><td><select class="form-select" name="competitionmoney">' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_MONEY'); $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($competitionMoney == $i) ? ' selected' : '') . '>' . $i . ' euro</option>' . "\n";
         }
         $content .= '</select></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_COMPETITION_FIRST_PLACE}:</td><td><select name="competitionfirstplace">' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION_FIRST_PLACE}:</td><td><select class="form-select" name="competitionfirstplace">' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_PLACE'); $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($competitionFirstPlace == $i) ? ' selected' : '') . '>' . $i . '%</option>' . "\n";
         }
         $content .= '</select></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_COMPETITION_SECOND_PLACE}:</td><td><select name="competitionsecondplace">' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION_SECOND_PLACE}:</td><td><select class="form-select" name="competitionsecondplace">' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_PLACE'); $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($competitionSecondPlace == $i) ? ' selected' : '') . '>' . $i . '%</option>' . "\n";
         }
         $content .= '</select></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_COMPETITION_THIRD_PLACE}:</td><td><select name="competitionthirdplace">' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION_THIRD_PLACE}:</td><td><select class="form-select" name="competitionthirdplace">' . "\n";
         for ($i=0; $i<=App::$_CONF->getValue('MAX_SELECTION_PLACE'); $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($competitionThirdPlace == $i) ? ' selected' : '') . '>' . $i . '%</option>' . "\n";
@@ -224,7 +225,7 @@ class Competitions extends Component
             $content .= '<tr><td>&nbsp;</td><td><img src="'.UPLOAD_DIR.Competition::getHeaderDir(@$_GET['id']).$competitionImage.'" alt="'.$competitionImage.'" style="width: 200px;" /><br />{LANG_IMG_DESC}</td></tr>';
             $_FILES['file']['name'] = $competitionImage;
         } 
-        $content .= '<tr><td>{LANG_COMPETITION_HEADER}:</td><td><input ' . ((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file') ? 'class="error" ' : ' ') . 'type="file" name="file" id="file" style="width: 300px;" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_COMPETITION_HEADER}:</td><td><input class="form-control' . (((@$edit && !@$_FILES['file']['name']) || ($edit instanceof InputException && $edit->getErrorField() == 'file')) ? ' error' : '') . '" type="file" name="file" id="file" /></td></tr>' . "\n";
          
         $replaceArr['COMPETITION_TITLE'] = "{LANG_COMPETITION} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;

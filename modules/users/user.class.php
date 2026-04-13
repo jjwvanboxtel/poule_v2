@@ -21,7 +21,7 @@ class User
     {
         App::openClass('Participant', 'modules/users');
 
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `user`
                                           WHERE `user_id` = ' . $this->id . ' LIMIT 1;');
@@ -47,9 +47,9 @@ class User
                             `user_lastname` = "'.App::$_DB->escapeString($this->result->user_lastname).'",
                             `user_password` = "'.App::$_DB->escapeString($this->result->user_password).'",
                             `user_phonenr` = "'.App::$_DB->escapeString($this->result->user_phonenr).'",
-                            `user_lastlogin` = '.App::$_DB->escapeString($this->result->user_lastlogin).',
-                            `user_logincount` = '.App::$_DB->escapeString($this->result->user_logincount).',
-                            `UserGroup_group_id` = '.App::$_DB->escapeString($this->result->UserGroup_group_id).'
+                            `user_lastlogin` = '.(int)$this->result->user_lastlogin.',
+                            `user_logincount` = '.(int)$this->result->user_logincount.',
+                            `UserGroup_group_id` = '.(int)$this->result->UserGroup_group_id.'
                           WHERE `user_id` = ' . $this->id . ' LIMIT 1;');
     } //save
 
@@ -90,7 +90,7 @@ class User
     {
         $query = '';
         if ($usergroup)
-          $query = ' WHERE `UserGroup_group_id` = ' . App::$_DB->escapeString($usergroup);
+          $query = ' WHERE `UserGroup_group_id` = ' . (int)$usergroup;
 
         self::$resultList = App::$_DB->doSQL('SELECT `user` . * , `usergroup`.`group_name`
                                               FROM `user`
@@ -129,7 +129,7 @@ class User
 
         App::$_DB->doSQL('INSERT INTO `user` (user_enabled, user_email, user_password, user_temp_password, user_firstname, user_lastname,
                                                 user_phonenr, user_lastlogin, user_logincount, UserGroup_group_id)
-                            VALUES ('.$enabled.', 
+                            VALUES ('.(int)$enabled.', 
                                 "'.App::$_DB->escapeString($email).'",
                                 "'.App::$_DB->escapeString($password).'",
                                 "'.bin2hex(random_bytes(32)).'",
@@ -138,7 +138,7 @@ class User
                                 "'.App::$_DB->escapeString($phoneNr).'",
                                 "0",
                                 "0",
-                                "'.App::$_DB->escapeString($userGroup).'"
+                                '.(int)$userGroup.'
                             )');
         return App::$_DB->getLastId();
     } //add
@@ -153,7 +153,7 @@ class User
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `user`
-                                    WHERE `user_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `user_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     } //exists
@@ -165,7 +165,7 @@ class User
     {
          $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `participant`
-                                    WHERE `User_user_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `User_user_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     } //isParticipant
@@ -305,7 +305,7 @@ class User
     public static function emailExists($email, $id=-1)
     {
         if ($id >= 0)
-          $sql = ' AND NOT `user_id` = ' . $id;
+          $sql = ' AND NOT `user_id` = ' . (int)$id;
        
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `user`
@@ -484,6 +484,7 @@ class User
                 if ($row->user_enabled != 1)
                   throw new Exception('{LANG_ACCOUNT_DISABLED}');
 
+                session_regenerate_id(true);
                 $_SESSION['user_id'] = $row->user_id;
                 $_SESSION['logged_in'] = true;
 

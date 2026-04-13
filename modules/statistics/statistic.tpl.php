@@ -4,8 +4,8 @@
     <h2>{COM_NAME}</h2>
 </div>
 
-<small>{LAST_UPDATED}</small>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" integrity="sha256-1G2Xof0CLF+yn6L0Xry8MiAtc67r8HbOX3JI9UmPx9c=" crossorigin="anonymous"></script>
 
-<br /><br />
-
-{CONTENT}
+<div id="statistic" class="card card-body">
+    {CONTENT}
+</div>

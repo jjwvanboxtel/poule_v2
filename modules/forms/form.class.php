@@ -13,7 +13,7 @@ class Form
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `form`
                                           WHERE `form_id` = ' . $this->id . ' LIMIT 1;');
@@ -53,9 +53,9 @@ class Form
         $curFile = $this->result->form_file;
 
         $delete = App::$_UPL->deleteFile($curFile, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        
-        $this->result->form_file = $file['name'];
+        $safe = App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
+
+        $this->result->form_file = $safe;
 
         return $delete;
     }
@@ -75,7 +75,7 @@ class Form
     public static function deleteAllByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `form`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -89,19 +89,19 @@ class Form
     public static function getAllForms($competitionId)
     {
        self::$resultList = App::$_DB->doSQL('SELECT * FROM `form`
-                                             WHERE `Competition_competition_id` = '.$competitionId.'
+                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
                                              ORDER BY `form_name` ASC');
     }
 
     public static function add($name, $file, $competitionId)
     {
-        App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
+        $safe = App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
         
         App::$_DB->doSQL('INSERT INTO `form` (form_name, form_file, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
-                            "'.App::$_DB->escapeString($file['name']).'",
-                            '.$competitionId.')
+                            "'.App::$_DB->escapeString($safe).'",
+                            '.(int)$competitionId.')
                           ');
     }
 
@@ -121,7 +121,7 @@ class Form
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `form`
-                                    WHERE `form_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `form_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

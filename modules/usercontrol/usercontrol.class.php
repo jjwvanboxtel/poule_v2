@@ -3,11 +3,6 @@ if (!defined('VALID_ACCESS')) die();
 
 /**
  * Is the class for generating the html of the user pages.
- *
- * @package   pizzaproject
- * @author    MI3TIa
- * @copyright 03-12-2008
- * @version   0.1
  */
 class UserControl extends Component
 {
@@ -23,7 +18,7 @@ class UserControl extends Component
         switch(@$_GET['option'])
         {
             case 'confirm':
-                if(@$_GET['com'] != parent::getComponentId('OrderProcedure'))
+                if(@$_GET['com'] != parent::getComponentId('UserControl'))
                   throw new Exception(@$_GET['option'] . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
                 break;
             default:
@@ -37,11 +32,11 @@ class UserControl extends Component
                         if(self::$currentUser instanceof User)
                           $this->showLoginSucces();
                         else
-                          $this->showLoginScreen('<div id="msg">{LANG_LOGIN} {ERROR_LOGIN_FAILED}</div><br />' . "\n");
+                          $this->showLoginScreen('<div id="msg">{LANG_LOGIN} {ERROR_LOGIN_FAILED}</div>' . "\n");
                     }
                     catch(Exception $ex)
                     {
-                        $this->showLoginScreen('<div id="msg">{LANG_LOGIN}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showLoginScreen('<div id="msg">{LANG_LOGIN}: ' . $ex->getMessage() . '</div>' . "\n");
                     }
 
                 }
@@ -67,10 +62,10 @@ class UserControl extends Component
                         $userId = User::getUserId($_POST['email']);
                         $password = User::setTempPassword($_POST['email']);
                         
-                        if ($this->sendTempPassword($userId, $_POST['email'], $password))
-                          $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {LANG_TEMP_PASSWORD}</div><br />' . "\n");
+                    if ($this->sendTempPassword($userId, $_POST['email'], $password))
+                          $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {LANG_TEMP_PASSWORD}</div>' . "\n");
                         else
-                          $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {ERROR_TEMP_PASSWORD}</div><br />' . "\n");
+                          $this->showLoginLostScreen('<div id="msg">{LANG_LOGIN_LOST}: {ERROR_TEMP_PASSWORD}</div>' . "\n");
                     }
                     else
                     {
@@ -79,7 +74,7 @@ class UserControl extends Component
                 }
                 catch(Exception $ex)
                 {
-                    $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showLoginLostScreen('<div id="msg">{LANG_LOGIN_LOST}: ' . $ex->getMessage() . '</div>' . "\n");
                 }
                 break;
             case 'logout':
@@ -100,10 +95,10 @@ class UserControl extends Component
                         'memory_cost' => 65536, 'time_cost' => 4, 'threads' => 2,
                     ]));
                     $user->save();
-                    $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {LANG_LOGIN_LOST_SUCCES}</div><br />' . "\n");
+                    $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {LANG_LOGIN_LOST_SUCCES}</div>' . "\n");
                 }
                 else
-                    $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {LANG_LOGIN_LOST_HASH_ERROR}</div><br />' . "\n");
+                    $this->showLoginScreen('<div id="msg">{LANG_LOGIN_LOST}: {LANG_LOGIN_LOST_HASH_ERROR}</div>' . "\n");
                 break;
             case 'activate':
                 if (!$this->hasAccess(CRUD_EDIT))
@@ -119,14 +114,14 @@ class UserControl extends Component
                     {
                         $user->enable();
                         $user->save();
-                        $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_SUCCES}</div><br />' . "\n");
+                        $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_SUCCES}</div>' . "\n");
                     }
                     else
-                        $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_HASH_ERROR}</div><br />' . "\n");
+                        $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_HASH_ERROR}</div>' . "\n");
                 }
                 else
                 {
-                    $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_ALREADY_ENABLED}</div><br />' . "\n");
+                    $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_ALREADY_ENABLED}</div>' . "\n");
                 }
                 break;
             //throw new Exception(@$_GET['option'] . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
@@ -182,7 +177,7 @@ class UserControl extends Component
         $tpl = new Template('loginscreen', strtolower(get_class()), 'modules');
 
         $replaceArr = array();
-        $replaceArr['LOGIN_MSG'] = $msg;
+        $replaceArr['LOGIN_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
         $replaceArr['LOGIN_ACTION'] = '?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=login';
         $replaceArr['LOGIN_LOST'] = '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=login_lost">{LANG_LOGIN_LOST}</a>';
         $replaceArr['NEW_CUSTOMER'] = '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=newparticipant">{LANG_PARTICIPANT_NEW}</a>';
@@ -196,7 +191,7 @@ class UserControl extends Component
         $tpl = new Template('confirmation', strtolower(get_class()), 'modules');
 
         $replaceArr = array();
-        $replaceArr['LOGIN_MSG'] = $msg;
+        $replaceArr['LOGIN_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
         $tpl->replace($replaceArr);
 
         echo $tpl;
@@ -256,10 +251,17 @@ class UserControl extends Component
 
     } //showRegisterScreen
 
-    private function showLoginLostScreen()
+    private function showLoginLostScreen($msg='')
     {
-        echo new Template('login_lost', strtolower(get_class()), 'modules');
-    } //showRegisterScreen
+        $tpl = new Template('login_lost', strtolower(get_class()), 'modules');
+        
+        $replaceArr = array();
+        $replaceArr['LOGIN_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
+        $replaceArr['USER_COM_ID'] = $_GET['com'];
+        $tpl->replace($replaceArr);
+
+         echo $tpl;
+    } //showLoginLostScreen
 
     private function sendTempPassword($userId, $email, $password)
     {

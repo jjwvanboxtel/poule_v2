@@ -15,7 +15,7 @@ class Subleague
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `subleague`
                                           WHERE `subleague_id` = ' . $this->id . ' LIMIT 1;');
@@ -120,12 +120,12 @@ class Subleague
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
                             "" './*App::$_DB->escapeString($header['name']).*/',
-                            '.$competitionId.')
+                            '.(int)$competitionId.')
                           ');
         
         $subleagueId = App::$_DB->getLastId();
 
-        //App::$_UPL->loadUp($header, $competitionId.'/'.self::$header_dir.'/'.$subleagueId.'/');
+        //App::$_UPL->loadUp($header, $competitionId.'/'.self::$header_dir.'/'.(int)$subleagueId.'/');
                 
         return $subleagueId;
     }
@@ -135,7 +135,7 @@ class Subleague
         App::$_DB->doSQL('INSERT INTO `participant_subleague` (Subleague_subleague_id, Participant_User_user_id)
                       VALUES (
                         '.$this->getId().',
-                        '.$participantId.')
+                        '.(int)$participantId.')
                       ');
     }
 
@@ -143,7 +143,7 @@ class Subleague
     {
         App::$_DB->doSQL('DELETE FROM `participant_subleague` 
                            WHERE `Subleague_subleague_id`='.$this->getId().' 
-                           AND `Participant_User_user_id`='.$participantId.'
+                           AND `Participant_User_user_id`='.(int)$participantId.'
                       ');
     }
     
@@ -163,32 +163,32 @@ class Subleague
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `subleague`
-                                    WHERE `subleague_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `subleague_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 
     public static function deleteAllByUser($userId)
     {
-        App::$_DB->doSQL('DELETE FROM `participant_subleague` WHERE `Participant_User_user_id` = ' . $userId . '');        
+        App::$_DB->doSQL('DELETE FROM `participant_subleague` WHERE `Participant_User_user_id` = ' . (int)$userId . '');        
     }
     
     public static function deleteAllByCompetition($competitionId)
     {
-        $resultList = App::$_DB->doSQL('SELECT * FROM `subleague` WHERE `Competition_competition_id` = ' . $competitionId);                                  
+        $resultList = App::$_DB->doSQL('SELECT * FROM `subleague` WHERE `Competition_competition_id` = ' . (int)$competitionId);                                  
         while (($result = App::$_DB->getRecord($resultList)) != null)
         {
             App::$_DB->doSQL('DELETE FROM `participant_subleague` WHERE `Subleague_subleague_id` = ' . $result->subleague_id . '');            
         }
-        App::$_DB->doSQL('DELETE FROM `subleague` WHERE `Competition_competition_id` = ' . $competitionId . '');                    
+        App::$_DB->doSQL('DELETE FROM `subleague` WHERE `Competition_competition_id` = ' . (int)$competitionId . '');                    
     }
     
     public static function participantExists($id, $participantId)
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `participant_subleague`
-                                    WHERE `Subleague_subleague_id` = ' . App::$_DB->escapeString($id) . '
-                                    AND `Participant_User_user_id` = '. App::$_DB->escapeString($participantId));
+                                    WHERE `Subleague_subleague_id` = ' . (int)$id . '
+                                    AND `Participant_User_user_id` = '. (int)$participantId);
 
         return (boolean)App::$_DB->getRecord($record)->total;   
     }

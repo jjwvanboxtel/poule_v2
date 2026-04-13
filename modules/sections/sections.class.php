@@ -39,9 +39,9 @@ class Sections extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditSection($section))
-                          $this->showSections('<div>{LANG_SECTION} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showSections('{LANG_SECTION} {ERROR_EDIT}');
                         else
-                          $this->showSections('<div>{LANG_SECTION} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showSections('{LANG_SECTION} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -54,7 +54,7 @@ class Sections extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showSections('<div>{LANG_SECTION} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showSections('{LANG_SECTION} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -88,7 +88,7 @@ class Sections extends Component
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_SECTIONS}';
-        $replaceArr['SECTION_MSG'] = $msg;
+        $replaceArr['SECTION_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
@@ -124,10 +124,10 @@ class Sections extends Component
             $sectionName = @$_POST['sectionname'];
             $sectionEnabled = @$_POST['sectionenabled'];
                         
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td>{LANG_SECTION_FULLNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'sectionname') || (@$edit && !@$sectionName) ? 'class="error" ' : ' ') . 'type="text" name="sectionname"' . (@$sectionName ? ' value="'.@$sectionName.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_ENABLED}:</td><td><input type="checkbox" name="sectionenabled" value="1" ' . (@$sectionEnabled == 1 ? ' checked' : '') . '></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_SECTION_FULLNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'sectionname') || (@$edit && !@$sectionName)) ? ' error' : '') . '" maxlength="70" type="text" name="sectionname"' . (@$sectionName ? ' value="'.@$sectionName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_ENABLED}:</td><td><input class="form-check-input" type="checkbox" name="sectionenabled" value="1" ' . (@$sectionEnabled == 1 ? ' checked' : '') . '></td></tr>' . "\n";
          
         $replaceArr['SECTION_TITLE'] = "{LANG_SECTION} {LANG_EDIT}";
         $replaceArr['CONTENT'] = $content;
@@ -151,9 +151,10 @@ class Sections extends Component
             if (!@$_POST[$field])
               throw new InputException('{ERROR_EMPTY_FIELD}', $field);
         }
-          
+
         $section->setName(@$_POST['sectionname']);
-        $section->setEnabled(@$_GET['competition'], @$_POST['sectionenabled']);
+        $enabled = $_POST['sectionenabled'] ? 1 : 0;
+        $section->setEnabled(@$_GET['competition'], $enabled);
         $section->save();
         
         return true;

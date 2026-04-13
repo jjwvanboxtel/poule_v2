@@ -21,7 +21,7 @@ class Question
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `question`
                                           WHERE `question_id` = ' . $this->id . ' LIMIT 1;');
@@ -162,7 +162,7 @@ class Question
         }
     
         App::$_DB->doSQL('DELETE FROM `question`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -179,7 +179,7 @@ class Question
     {
         $query = '';
         if ($competitionId)
-            $query = 'WHERE `Competition_competition_id` = ' . $competitionId;
+            $query = 'WHERE `Competition_competition_id` = ' . (int)$competitionId;
 
        self::$resultList = App::$_DB->doSQL('SELECT * 
                                              FROM `question`
@@ -188,13 +188,20 @@ class Question
 
     public static function add($competitionId, $question_anwser_count, $question, $type)
     {
+        // Generate comma-separated empty values based on answer count
+        $question_anwser = '';
+        for ($i=0; $i<$question_anwser_count; $i++)
+        {
+            $question_anwser .= 'empty' . ($i<($question_anwser_count-1) ? ',' : '');
+        }
+        
         App::$_DB->doSQL('INSERT INTO `question` (question_question, question_type, question_anwser_count, question_anwser, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($question).'",
                             "'.App::$_DB->escapeString($type).'",
                             '.$question_anwser_count.',
-                            "empty",
-                            '.$competitionId.')
+                            "'.App::$_DB->escapeString($question_anwser).'",
+                            '.(int)$competitionId.')
                           ');
         
         $questionId = App::$_DB->getLastId();
@@ -236,7 +243,7 @@ class Question
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `question`
-                                    WHERE `question_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `question_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

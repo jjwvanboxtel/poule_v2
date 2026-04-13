@@ -9,6 +9,38 @@
  */
 class Menu
 {
+    /** Maps component names to unique Bootstrap Icons classes. */
+    private static array $icons = [
+        // Top-level
+        'UserControl'  => 'bi-box-arrow-in-right',
+        'Users'        => 'bi-people-fill',
+        'UserGroups'   => 'bi-shield-check',
+        'Countries'    => 'bi-globe2',
+        'Cities'       => 'bi-buildings',
+        'Competitions' => 'bi-trophy-fill',
+        // Competition sub-menu
+        'Poules'       => 'bi-diagram-3',
+        'Games'        => 'bi-play-circle-fill',
+        'Questions'    => 'bi-patch-question-fill',
+        'Rounds'       => 'bi-arrow-repeat',
+        'Referees'     => 'bi-person-badge-fill',
+        'Players'      => 'bi-person-fill',
+        'Predictions'  => 'bi-lightning-fill',
+        'Sections'     => 'bi-puzzle-fill',
+        'Scorings'     => 'bi-award-fill',
+        'Table'        => 'bi-table',
+        'Participants' => 'bi-person-plus-fill',
+        'Forms'        => 'bi-file-earmark-text-fill',
+        'Statistics'   => 'bi-bar-chart-fill',
+        'Subleagues'   => 'bi-diagram-2-fill',
+    ];
+
+    private static function getIcon(string $comName): string
+    {
+        $cls = self::$icons[$comName] ?? 'bi-circle';
+        return '<i class="bi ' . $cls . ' nav-icon"></i>';
+    }
+
     public function __construct()
     {
         App::openClass('Competition', 'modules/competitions');
@@ -27,14 +59,7 @@ class Menu
         if ($usergroup->getId() != ADMIN && $parent == 0 &&  $mode != 'login')
             return '';
         
-        //if ($mode == 'menu' && $parent == null) 
-          //$header = '<li '.(!isset($_GET['com']) ? 'class="current_page_item"' : '').'><a href=".">'.App::$_LANG->getValue('LANG_HOME').'</a></li>'."\n";
-        //else
-        
-        $header = '';
-
-        $content = '';
-        $footer = '';
+        $items = '';
         $components = Component::getAllComponents(($parent != null ? $parent : 0));
         while (($com = App::$_DB->getRecord($components)) != null)
         {
@@ -45,9 +70,9 @@ class Menu
                     if ($com->com_in_menu == true)
                     {
                         if ($parent == Component::getComponentId('Competitions') && @$_GET['competition'])
-                            $header .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
+                            $items .= '<li><a href="?competition='.$_GET['competition'].'&amp;com='.$com->com_id.'">'.self::getIcon($com->com_name).'<span class="nav-text">'.htmlspecialchars($com->com_friendlyname, ENT_QUOTES, 'UTF-8').'</span></a></li>'."\n";
                         else
-                            $header .= '<li '.($com->com_id == @$_GET['com'] ? 'class="current_page_item"' : '').'><a href="?com='.$com->com_id.'">'.$com->com_friendlyname.'</a></li>'."\n";
+                            $items .= '<li '.($com->com_id == @$_GET['com'] ? 'class="current_page_item"' : '').'><a href="?com='.$com->com_id.'">'.self::getIcon($com->com_name).'<span class="nav-text">'.htmlspecialchars($com->com_friendlyname, ENT_QUOTES, 'UTF-8').'</span></a></li>'."\n";
                     }   
                 }
                 else if ($mode == 'login')
@@ -55,9 +80,9 @@ class Menu
                     if ($com->com_in_menu == false)
                     {
                         if(UserControl::getCurrentUserGroup()->getId() == GAST)
-                          $content .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=login" class="login">{LANG_LOGIN}</a></li>'."\n";
+                          $items .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=login" class="login"><i class="bi bi-box-arrow-in-right nav-icon"></i> {LANG_LOGIN}</a></li>'."\n";
                         else
-                          $content .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=logout" class="login">{LANG_LOGOUT}</a></li>'."\n";
+                          $items .= '<li><a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$com->com_id.'&amp;option=logout" class="login"><i class="bi bi-box-arrow-right nav-icon"></i> {LANG_LOGOUT}</a></li>'."\n";
                     }
                 }
                 else
@@ -66,8 +91,10 @@ class Menu
                 }
             }
         }
-        
-        return $header . $content . $footer;
+
+        // Returns a <ul> wrapper around all <li> items, or an empty string when
+        // there are no accessible items to render (callers must handle both cases).
+        return $items ? '<ul>' . $items . '</ul>' : '';
     } // getMenuHTML
 }
 ?>
