@@ -13,8 +13,8 @@ class QuestionPrediction
     
     public function __construct($userId, $questionId)
     {
-        $this->userId = App::$_DB->escapeString($userId);
-        $this->questionId = App::$_DB->escapeString($questionId);
+        $this->userId = (int)$userId;
+        $this->questionId = (int)$questionId;
         
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `participant_question_prediction`
@@ -72,7 +72,7 @@ class QuestionPrediction
     public static function getAllQuestionPredictions($userId, $questionId)
     {
         self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_question_prediction`
-                          WHERE `Participant_User_user_id` = ' . $userId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId);
     }
     
     public static function getPredictionAnswerCount($questionId)
@@ -81,7 +81,7 @@ class QuestionPrediction
                                 FROM `participant_question_prediction` 
                                 INNER JOIN `participant_competition`
                                 ON `participant_question_prediction`.`Participant_User_user_id`=`participant_competition`.`Participant_User_user_id`
-                                WHERE `participant_question_prediction`.`Question_question_id` = '.$questionId.'
+                                WHERE `participant_question_prediction`.`Question_question_id` = '.(int)$questionId.'
                                 AND `participant_competition`.`Participant_Competition_payed` = 1 
                                 AND `participant_competition`.`Participant_Competition_subscribed` = 1
                                 GROUP BY `Participant_Question_answer`
@@ -92,21 +92,21 @@ class QuestionPrediction
     public static function deleteAllPredictionsByUser($userId)
     {
         self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_question_prediction`
-                          WHERE `Participant_User_user_id` = ' . $userId);
+                          WHERE `Participant_User_user_id` = ' . (int)$userId);
     }
     
     public static function deleteAllPredictionsByQuestion($questionId)
     {
         self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_question_prediction`
-                          WHERE `Question_question_id` = ' . $questionId . '');
+                          WHERE `Question_question_id` = ' . (int)$questionId . '');
     }
     
     public static function add($userId, $questionId, $answer)
     {
         App::$_DB->doSQL('INSERT INTO `participant_question_prediction` (Participant_User_user_id, Question_question_id, Participant_Question_answer)
                           VALUES (
-                            '.$userId.',
-                            '.$questionId.',
+                            '.(int)$userId.',
+                            '.(int)$questionId.',
                             "'.App::$_DB->escapeString($answer).'")
                           ');
     }
@@ -127,8 +127,8 @@ class QuestionPrediction
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `participant_question_prediction`
-                                    WHERE `Participant_User_user_id` = ' . $userId . '
-                                    AND `Question_question_id` = ' . $questionId . '');
+                                    WHERE `Participant_User_user_id` = ' . (int)$userId . '
+                                    AND `Question_question_id` = ' . (int)$questionId . '');
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

@@ -12,7 +12,7 @@ class City
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `city`
                                           WHERE `city_id` = ' . $this->id . ' LIMIT 1;');
@@ -71,7 +71,7 @@ class City
     public static function deleteAllByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `city`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -84,7 +84,7 @@ class City
     public static function getAllCities($competitionId)
     {
        self::$resultList = App::$_DB->doSQL('SELECT * FROM `city`
-                                             WHERE `Competition_competition_id` = ' . $competitionId . ' 
+                                             WHERE `Competition_competition_id` = ' . (int)$competitionId . ' 
                                              ORDER BY `city_name` ASC');
     }
 
@@ -93,7 +93,7 @@ class City
         App::$_DB->doSQL('INSERT INTO `city` (city_name, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
-                            '.$competition.')
+                            '.(int)$competition.')
                           ');
         
         return App::$_DB->getLastId();
@@ -115,7 +115,7 @@ class City
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `city`
-                                    WHERE `city_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `city_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

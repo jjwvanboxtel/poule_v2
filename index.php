@@ -105,10 +105,10 @@ final class App
                     
                 if (@$_GET['com'])
                 {
-                    $comId = self::$_DB->escapeString(@$_GET['com']);
+                    $comId = (int)@$_GET['com'];
                     $record = self::$_DB->doSQL('SELECT `com_name`
                                                  FROM `component`
-                                                 WHERE `com_id` = \'' . $comId . '\'
+                                                 WHERE `com_id` = ' . $comId . '
                                                  LIMIT 1;');
 
                     if (self::$_DB->numRows($record) != 1)

@@ -21,7 +21,8 @@ class AllTests extends TestSuite {
         $this->addFile('rounds_tests.php');
         $this->addFile('scorings_tests.php');
         $this->addFile('table_tests.php');
-
+        $this->addFile('upload_tests.php');
+        
         // UI regression suites (001-ui-ux-refresh).
         // ui_testcase.php defines the shared UiTestCase base class.
         // ui_shell_assertions.php adds UiShellAssertions for shell/navigation.

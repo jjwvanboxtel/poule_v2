@@ -1,7 +1,11 @@
-/.copilot/session-state
-templates/orange/node_modules/
-templates/orange/package-lock.json
-sessions/
-/upload
 /.copilot
+/templates/orange/node_modules
+/templates/orange/package-lock.json
+/sessions
+/upload
 /.playwright-mcp
+/sessions
+/tests/playwright/auth-state.json
+/tests/playwright/node_modules
+/tests/playwright/playwright-report
+/tests/playwright/test-results

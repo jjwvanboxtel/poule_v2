@@ -273,15 +273,15 @@ class Players extends Component
           
         if($_FILES['file']['name'] != '')
         {
-            App::$_UPL->loadUp($_FILES['file']);
+            $safe = App::$_UPL->loadUp($_FILES['file']);
 
-            $players = explode(',', file_get_contents(UPLOAD_DIR.$_FILES['file']['name']));
+            $players = explode(',', file_get_contents(UPLOAD_DIR.$safe));
             foreach ($players as $player)
             {
                 Player::add(@$_GET['competition'], $player, @$_POST['countryid']);
             }
             
-            $status = App::$_UPL->deleteFile($_FILES['file']['name'], "");
+            $status = App::$_UPL->deleteFile($safe, "");
         }
         
         return $status;    

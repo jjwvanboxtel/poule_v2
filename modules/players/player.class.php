@@ -12,7 +12,7 @@ class Player
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `player`
                                           WHERE `player_id` = ' . $this->id . ' LIMIT 1;');
@@ -75,7 +75,7 @@ class Player
     public static function deleteAllByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `player`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -95,7 +95,7 @@ class Player
         self::$resultList = App::$_DB->doSQL('SELECT  `player`.`player_id` ,   `player`.`player_name` ,  `country`.`country_name` 
                                             FROM  `player` 
                                             INNER JOIN  `country` ON  `player`.`Country_country_id` =  `country`.`country_id` 
-                                            WHERE  `player`.`Competition_competition_id` = '.$competitionId.'
+                                            WHERE  `player`.`Competition_competition_id` = '.(int)$competitionId.'
                                             '.$query.'
                                             ORDER BY  `country`.`country_name`, `player`.`player_name`' );
     }
@@ -105,8 +105,8 @@ class Player
         App::$_DB->doSQL('INSERT INTO `player` (player_name, Country_country_id, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
-                            '.$countryId.',
-                            '.$competitionId.')
+                            '.(int)$countryId.',
+                            '.(int)$competitionId.')
                           ');
                           
         return App::$_DB->getLastId();
@@ -128,7 +128,7 @@ class Player
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `player`
-                                    WHERE `player_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `player_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }

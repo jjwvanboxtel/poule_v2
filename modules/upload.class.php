@@ -26,34 +26,46 @@ class Upload implements iUpload
     } // __construct()
 
     /**
-     *  Uploads a file.
+     *  Uploads a file using a cryptographically random, safe filename.
      *
-     * @param file $file
-     * @param String $map
-     * @return boolean if a file is uploaded with succes.
+     * @param array  $file  The $_FILES entry for the uploaded file.
+     * @param string $map   Optional sub-directory inside the upload root.
+     * @return string       The safe filename that was stored on disk.
      */
     private function fileUpload($file, $map='')
     {
         $path = $this->directory.$map;
 
         if (!file_exists($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0750, true);
         }
-        
+
+        // Build a random, non-guessable filename that retains the original
+        // extension so images/documents are still served correctly, but the
+        // random prefix prevents an attacker from knowing or predicting the
+        // stored path even if a malicious file passes extension validation.
+        // Strip any non-alphanumeric characters from the extension to prevent
+        // null-byte, double-extension, or other injection tricks.
+        $rawExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $ext    = preg_replace('/[^a-z0-9]/', '', $rawExt);
+        $safe   = bin2hex(random_bytes(16)) . ($ext !== '' ? '.' . $ext : '');
+
         if(is_uploaded_file($file['tmp_name']))
         {
-			if(move_uploaded_file($file['tmp_name'], './'.$path.$file['name']))
-                return true;
+            if(move_uploaded_file($file['tmp_name'], './'.$path.$safe))
+                return $safe;
         }
 
         return false;
     } // fileUpload
 
     /**
-     * The main upload method
+     * The main upload method.
      *
-     * @param file $file
-     * @param Sting $map (dir)
+     * @param array  $file  The $_FILES entry for the uploaded file.
+     * @param string $map   Optional sub-directory inside the upload root.
+     * @return string       The safe filename that was stored on disk.
+     * @throws InputException on validation failure or failed move.
      */
     public function loadUp($file, $map='')
     {
@@ -61,16 +73,10 @@ class Upload implements iUpload
         {
             if($this->checkExt($file))
             {
-				$path = $this->directory.$map;
-                if(!file_exists($path.$file['name']))
-				{
-					if(!$this->fileUpload($file, $map))
-					  throw new InputException('{ERROR_UPLOAD}', 'file');
-				}
-				else
-				{
-					throw new InputException('{ERROR_F_ALREADY_EXISTS}', 'file');
-				}
+                $safe = $this->fileUpload($file, $map);
+                if($safe === false)
+                    throw new InputException('{ERROR_UPLOAD}', 'file');
+                return $safe;
             }
             else
             {
@@ -84,23 +90,20 @@ class Upload implements iUpload
     } // loadUp
 
     /**
-     * Checks if the extention is valid.
+     * Checks if the extension is valid.
      *
-     * @param file $file
-     * @return boolean true if the extention of a file is valid.
+     * @param array $file
+     * @return bool true if the extension of a file is valid.
      */
-    private function checkExt($file)
+    private function checkExt(array $file): bool
     {
-        $exts = explode(', ', $this->ext);
-        foreach($exts as $extention)
-        {
-            if(stripos(strtolower($file['name']), $extention) !== true)
-            {
-                return true;
-            }
+        $allowed = array_map('trim', explode(',', $this->ext));
+        $rawExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if ($rawExt === '') {
+            return false;
         }
-
-        return false;
+        $ext = '.' . $rawExt;
+        return in_array($ext, $allowed, true);
     } // checkExt
 
     /**

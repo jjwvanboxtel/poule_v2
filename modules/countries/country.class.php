@@ -13,7 +13,7 @@ class Country
     
     public function __construct($id)
     {
-        $this->id = App::$_DB->escapeString($id);
+        $this->id = (int)$id;
         $this->result = App::$_DB->doSQL('SELECT *
                                           FROM `country`
                                           WHERE `country_id` = ' . $this->id . ' LIMIT 1;');
@@ -53,9 +53,9 @@ class Country
         $curImage = $this->result->country_flag;
 
         $delete = App::$_UPL->deleteFile($curImage, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
-        
-        $this->result->country_flag = $file['name'];
+        $safe = App::$_UPL->loadUp($file, $this->result->Competition_competition_id.'/'.self::$image_dir);
+
+        $this->result->country_flag = $safe;
 
         return $delete;
     }
@@ -122,7 +122,7 @@ class Country
     public static function deleteAllByCompetition($competitionId)
     {
         App::$_DB->doSQL('DELETE FROM `country`
-                          WHERE `Competition_competition_id` = ' . $competitionId . '');
+                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
     }
     
     public function save()
@@ -143,19 +143,19 @@ class Country
     public static function getAllCountries($competitionId)
     {
        self::$resultList = App::$_DB->doSQL('SELECT * FROM `country`
-                                             WHERE `Competition_competition_id` = '.$competitionId.'
+                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
                                              ORDER BY `country_name` ASC');
     }
         
     public static function add($name, $file, $competitionId)
     {
-        App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
+        $safe = App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
         
         App::$_DB->doSQL('INSERT INTO `country` (country_name, country_flag, Competition_competition_id)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
-                            "'.App::$_DB->escapeString($file['name']).'",
-                            '.$competitionId.')
+                            "'.App::$_DB->escapeString($safe).'",
+                            '.(int)$competitionId.')
                           ');
                          
         return App::$_DB->getLastId();
@@ -177,7 +177,7 @@ class Country
     {
         $record = App::$_DB->doSQL('SELECT count( * ) AS total
                                     FROM `country`
-                                    WHERE `country_id` = ' . App::$_DB->escapeString($id));
+                                    WHERE `country_id` = ' . (int)$id);
 
         return (boolean)App::$_DB->getRecord($record)->total;
     }
