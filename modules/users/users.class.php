@@ -464,13 +464,13 @@ class Users extends Component
                     || App::$_CONF->getValue('TEST_MODE') == 'true')
                     $enabled = 1;
                 
-                $userId = Participant::addp($enabled, $_POST['emailaddress'], md5($_POST['password']), $_POST['firstname'],
+                $userId = Participant::addp($enabled, $_POST['emailaddress'], password_hash($_POST['password'], PASSWORD_ARGON2ID, ['memory_cost' => 65536, 'time_cost' => 4, 'threads' => 2]), $_POST['firstname'],
                                         $_POST['lastname'], $_POST['telnr'], 3, $_POST['postalcode'], $_POST['street'],
                                         $_POST['town'], $_POST['housenr'], $_POST['nradd'], $_POST['bankaccount']);
             }
             else
             {
-                $userId = User::add(1, $_POST['emailaddress'], md5($_POST['password']), $_POST['firstname'],
+                $userId = User::add(1, $_POST['emailaddress'], password_hash($_POST['password'], PASSWORD_ARGON2ID, ['memory_cost' => 65536, 'time_cost' => 4, 'threads' => 2]), $_POST['firstname'],
                                     $_POST['lastname'], $_POST['telnr'], $_POST['usergroup']);
             }
 
@@ -488,7 +488,7 @@ class Users extends Component
             if ($user->getUserGroup()->getId() != 3)
               $user->setUserGroup(@$_POST['usergroup']);
             if (@$_POST['password'] != '')
-                $user->setPassword(md5(@$_POST['password']));
+                $user->setPassword(password_hash(@$_POST['password'], PASSWORD_ARGON2ID, ['memory_cost' => 65536, 'time_cost' => 4, 'threads' => 2]));
 
             if ($user instanceof Participant)
             {
