@@ -19,13 +19,10 @@ class Participant extends User
         $id = (int)$id;
         parent::__construct($id);
 
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `participant`
-                                          WHERE `User_user_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `participant` WHERE `User_user_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);        
     
-        $resultList = App::$_DB->doSQL('SELECT * FROM `participant_competition`
-                          WHERE `Participant_User_user_id` = ' . $this->id);
+        $resultList = App::$_DB->doQuery('SELECT * FROM `participant_competition` WHERE `Participant_User_user_id` = ?', 'i', $this->id);
                           
         while (($competition = App::$_DB->getRecord($resultList)) != null)
         {
@@ -46,23 +43,29 @@ class Participant extends User
     {        
         parent::save();
         
-        App::$_DB->doSQL('UPDATE `participant` SET
-                            `part_postalCode` = "'.App::$_DB->escapeString($this->result->part_postalCode).'",
-                            `part_street` = "'.App::$_DB->escapeString($this->result->part_street).'",
-                            `part_town` = "'.App::$_DB->escapeString($this->result->part_town).'",
-                            `part_housenr` = '.$this->result->part_housenr.',
-                            `part_addition` = "'.App::$_DB->escapeString($this->result->part_addition).'",
-                            `part_bankaccount` = "'.App::$_DB->escapeString($this->result->part_bankaccount).'"
-                            WHERE `User_user_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery(
+            'UPDATE `participant` SET `part_postalCode` = ?, `part_street` = ?, `part_town` = ?, `part_housenr` = ?, `part_addition` = ?, `part_bankaccount` = ? WHERE `User_user_id` = ? LIMIT 1',
+            'sssissi',
+            $this->result->part_postalCode,
+            $this->result->part_street,
+            $this->result->part_town,
+            (int)$this->result->part_housenr,
+            $this->result->part_addition,
+            $this->result->part_bankaccount,
+            $this->id
+        );
 
         
         foreach ($this->competitionList as $competitionId => $participant)
         {
-            App::$_DB->doSQL('UPDATE `participant_competition` SET
-                                `Participant_Competition_payed` = "'.$participant['payed'].'",
-                                `Participant_Competition_subscribed` = "'.$participant['subscribed'].'"
-                                WHERE `Participant_User_user_id` = ' . $this->id . ' 
-                                AND `Competition_competition_id` = ' . (int)$competitionId . ' LIMIT 1;');
+            App::$_DB->doQuery(
+                'UPDATE `participant_competition` SET `Participant_Competition_payed` = ?, `Participant_Competition_subscribed` = ? WHERE `Participant_User_user_id` = ? AND `Competition_competition_id` = ? LIMIT 1',
+                'ssii',
+                $participant['payed'],
+                $participant['subscribed'],
+                $this->id,
+                (int)$competitionId
+            );
         }
     } //save
 
@@ -73,7 +76,7 @@ class Participant extends User
     {
         parent::delete();
 
-        App::$_DB->doSQL('DELETE FROM `participant` WHERE `User_user_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `participant` WHERE `User_user_id` = ?', 'i', $this->id);
         
         self::deleteAllParticipantCompetitionByUser($this->id);
         
@@ -100,17 +103,17 @@ class Participant extends User
                                                     $postalCode, $street, $town, $houseNr, $addition='', $bankAccount)
     {             
         $id = parent::add($enabled, $email, $password, $firstName, $lastName, $phoneNr, $userGroup);
-        App::$_DB->doSQL('INSERT INTO `participant` (part_postalCode, part_street, part_town, part_housenr,
-                                                        part_addition, part_bankaccount, User_user_id)
-                            VALUES (
-                                "'.App::$_DB->escapeString(str_replace(' ', '', $postalCode)).'",
-                                "'.App::$_DB->escapeString($street).'",
-                                "'.App::$_DB->escapeString($town).'",
-                                '.App::$_DB->escapeString((int)$houseNr).',
-                                "'.App::$_DB->escapeString($addition).'",
-                                "'.App::$_DB->escapeString($bankAccount).'",
-                                '.App::$_DB->escapeString($id).'
-                            )');
+        App::$_DB->doQuery(
+            'INSERT INTO `participant` (part_postalCode, part_street, part_town, part_housenr, part_addition, part_bankaccount, User_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            'sssissi',
+            str_replace(' ', '', $postalCode),
+            $street,
+            $town,
+            (int)$houseNr,
+            $addition,
+            $bankAccount,
+            (int)$id
+        );
                                    
         App::openClass('Round', 'modules/rounds');       
         App::openClass('Question', 'modules/questions');     
@@ -298,39 +301,33 @@ class Participant extends User
          
     public static function deleteAllParticipantCompetitionByUser($userId)
     {
-        App::$_DB->doSQL('DELETE FROM `participant_competition`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId);
+        App::$_DB->doQuery('DELETE FROM `participant_competition` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function deleteAllParticipantCompetitionByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `participant_competition`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `participant_competition` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public static function addCompetition($userId, $competitionId)
     {
-            App::$_DB->doSQL('INSERT INTO `participant_competition` (Participant_User_user_id, Competition_competition_id, Participant_Competition_payed, Participant_Competition_subscribed)
-                          VALUES (
-                            '.(int)$userId.',
-                            '.(int)$competitionId.',
-                            0,
-                            0)
-                          ');
+        App::$_DB->doQuery('INSERT INTO `participant_competition` (Participant_User_user_id, Competition_competition_id, Participant_Competition_payed, Participant_Competition_subscribed) VALUES (?, ?, 0, 0)', 'ii', (int)$userId, (int)$competitionId);
     } 
     
     public static function getNumberOfParticipants($competitionId, $subscribed, $payed)
     {
-        $sql = '';
-        if ($payed)
+        $sql = 'SELECT count(*) AS total FROM `participant_competition` WHERE `Competition_competition_id` = ?';
+        $types = 'i';
+        $params = [(int)$competitionId];
+
+        if ($payed) {
             $sql .= ' AND `Participant_Competition_payed` = 1';
-        if ($subscribed)
+        }
+        if ($subscribed) {
             $sql .= ' AND `Participant_Competition_subscribed` = 1';
-            
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total 
-                          FROM `participant_competition` 
-                          WHERE `Competition_competition_id` = '.(int)$competitionId.'
-                          '.$sql);
+        }
+
+        $record = App::$_DB->doQuery($sql, $types, ...$params);
         return App::$_DB->getRecord($record)->total;
     } 
 } // Participant
