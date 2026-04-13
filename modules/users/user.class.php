@@ -451,6 +451,12 @@ class User
     {
         if(isset($_POST['wac'],  $_POST['geb']))
         {
+            $failKey = 'login_fails_' . hash('sha256', $_SERVER['REMOTE_ADDR']);
+            if (($_SESSION[$failKey] ?? 0) >= 5)
+            {
+                throw new \Exception('{LANG_TOO_MANY_ATTEMPTS}');
+            }
+
             $username = App::$_DB->escapeString($_POST['geb']);
             $plainPassword = $_POST['wac'];
 
@@ -484,6 +490,7 @@ class User
                 if ($row->user_enabled != 1)
                   throw new Exception('{LANG_ACCOUNT_DISABLED}');
 
+                unset($_SESSION[$failKey]);
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $row->user_id;
                 $_SESSION['logged_in'] = true;
@@ -496,6 +503,7 @@ class User
             }
             else
             {
+                $_SESSION[$failKey] = ($_SESSION[$failKey] ?? 0) + 1;
                 return null;
             }
         }
