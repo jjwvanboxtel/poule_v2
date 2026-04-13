@@ -52,6 +52,7 @@ LANG_LOST               = opvragen
 LANG_LOST_MSG           = Voer het e-mailadres in waarmee je je geregistreerd hebt.
 LANG_LOST_INFO          = Een nieuw wachtwoord met daarbij een koppeling om dit nieuwe wachtwoord te activeren worden naar dat adres gestuurd.
 LANG_LOGIN_SUCCES       = U bent succesvol ingelogd!
+LANG_TOO_MANY_ATTEMPTS  = Te veel mislukte inlogpogingen. Probeer het later opnieuw.
 LANG_TOO_LATE           = te laat
 LANG_TEMP_PASSWORD      = Er is een tijdelijk wachtwoord naar uw e-mail adres verzonden. Bevestig de e-mail om dit tijdelijke wachtwoord te activeren.
 ERROR_TEMP_PASSWORD     = Er is iets fout gegaan, uw wachtwoord is niet aangepast. Probeer het opnieuw!
