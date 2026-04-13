@@ -297,7 +297,7 @@ class UserControl extends Component
 		$header .= 'Content-Type: text/html; charset=iso-8859-1' . "\n";
 		$header .= 'X-Priority: 3' . "\n";
 		$header .= 'X-MSMail-Priority: Normal' . "\n";
-		$header .= 'X-Mailer: PHP / ' . phpversion() . "\n";
+		$header .= 'X-Mailer: Application Mailer' . "\n";
 		$subject = '' . App::$_CONF->getValue('LOGIN_LOST_SUBJECT') . ''."\n";
 		$body = "<html><body>"."\n";
 		$body .= "<font face=\"Tahoma\" size=\"2\">"."\n";
@@ -323,7 +323,7 @@ class UserControl extends Component
 		$header .= 'Content-Type: text/html; charset=iso-8859-1' . "\n";
 		$header .= 'X-Priority: 3' . "\n";
 		$header .= 'X-MSMail-Priority: Normal' . "\n";
-		$header .= 'X-Mailer: PHP / ' . phpversion() . "\n";
+		$header .= 'X-Mailer: Application Mailer' . "\n";
 		$subject = '' . App::$_CONF->getValue('ACCOUNT_ACTIVATION') . ''."\n";
 
         $body = '' . App::$_LANG->getValue('LANG_WELCOME').': ' . $user->getFirstName() . ' ' . $user->getLastName() . '<br />'."\n";
