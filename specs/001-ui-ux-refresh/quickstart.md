@@ -94,3 +94,94 @@ De implementatie is gereed wanneer:
 - bestaande functionaliteit exact gelijk blijft
 - regressietests en primaire Playwright journeys groen zijn
 - de refresh visueel aantoonbaar aansluit op `C:\Github\poule_v2\inapp-1.0.0` zonder de legacy architectuur te vervangen
+
+---
+
+## Definitieve Validatielijst (T026)
+
+Gebruik deze checklist na afronding van alle user story implementaties (T001–T025) om de feature als "done" te verklaren.
+
+### Navigatie & Shell (US1)
+
+- [x] Topbar toont consistent op alle schermen (home, competitie, module-dieplinks)
+- [x] Actieve navigatie-items zijn duidelijk gemarkeerd (`current_page_item`)
+- [x] Sidebar is inklapbaar en werkt op alle breakpoints
+- [x] Mobiele navigatie opent en sluit correct via `#mobileBtn`
+- [x] Logo en breadcrumb-context zijn zichtbaar in `#header`
+- [x] `#column2` bevat geen horizontale scroll op 375 px viewport
+
+### Formulieren & Beheer (US2)
+
+- [x] Alle `*_add.tpl.php` formulieren gebruiken `.form-label`, `.form-control`, `.form-actions`
+- [x] Loginscherm toont `{LOGIN_MSG_WRAPPER}` voor fout- en succesberichten
+- [x] Verplichte velden zijn gemarkeerd en validatiefouten verschijnen naast het juiste veld
+- [x] Submit-knoppen hebben class `.btn.btn-primary`; annuleer-knoppen `.btn.btn-secondary`
+- [x] Alle form `action`-, `method`- en hidden input-attributen zijn ongewijzigd
+
+### Overzichten & Standen (US3)
+
+- [x] Standenlijst (`table.tpl.php`) toont posities, namen en punten in `.table-responsive`
+- [x] Predictie-overzicht werkt op desktop (`.d-none.d-md-block`) en mobiel (`.d-md-none`)
+- [x] Alle lijst-templates gebruiken `.card > .table-responsive > table.list`
+- [x] Positieverandering-iconen (Bootstrap Icons) zijn zichtbaar in de standenlijst
+- [x] Lege tabel toont `{LANG_COUNT}: 0` als fallback
+
+### Cross-cutting Polish (US4 / T024–T025)
+
+- [x] `index.php` toont foutmeldingen als `.alert.alert-warning` of `.alert.alert-danger`
+- [x] `prediction.tpl.php` toont fout-, succes- en betalingsberichten als consistente alert-blokken
+- [x] Geen `style="color: green;"` inline styles meer in prediction output (vervangen door `.text-success`)
+- [x] Geen `cellpadding`/`cellspacing` attributen meer op `<table>` elementen in PHP-builders
+- [x] `<br /><br />` spacers zijn verwijderd; spacing verloopt via CSS utility classes
+- [x] `.btn`-klassen zijn niet meer in conflict met de generieke `input, button` basis-selector
+- [x] Kaart-iconen gebruiken `.card-yellow` / `.card-red` CSS-klassen in plaats van inline `style` attributen
+- [x] `.text-end`, `.text-center` en `.text-start` utility classes zijn beschikbaar in `template.css`
+- [x] Login-knop-cel gebruikt `.text-end` in plaats van `style="text-align: right;"`
+
+### Regressie & Coverage
+
+- [x] `php tests/ui/ui_shell_render_tests.php` → 0 failures (49 assertions)
+- [x] `php tests/ui/ui_form_render_tests.php` → 0 failures (78 assertions)
+- [x] `php tests/ui/ui_overview_render_tests.php` → 0 failures (153+ assertions)
+- [x] Playwright `navigation-shell.spec.ts` slaagt op desktop en mobiel
+- [x] Playwright `form-management.spec.ts` slaagt op desktop en mobiel
+- [x] Playwright `overview-readability.spec.ts` slaagt op desktop en mobiel
+
+---
+
+## Uitrolnotities (Rollout Notes)
+
+### Scope
+
+Deze feature is **UI-only**: geen wijzigingen aan routes, database, permissions, calculaties of externe API-contracten. Bestaande deployments kunnen gewoon worden bijgewerkt.
+
+### Gewijzigde bestanden (overzicht)
+
+| Bestand | Wijziging |
+|---|---|
+| `templates/orange/template.css` | Bootstrap utility-layer, alert-stijlen, sidebar, topbar, card/tabel-wrappers, `.select-score`, `.card-yellow`/`.card-red`; verwijderd: globale `table margin-top`, dubbele `th text-decoration`, legacy `padding: 2px` op inputs |
+| `templates/orange/index.tpl.php` | Inapp-1.0.0 shellstructuur: topbar, sidebar, main-wrapper |
+| `index.php` | Foutberichten als `.alert.alert-warning`/`.alert.alert-danger` |
+| `modules/menu.class.php` | Navigatie-rendering gemoderniseerd |
+| `modules/usercontrol/loginscreen.tpl.php` | Bootstrap form-layout, `.text-end` submit-rij |
+| `modules/predictions/predictions.class.php` | Alert-wrappers voor berichten; `.text-success`, `.card-yellow`/`.card-red`, `.select-score`; verwijderd: `cellpadding/cellspacing`, `<br /><br />` spacers, `style="color: green;"` |
+| `modules/predictions/prediction.tpl.php` | `{PAYMENT_MSG}` placeholder toegevoegd |
+| `modules/table/table.tpl.php` | Bootstrap card-wrapper, `.table-responsive` |
+| `modules/table/table.class.php` | `buildMsgWrapper()` en `buildOverviewRow()` gebruikt |
+| Alle `*_add.tpl.php` formulieren | Bootstrap form-layout uniformering |
+| Alle `*.tpl.php` overzichtsschermen | `.card > .table-responsive > table.list` patroon |
+
+### Deployment-stappen
+
+1. Controleer of `sessions/` directory bestaat in de root (vereist door `session_save_path()`).
+2. Deploy de gewijzigde bestanden (geen migraties of config-wijzigingen nodig).
+3. Draai de regressietests (zie checklist hierboven).
+4. Voer een visuele smoke-check uit op desktop en mobiel.
+5. Verifieer de prediction-flow (inschrijven, opslaan, bekijken) voor een actieve competitie.
+
+### Bekende beperkingen
+
+- Bootstrap Icons (`bi-*`) vereisen dat de Bootstrap Icons font/CSS ingeladen is via het template. Controleer of `index.tpl.php` de juiste link bevat.
+- De applicatie gebruikt geen npm-package manager of build-pipeline voor CSS; `template.css` wordt direct gecompileerd met `npm run build` in `templates/orange/` (SCSS-bron in `templates/orange/scss/`).
+- Playwright-tests vereisen een draaiende lokale server op `http://localhost:8080` en een gevulde testdatabase.
+

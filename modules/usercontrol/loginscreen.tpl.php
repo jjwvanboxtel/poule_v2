@@ -18,7 +18,7 @@
                 <td><input id="wac" class="form-control" type="password" name="wac" /></td>
             </tr>
             <tr>
-                <td colspan="2" style="text-align: right;">
+                <td colspan="2" class="text-end">
                     <input class="btn btn-primary" type="submit" name="submit" value="{LANG_LOGIN}" />
                 </td>
             </tr>
