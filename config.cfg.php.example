@@ -1,0 +1,43 @@
+<?php die(); ?>
+# Default configuration file
+# version 0.1
+# Copy this file to config.cfg.php and fill in your own values.
+
+
+# general settings
+LANGUAGE                = nl_NL
+TEMPLATE                = orange
+TEST_MODE               = false
+DOMAIN                  = http://your-domain.com/poule/
+MAIL                    = poule@your-domain.com
+
+# database settings
+DB_USERNAME             = your_db_username
+DB_PASSWORD             = your_db_password
+DB_NAME                 = poule_v2
+DB_HOST                 = 127.0.0.1
+DB_PORT                 = 3306
+DB_HOSTNAME             = 127.0.0.1
+
+# homepage
+TITLE                   = your poule title
+HOME_CONTENT            = Welkom op de poule, selecteer hiernaast een competitie!
+COPYRIGHT               = Copyright (c) 2024 your-domain.com. All rights reserved.
+
+# email
+LOGIN_LOST_SUBJECT      = poule wachtwoord vergeten.
+LOGIN_LOST_BODY         = Klik op bevestigen om het onderstaande wachtwoord te accepteren.
+ACCOUNT_ACTIVATION      = poule account activeren
+ACCOUNT_ACTIVATION_BODY = Klik op account activeren om mee te doen met de poule.
+ 
+# input
+MAX_SELECTION_GAME_RESULT = 10
+MAX_SELECTION_GAME_CARDS  = 20
+MAX_SELECTION_QUESTION    = 100
+MAX_SELECTION_QUESTION_ANWSER_COUNT = 10
+MAX_SELECTION_SCORING     = 100
+MAX_SELECTION_MONEY       = 20
+MAX_SELECTION_PLACE       = 100
+
+# payment
+PAYMENT_LINK              = https://your-payment-link
