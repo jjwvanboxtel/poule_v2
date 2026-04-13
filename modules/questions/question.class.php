@@ -201,7 +201,7 @@ class Question
                             "'.App::$_DB->escapeString($type).'",
                             '.$question_anwser_count.',
                             "'.App::$_DB->escapeString($question_anwser).'",
-                            '.$competitionId.')
+                            '.(int)$competitionId.')
                           ');
         
         $questionId = App::$_DB->getLastId();
