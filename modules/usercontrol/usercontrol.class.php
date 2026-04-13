@@ -19,7 +19,7 @@ class UserControl extends Component
         {
             case 'confirm':
                 if(@$_GET['com'] != parent::getComponentId('UserControl'))
-                  throw new Exception(@$_GET['option'] . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
+                  throw new Exception(htmlspecialchars(@$_GET['option'], ENT_QUOTES | ENT_HTML5, 'UTF-8') . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
                 break;
             default:
             case 'login':
@@ -128,7 +128,7 @@ class UserControl extends Component
                     $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_ALREADY_ENABLED}</div>' . "\n");
                 }
                 break;
-            //throw new Exception(@$_GET['option'] . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
+            //throw new Exception(htmlspecialchars(@$_GET['option'], ENT_QUOTES | ENT_HTML5, 'UTF-8') . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
         }
     } //__construct
 
