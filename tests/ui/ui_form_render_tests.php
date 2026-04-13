@@ -52,6 +52,7 @@ function loginFormDefaults()
         '{LANG_PASSWORD}' => 'Wachtwoord',
         '{NEW_CUSTOMER}'  => '<a href="/?com=2&amp;option=new">Nieuw account</a>',
         '{LOGIN_LOST}'    => '<a href="/?com=2&amp;option=lost">Wachtwoord vergeten</a>',
+        '{CSRF_TOKEN}'    => '<input type="hidden" name="csrf_token" value="test_token_abc123" />',
     );
 }
 
@@ -102,6 +103,7 @@ function addFormDefaults()
         '{COMPETITION_COM_ID}' => '1',
         '{LANG_CANCEL}'        => 'Annuleren',
         '{LANG_SAVE}'          => 'Opslaan',
+        '{CSRF_TOKEN}'         => '<input type="hidden" name="csrf_token" value="test_token_abc123" />',
     );
 }
 
@@ -142,6 +144,7 @@ function userAddFormDefaults()
         '{USER_COM_ID}'  => '4',
         '{LANG_CANCEL}'  => 'Annuleren',
         '{LANG_SAVE}'    => 'Opslaan',
+        '{CSRF_TOKEN}'   => '<input type="hidden" name="csrf_token" value="test_token_abc123" />',
     );
 }
 
@@ -715,6 +718,90 @@ class TestOfFormTokenReplacement extends UiMarkupAssertions
                 "Placeholder {$token} was not replaced in the user add form."
             );
         }
+    }
+}
+
+// ===========================================================================
+// 8. CSRF token — presence and structure across all representative forms
+// ===========================================================================
+
+/**
+ * Verify that every rendered form contains a CSRF hidden field with the
+ * correct name attribute.  This locks down the CSRF protection contract
+ * added in VULN-007 so that future template refactors cannot silently
+ * remove the token.
+ */
+class TestOfCsrfTokenPresence extends UiMarkupAssertions
+{
+    function testLoginFormContainsCsrfHiddenField()
+    {
+        $html = renderLoginForm();
+
+        $this->assertHtmlContains(
+            $html,
+            'name="csrf_token"',
+            'Login form must contain a hidden csrf_token field.'
+        );
+        $this->assertHtmlContains(
+            $html,
+            'type="hidden"',
+            'Login form csrf_token must be a hidden input.'
+        );
+    }
+
+    function testCompetitionAddFormContainsCsrfHiddenField()
+    {
+        $html = renderCompetitionAddForm();
+
+        $this->assertHtmlContains(
+            $html,
+            'name="csrf_token"',
+            'Competition add form must contain a hidden csrf_token field.'
+        );
+    }
+
+    function testUserAddFormContainsCsrfHiddenField()
+    {
+        $html = renderUserAddForm();
+
+        $this->assertHtmlContains(
+            $html,
+            'name="csrf_token"',
+            'User add form must contain a hidden csrf_token field.'
+        );
+    }
+
+    function testCsrfTokenPlaceholderIsReplacedInLoginForm()
+    {
+        $html = renderLoginForm();
+
+        $this->assertHtmlNotContains(
+            $html,
+            '{CSRF_TOKEN}',
+            'The {CSRF_TOKEN} placeholder must be replaced in the login form.'
+        );
+    }
+
+    function testCsrfTokenPlaceholderIsReplacedInCompetitionAddForm()
+    {
+        $html = renderCompetitionAddForm();
+
+        $this->assertHtmlNotContains(
+            $html,
+            '{CSRF_TOKEN}',
+            'The {CSRF_TOKEN} placeholder must be replaced in the competition add form.'
+        );
+    }
+
+    function testCsrfTokenPlaceholderIsReplacedInUserAddForm()
+    {
+        $html = renderUserAddForm();
+
+        $this->assertHtmlNotContains(
+            $html,
+            '{CSRF_TOKEN}',
+            'The {CSRF_TOKEN} placeholder must be replaced in the user add form.'
+        );
     }
 }
 ?>
