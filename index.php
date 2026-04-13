@@ -11,7 +11,8 @@ error_reporting(0);
 
 // Composer autoloader (HTMLPurifier and other dependencies)
 if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
-    die('Composer dependencies not installed. Please run: composer install');
+    http_response_code(500);
+    die('Application dependencies are missing. Please contact the system administrator.');
 }
 require_once __DIR__ . '/vendor/autoload.php';
 
