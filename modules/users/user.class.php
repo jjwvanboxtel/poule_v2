@@ -531,38 +531,6 @@ class User
 
         return $token;
     } //setTempPassword
-    
-    /**
-     * Generates a randomPassword.
-     *
-     * @param int $length
-     * @return String $password
-     */
-    public static function randomPassword($length=10)
-    {
-        if (!is_Numeric($length))
-        {
-            $length = 10;
-        }
-
-        $password = '';
-
-        // Array with characters for the password
-        $integers  = range('0', '9');
-        $lowercase = range('a', 'z');
-        $uppercase = range('A', 'Z');
-
-        // Merge all arrays to one array with al the characters
-        $chars = array_merge($integers, $lowercase, $uppercase);
-
-        // Generate the random password
-        for ($i = 0; $i < $length; $i++)
-        {
-            $password .= $chars[random_int(0, count($chars)-1)];
-        }
-
-        return $password;
-    } // randomPassword
 
 
 } //User
