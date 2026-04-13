@@ -225,26 +225,35 @@ class Component
             return '';
         }
 
+        // Tags produced by TinyMCE that are safe to preserve.
         $allowedTags = [
             'p', 'br', 'hr', 'strong', 'b', 'em', 'i', 'u', 's', 'del', 'ins',
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
-            'a', 'img', 'div', 'span',
-            'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
-            'sub', 'sup',
+            'a', 'img', 'figure', 'figcaption',
+            'div', 'span',
+            'table', 'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+            'sub', 'sup', 'mark', 'small', 'abbr', 'cite', 'q', 'address',
         ];
 
         $allowedAttributes = [
-            'a'   => ['href', 'title', 'target'],
-            'img' => ['src', 'alt', 'width', 'height', 'title'],
-            '*'   => ['class', 'align'],
+            'a'        => ['href', 'title', 'target', 'rel'],
+            'img'      => ['src', 'alt', 'width', 'height', 'title'],
+            'col'      => ['span', 'width', 'style'],
+            'td'       => ['colspan', 'rowspan', 'headers'],
+            'th'       => ['colspan', 'rowspan', 'scope', 'headers'],
+            // 'style' is allowed globally so TinyMCE formatting (alignment, colours, etc.)
+            // is preserved; dangerous CSS patterns are stripped in sanitizeDomNode().
+            '*'        => ['class', 'align', 'style', 'id'],
         ];
 
         $doc = new DOMDocument('1.0', 'UTF-8');
         libxml_use_internal_errors(true);
-        // LIBXML_NONET prevents network access during parsing (e.g. external DTD/entity fetches).
+        // The XML declaration with encoding ensures DOMDocument treats input as UTF-8
+        // rather than defaulting to iso-8859-1. LIBXML_NONET prevents external DTD/entity
+        // network requests.
         $doc->loadHTML(
-            '<?xml encoding="UTF-8"><html><head><meta charset="UTF-8"/></head><body>' . $html . '</body></html>',
+            '<?xml version="1.0" encoding="UTF-8"?><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body>' . $html . '</body></html>',
             LIBXML_HTML_NODEFDTD | LIBXML_NONET
         );
         libxml_clear_errors();
@@ -267,14 +276,24 @@ class Component
     /**
      * Recursively removes disallowed elements and dangerous attributes from a DOM node.
      *
+     * Children of removed elements are sanitized first, then promoted into the parent
+     * so that no unsafe content (e.g. a <script> nested inside a <figure>) survives.
+     *
      * @param DOMNode $node               The node to process.
      * @param array   $allowedTags        List of lowercase tag names that may remain.
      * @param array   $allowedAttributes  Map of tag => [attr, ...] plus '*' for globals.
      */
     private static function sanitizeDomNode($node, array $allowedTags, array $allowedAttributes)
     {
-        $toRemove = [];
+        // Snapshot children into an array first so that DOM modifications made during
+        // the loop (by recursive calls) do not affect the iteration order.
+        $children = [];
         foreach ($node->childNodes as $child) {
+            $children[] = $child;
+        }
+
+        $toRemove = [];
+        foreach ($children as $child) {
             if ($child->nodeType !== XML_ELEMENT_NODE) {
                 continue;
             }
@@ -287,11 +306,16 @@ class Component
             // Strip disallowed and dangerous attributes from this element.
             $attrsToRemove = [];
             if ($child->hasAttributes()) {
+                // Snapshot attribute names before any modification.
+                $attrNames = [];
                 foreach ($child->attributes as $attr) {
-                    $name = strtolower($attr->nodeName);
+                    $attrNames[] = [$attr->nodeName, $attr->nodeValue];
+                }
+                foreach ($attrNames as [$attrName, $attrValue]) {
+                    $name = strtolower($attrName);
                     // Block all event-handler attributes (onclick, onerror, …).
                     if (strncasecmp($name, 'on', 2) === 0) {
-                        $attrsToRemove[] = $name;
+                        $attrsToRemove[] = $attrName;
                         continue;
                     }
                     $allowed = array_merge(
@@ -299,16 +323,21 @@ class Component
                         isset($allowedAttributes['*'])  ? $allowedAttributes['*']  : []
                     );
                     if (!in_array($name, $allowed, true)) {
-                        $attrsToRemove[] = $name;
+                        $attrsToRemove[] = $attrName;
                         continue;
                     }
                     // Enforce an allowlist of safe URI schemes for href/src.
                     if (in_array($name, ['href', 'src'], true)) {
-                        $val = trim($attr->nodeValue);
-                        // Allow relative URLs and safe absolute schemes only.
+                        $val = trim($attrValue);
                         if ($val !== '' && !preg_match('/^(https?:|mailto:|#|\/)/i', $val)) {
-                            $attrsToRemove[] = $name;
+                            $attrsToRemove[] = $attrName;
                         }
+                    }
+                    // Strip dangerous patterns from inline CSS (expression(), javascript:, etc.).
+                    if ($name === 'style') {
+                        $safe = preg_replace('/expression\s*\(/i', '', $attrValue);
+                        $safe = preg_replace('/(javascript|vbscript)\s*:/i', '', $safe);
+                        $child->setAttribute($attrName, $safe);
                     }
                 }
             }
@@ -320,9 +349,11 @@ class Component
             self::sanitizeDomNode($child, $allowedTags, $allowedAttributes);
         }
 
-        // Promote text children of removed elements so no content is lost,
-        // then remove the disallowed element itself.
+        // For each disallowed element: sanitize its subtree first (so a <script> nested
+        // inside a <figure> is removed before the <figure>'s children are promoted),
+        // then inline-promote its children into the current node.
         foreach ($toRemove as $child) {
+            self::sanitizeDomNode($child, $allowedTags, $allowedAttributes);
             while ($child->hasChildNodes()) {
                 $node->insertBefore($child->firstChild, $child);
             }
