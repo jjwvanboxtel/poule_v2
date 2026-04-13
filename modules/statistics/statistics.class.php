@@ -2,9 +2,8 @@
 if (!defined('VALID_ACCESS')) die();
 
 /**
- * Statistics module – displays Chart.js pie/bar charts rendered from a
- * pre-generated JSON file.  Admins can trigger a regeneration via the
- * `?option=generate` action.
+ * Statistics module – displays Chart.js pie/bar charts calculated
+ * on-the-fly from the database.
  *
  * @package   vvalempoule
  * @author    Jaap van Boxtel
@@ -30,75 +29,21 @@ class Statistics extends Component
             throw new Exception('{ERROR_NO_COMPETITION_SELECTED}');
         }
 
-        switch (@$_GET['option']) {
-            case '':
-                $this->showStatistics();
-                break;
-            case 'generate':
-                if (!$this->hasAccess(CRUD_EDIT)) {
-                    throw new Exception('{ERROR_ACCESSDENIED}');
-                }
-                $this->doGenerate();
-                break;
-            default:
-                throw new Exception(@$_GET['option'] . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
-        }
+        $this->showStatistics();
     }
 
     // ── private methods ────────────────────────────────────────────────
 
-    private function doGenerate()
-    {
-        $tpl = new Template('statistic', strtolower(get_class()), 'modules');
-
-        Statistic::generateAllStatistics(@$_GET['competition']);
-        $msg = self::buildMsgWrapper('{LANG_STATISTICS_GENERATED}');
-
-        $replaceArr = array();
-        $replaceArr['COM_NAME']      = '{LANG_STATISTICS}';
-        $replaceArr['COM_ID']        = $this->componentId;
-        $replaceArr['STAT_MSG']      = $msg;
-        $replaceArr['LAST_UPDATED']  = $this->formatLastUpdated(@$_GET['competition']);
-        $replaceArr['CONTENT']       = $this->buildChartsHtml(@$_GET['competition']);
-        $replaceArr['GENERATE_LINK'] = $this->buildGenerateLink();
-        $tpl->replace($replaceArr);
-        echo $tpl;
-    }
-
-    private function showStatistics($msg = '')
+    private function showStatistics()
     {
         $tpl = new Template('statistic', strtolower(get_class()), 'modules');
 
         $replaceArr = array();
-        $replaceArr['COM_NAME']      = '{LANG_STATISTICS}';
-        $replaceArr['COM_ID']        = $this->componentId;
-        $replaceArr['STAT_MSG']      = $msg !== '' ? self::buildMsgWrapper($msg) : '';
-        $replaceArr['LAST_UPDATED']  = $this->formatLastUpdated(@$_GET['competition']);
-        $replaceArr['CONTENT']       = $this->buildChartsHtml(@$_GET['competition']);
-        $replaceArr['GENERATE_LINK'] = $this->buildGenerateLink();
+        $replaceArr['COM_NAME'] = '{LANG_STATISTICS}';
+        $replaceArr['COM_ID']   = $this->componentId;
+        $replaceArr['CONTENT']  = $this->buildChartsHtml(@$_GET['competition']);
         $tpl->replace($replaceArr);
         echo $tpl;
-    }
-
-    private function buildGenerateLink()
-    {
-        if (!$this->hasAccess(CRUD_EDIT)) {
-            return '';
-        }
-        $href = '?' . (@$_GET['competition'] ? 'competition=' . @$_GET['competition'] . '&amp;' : '')
-              . 'com=' . $this->componentId . '&amp;option=generate';
-        return '<a href="' . $href . '" class="btn btn-primary">'
-             . '<i class="bi bi-arrow-clockwise me-1"></i>{LANG_STATISTICS_GENERATE}'
-             . '</a>';
-    }
-
-    private function formatLastUpdated($competitionId)
-    {
-        $ts = Statistic::getLastUpdated($competitionId);
-        if ($ts === 0) {
-            return '{LANG_STATISTICS_NOT_GENERATED}';
-        }
-        return '{LANG_LAST_UPDATED}: ' . date('d-m-Y H:i:s', $ts);
     }
 
     private function buildChartsHtml($competitionId)
@@ -152,7 +97,9 @@ class Statistics extends Component
              . '<div class="card">' . "\n"
              . '<div class="card-header"><span class="card-title">' . htmlspecialchars($title) . '</span></div>' . "\n"
              . '<div class="card-body">' . "\n"
-             . '<canvas id="' . $canvasId . '" height="300"></canvas>' . "\n"
+             . '<div style="position: relative; min-height: 300px;">' . "\n"
+             . '<canvas id="' . $canvasId . '"></canvas>' . "\n"
+             . '</div>' . "\n"
              . '</div>' . "\n"
              . '</div>' . "\n"
              . '</div>' . "\n";
@@ -199,7 +146,7 @@ class Statistics extends Component
         $js .= "    },\n";
         $js .= "    options: {\n";
         $js .= "      responsive: true,\n";
-        $js .= "      maintainAspectRatio: true,\n";
+        $js .= "      maintainAspectRatio: false,\n";
         if ($type === 'bar') {
             $js .= "      indexAxis: 'x',\n";
             $js .= "      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },\n";

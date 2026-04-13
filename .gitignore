@@ -4,3 +4,4 @@ templates/orange/package-lock.json
 sessions/
 /upload
 /.copilot
+/.playwright-mcp
