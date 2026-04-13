@@ -7,7 +7,11 @@ $time = microtime(true);
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
-ini_set('error_log', getcwd() . '/logs/php_errors.log');
+$logDir = __DIR__ . '/logs';
+if (!is_dir($logDir)) {
+    mkdir($logDir, 0750, true);
+}
+ini_set('error_log', $logDir . '/php_errors.log');
 
 # Session lifetime of 3 hours
 ini_set('session.gc_maxlifetime', 10800);
