@@ -37,7 +37,7 @@ class Users extends Component
                     try
                     {
                         Users::doEditUser();
-                        $this->showUsers('<div id="msg">{LANG_USER} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -45,7 +45,7 @@ class Users extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showUsers('<div>{LANG_USER} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -64,9 +64,9 @@ class Users extends Component
                     {
                         Users::doEditUser(true);
                         if (Usercontrol::getCurrentUserGroup()->getId() != PARTICIPANT)
-                            $this->showUsers('<div>{LANG_USER} {LANG_EDIT_OK}</div><br />' . "\n");
+                            $this->showUsers('{LANG_USER} {LANG_EDIT_OK}');
                         else
-                            Users::showEditUser(true, '<div>{LANG_USER} {LANG_EDIT_OK}</div><br />' . "\n");    
+                            Users::showEditUser(true, '{LANG_USER} {LANG_EDIT_OK}');    
                     }
                     else
                     {
@@ -79,7 +79,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -101,7 +101,7 @@ class Users extends Component
                           throw new Exception("{ERROR_DELETE_LASTADMIN}");
 
                         $user->delete();
-                        $this->showUsers('<div>{LANG_USER} {LANG_REMOVE_OK}</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -110,7 +110,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -124,7 +124,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {ERROR_SHOW}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {ERROR_SHOW}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -143,7 +143,7 @@ class Users extends Component
 
                         $enable ? $user->enable() : $user->disable();
                         $user->save();
-                        $this->showUsers('<div>{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'_OK}</div><br />' . "\n");
+                        $this->showUsers('{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'_OK}');
                     }
                     else
                     {
@@ -152,7 +152,7 @@ class Users extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showUsers('<div>{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showUsers('{LANG_USER} {LANG_'.($enable ? 'ENABLE' : 'DISABLE').'}: ' . $ex->getMessage());
                 }
 
                 break;
@@ -170,20 +170,18 @@ class Users extends Component
         $content = '';
         while (($user = User::nextUser()) != null)
         {
-            $currentClass = (($c % 2) ? 'odd' : 'even');
-            $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
-            $content .= '<td><img alt="{LANG_USERGROUP}" src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'user' : 'user_red').'.png" class="icon" /></td>' . "\n";
-            $content .= '<td>' . $user->user_id . '</td>' . "\n";
-            $content .= '<td><a href="?com=' . $this->componentId . '&option=show&id=' . $user->user_id . '">' . $user->user_firstname . ' ' . $user->user_lastname . '</a></td>' . "\n";
-            $content .= '<td>' . $user->group_name . '</td>' . "\n";
-            $content .= '<td>' . "\n";
-            $content .= '<a href="?com='.$this->componentId.'&amp;option='.($user->user_enabled ? 'disable' : 'enable').'&amp;id='.$user->user_id.'"><img src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'lock' : 'lock_open').'.png" alt="{LANG_USER} {LANG_'.($user->user_enabled ? 'DISABLE' : 'ENABLE').'}" class="actions" /></a>' . "\n";
-            $content .= '<a href="?com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
+            $cells  = '<td><img alt="{LANG_USERGROUP}" src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'user' : 'user_red').'.png" class="icon" /></td>' . "\n";
+            $cells .= '<td>' . $user->user_id . '</td>' . "\n";
+            $cells .= '<td><a href="?com=' . $this->componentId . '&option=show&id=' . $user->user_id . '">' . $user->user_firstname . ' ' . $user->user_lastname . '</a></td>' . "\n";
+            $cells .= '<td>' . $user->group_name . '</td>' . "\n";
+            $cells .= '<td>' . "\n";
+            $cells .= '<a href="?com='.$this->componentId.'&amp;option='.($user->user_enabled ? 'disable' : 'enable').'&amp;id='.$user->user_id.'"><img src="templates/{TEMPLATE_NAME}/icons/'.($user->user_enabled ? 'lock' : 'lock_open').'.png" alt="{LANG_USER} {LANG_'.($user->user_enabled ? 'DISABLE' : 'ENABLE').'}" class="actions" /></a>' . "\n";
+            $cells .= '<a href="?com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
 
             if (UserControl::getCurrentUser()->getId() != $user->user_id)
-              $content .= '<a href="?com='.$this->componentId.'&amp;option=delete&amp;id='.$user->user_id.'" onclick="return confirm(\'{LANG_CONFIRM_DELETE}\');"><img src="templates/{TEMPLATE_NAME}/icons/page_delete.png" class="actions" alt="{LANG_USER} {LANG_REMOVE}" class="actions" /></a>' . "\n";
-            $content .= '</td>' . "\n";
-            $content .= '</tr>' . "\n";
+              $cells .= '<a href="?com='.$this->componentId.'&amp;option=delete&amp;id='.$user->user_id.'" onclick="return confirm(\'{LANG_CONFIRM_DELETE}\');"><img src="templates/{TEMPLATE_NAME}/icons/page_delete.png" class="actions" alt="{LANG_USER} {LANG_REMOVE}" /></a>' . "\n";
+            $cells .= '</td>' . "\n";
+            $content .= self::buildOverviewRow($cells, $c);
             $c++;
         }
 
@@ -191,7 +189,7 @@ class Users extends Component
 
         //usergroup list to filter
         $groupList = '<form name="grouplist" action="?com=' . $this->componentId . '" method="post">' . "\n";
-        $groupList .= '<select onchange="document.grouplist.submit();" name="usergroup">' . "\n";
+        $groupList .= '<select class="form-select" onchange="document.grouplist.submit();" name="usergroup">' . "\n";
         $groupList .= '<option value="">{LANG_ALL}</option>';
         UserGroup::getAllUserGroups((@$_POST['usergroup'] ? $_POST['usergroup'] : false));
         while (($userGroup = UserGroup::nextUserGroup()) != null)
@@ -202,16 +200,18 @@ class Users extends Component
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_USERS}';
         $replaceArr['USERGROUP_LIST'] = $groupList;
-        $replaceArr['USER_MSG'] = $msg;
-        $replaceArr['USER_ADD'] = '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" /> <a href="?com={COM_ID}&amp;option=add" class="button">{LANG_USER} {LANG_ADD}</a> 
-        <img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_USERGROUP} {LANG_ADD}" class="actions_top" /> <a href="?com={COM_ID}&amp;option=newparticipant" class="button">{LANG_PARTICIPANT} {LANG_ADD}</a>';
+        $replaceArr['USER_MSG'] = self::buildMsgWrapper($msg);
+        $replaceArr['USER_ADD'] = '<a href="?com={COM_ID}&amp;option=add" class="btn btn-primary mb-2 me-2">'
+                                . '<i class="bi bi-plus-lg me-1"></i>{LANG_USER} {LANG_ADD}</a>'
+                                . '<a href="?com={COM_ID}&amp;option=newparticipant" class="btn btn-primary mb-2">'
+                                . '<i class="bi bi-plus-lg me-1"></i>{LANG_PARTICIPANT} {LANG_ADD}</a>';
 
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
         echo $tpl;
 
-    } // showUserGroups
+    } // showUsers
 
     public static function showUser($id)
     {
@@ -247,7 +247,7 @@ class Users extends Component
         {
             $content .= '<tr>' . "\n";
             $content .= '<td colspan="7" style="text-align: right;">' . "\n";
-            $content .= '<button onclick="window.location = \'?com=' . $_GET['com'] . '\';">{LANG_BACK}</button>' . "\n";
+            $content .= '<button class="btn btn-secondary" onclick="window.location = \'?com=' . $_GET['com'] . '\';">{LANG_BACK}</button>' . "\n";
             $content .= '</td>' . "\n";
             $content .= '</tr>' . "\n";
         }
@@ -273,7 +273,6 @@ class Users extends Component
 
         $content = '';
         $replaceArr = array();
-        $replaceArr['ERROR_MSG'] = '';
 
         //get default values
         if ($edit && $edit instanceof InputException)
@@ -303,7 +302,7 @@ class Users extends Component
                 $bankaccount = @$_POST['bankaccount'];
             }
             
-            $replaceArr['ERROR_MSG'] = '<div>'.$edit->getMessage().'</div>';
+            $msg = '<div>'.$edit->getMessage().'</div>';
         }
         else if ($edit)
         {
@@ -328,19 +327,19 @@ class Users extends Component
             $confirmPassword = '';
         }
         
-        $content .= '<tr><td>{LANG_USER_FNAME}:</td><td><input maxlength="45" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'firstname') || (@$edit && !@$firstName) ? 'class="error" ' : ' ') . 'type="text" name="firstname"' . (@$firstName ? ' value="'.@$firstName.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_LNAME}:</td><td><input maxlength="70" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'lastname') || (@$edit && !@$lastName) ? 'class="error" ' : ' ') . 'type="text" name="lastname"' . (@$lastName ? ' value="'.@$lastName.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_PHONENR}:</td><td><input maxlength="10" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'telnr') ? 'class="error" ' : ' ') . 'type="text" name="telnr"' . (@$telNr ? ' value="'.@$telNr.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_EMAIL}:</td><td><input maxlength="128" ' . ((@$edit instanceof InputException && $edit->getErrorField() == 'emailaddress') || (@$edit && !@$emailAddress) ? 'class="error" ' : ' ') . 'type="text" name="emailaddress"' . (@$emailAddress ? ' value="'.@$emailAddress.'"' : '') . ' /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_PASS}:</td><td><input maxlength="65" ' . ((@$edit instanceof InputException && !isset($password)) ? 'class="error" ' : '') . 'type="password" name="password" /></td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_USER_PASS} {LANG_USER_CONFIRM}:</td><td><input maxlength="65" ' . ((@$edit instanceof InputException && !isset($confirmpassword)) ? 'class="error" ' : '') . ' type="password" name="confirmpassword" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_FNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'firstname') || (@$edit && !@$firstName)) ? ' error' : '') . '" maxlength="45" type="text" name="firstname"' . (@$firstName ? ' value="'.@$firstName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_LNAME}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'lastname') || (@$edit && !@$lastName)) ? ' error' : '') . '" maxlength="70" type="text" name="lastname"' . (@$lastName ? ' value="'.@$lastName.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_PHONENR}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'telnr') ? ' error' : '') . '" maxlength="10" type="text" name="telnr"' . (@$telNr ? ' value="'.@$telNr.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_EMAIL}:</td><td><input class="form-control' . (((@$edit instanceof InputException && $edit->getErrorField() == 'emailaddress') || (@$edit && !@$emailAddress)) ? ' error' : '') . '" maxlength="128" type="text" name="emailaddress"' . (@$emailAddress ? ' value="'.@$emailAddress.'"' : '') . ' /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_PASS}:</td><td><input class="form-control' . ((@$edit instanceof InputException && !isset($password)) ? ' error' : '') . '" maxlength="65" type="password" name="password" /></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_USER_PASS} {LANG_USER_CONFIRM}:</td><td><input class="form-control' . ((@$edit instanceof InputException && !isset($confirmpassword)) ? ' error' : '') . '" maxlength="65" type="password" name="confirmpassword" /></td></tr>' . "\n";
 
         //generate list of usergroups
         if (!@$user instanceof Participant && $_GET['option'] != 'newparticipant')
         {
             $content .= '<tr>' . "\n";
             $content .= '<td>{LANG_USERGROUP}:</td>' . "\n";
-            $content .= '<td><select name="usergroup">' . "\n";
+            $content .= '<td><select class="form-select" name="usergroup">' . "\n";
             UserGroup::getAllUserGroups();
             while (($userGroup = UserGroup::nextUserGroup()) != null)
             {
@@ -354,20 +353,23 @@ class Users extends Component
         else
         {
             $content .= '<tr><td>' . "\n";
-            $content .= '{LANG_USER_STREET}:</td><td><input maxlength="100" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? 'class="error" ' : ' ') . 'type="text" name="street"' . (@$street ? ' value="'.@$street.'"' : '') . ' />' . "\n";
-            $content .= '<input style="width: 20px;" maxlength="6" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? 'class="error" ' : ' ') . 'type="text" name="housenr"' . (@$housenr ? ' value="'.@$housenr.'"' : '') . ' />' . "\n";
-            $content .= '<input style="width: 15px;" type="text" maxlength="1" name="nradd"' . (@$nradd ? ' value="'.@$nradd.'"' : '') . ' />' . "\n";
-            $content .= '</td></tr>' . "\n";
+            $content .= '{LANG_USER_STREET}:</td><td><div class="d-flex gap-2">' . "\n";
+            $content .= '<input class="form-control flex-grow-1' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? ' error' : '') . '" maxlength="100" type="text" name="street"' . (@$street ? ' value="'.@$street.'"' : '') . ' />' . "\n";
+            $content .= '<input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? ' error' : '') . '" style="width: 80px;" maxlength="6" type="text" name="housenr" placeholder="Nr"' . (@$housenr ? ' value="'.@$housenr.'"' : '') . ' />' . "\n";
+            $content .= '<input class="form-control" style="width: 60px;" type="text" maxlength="1" name="nradd" placeholder="+"' . (@$nradd ? ' value="'.@$nradd.'"' : '') . ' />' . "\n";
+            $content .= '</div></td></tr>' . "\n";
 
-            $content .= '<tr><td>{LANG_USER_POSTALCODE}:</td><td><input maxlength="6" ' . ((@$edit && $edit instanceof InputException && ($edit->getErrorField() == 'address' || $edit->getErrorField() == 'postalcode')) ? 'class="error" ' : ' ') . 'type="text" name="postalcode"' . (@$postalcode ? ' value="'.@$postalcode.'"' : '') . ' /></td></tr>' . "\n";
-            $content .= '<tr><td>{LANG_USER_TOWN}:</td><td><input maxlength="100" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? 'class="error" ' : ' ') . 'type="text" name="town"' . (@$town ? ' value="'.@$town.'"' : '') . ' /></td></tr>' . "\n";
-            $content .= '<tr><td>{LANG_USER_BANKACCOUNT}:</td><td><input maxlength="18" ' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'bankaccount') ? 'class="error" ' : ' ') . 'type="text" name="bankaccount"' . (@$bankaccount ? ' value="'.@$bankaccount.'"' : '') . ' /></td></tr>' . "\n";
+            $content .= '<tr><td>{LANG_USER_POSTALCODE}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && ($edit->getErrorField() == 'address' || $edit->getErrorField() == 'postalcode')) ? ' error' : '') . '" maxlength="6" type="text" name="postalcode"' . (@$postalcode ? ' value="'.@$postalcode.'"' : '') . ' /></td></tr>' . "\n";
+            $content .= '<tr><td>{LANG_USER_TOWN}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'address') ? ' error' : '') . '" maxlength="100" type="text" name="town"' . (@$town ? ' value="'.@$town.'"' : '') . ' /></td></tr>' . "\n";
+            $content .= '<tr><td>{LANG_USER_BANKACCOUNT}:</td><td><input class="form-control' . ((@$edit && $edit instanceof InputException && $edit->getErrorField() == 'bankaccount') ? ' error' : '') . '" maxlength="18" type="text" name="bankaccount"' . (@$bankaccount ? ' value="'.@$bankaccount.'"' : '') . ' /></td></tr>' . "\n";
         }
 
         $replaceArr['USER_TITLE'] = "{LANG_USER} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";
         $replaceArr['CONTENT'] = $content;
-        $replaceArr['USER_MSG'] = $msg;        
-        $replaceArr['USER_COM_ID'] = $_GET['com'];
+        $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($msg);
+
+        $replaceArr['USER_COM_ID'] =  @$_GET['competition'] ? '' : $_GET['com'];
+        $replaceArr['COMPETITION'] = @$_GET['competition'] ? '&competition=' . $_GET['competition'] . '&' : '';
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditUserGroup

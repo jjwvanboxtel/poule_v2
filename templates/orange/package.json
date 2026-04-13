@@ -1,0 +1,14 @@
+{
+  "name": "orange-template",
+  "version": "1.0.0",
+  "description": "Orange template SCSS build for poule_v2",
+  "scripts": {
+    "build": "sass scss/style.scss template.css --style=expanded --no-source-map",
+    "build:min": "sass scss/style.scss template.css --style=compressed --no-source-map",
+    "watch": "sass --watch scss/style.scss:template.css --no-source-map"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "sass": "^1.77.6"
+  }
+}

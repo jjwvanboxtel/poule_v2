@@ -41,7 +41,7 @@ class Questions extends Component
                     try
                     {
                         $this->doEditQuestion();
-                        $this->showQuestions('<div id="msg">{LANG_QUESTION} {LANG_ADD_OK}</div><br />' . "\n");
+                        $this->showQuestions('{LANG_QUESTION} {LANG_ADD_OK}');
                     }
                     catch (InputException $iex)
                     {
@@ -49,7 +49,7 @@ class Questions extends Component
                     }
                     catch (Exception $ex)
                     {
-                        $this->showQuestions('<div>{LANG_QUESTION} {ERROR_ADD}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                        $this->showQuestions('{LANG_QUESTION} {ERROR_ADD}: ' . $ex->getMessage());
                     }
                 }
                 else
@@ -68,22 +68,25 @@ class Questions extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditQuestion($question))
-                          $this->showQuestions('<div>{LANG_QUESTION} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}');
                         else
-                          $this->showQuestions('<div>{LANG_QUESTION} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {LANG_EDIT_OK}');
                     }
                     else
                     {
+                        echo 'jaap';
                         $this->showEditQuestion(true);
                     }
                 }
                 catch (InputException $iex)
                 {
+                    echo 'jaap2';
                     $this->showEditQuestion($iex);
                 }
                 catch (Exception $ex)
                 {
-                    $this->showQuestions('<div>{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    echo 'jaap3';
+                    $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'editanwser':
@@ -97,9 +100,9 @@ class Questions extends Component
                     if(isset($_POST['submit']))
                     {
                         if(!$this->doEditAnwser($question))
-                          $this->showQuestions('<div>{LANG_QUESTION} {ERROR_EDIT}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {ERROR_EDIT}');
                         else
-                          $this->showQuestions('<div>{LANG_QUESTION} {LANG_EDIT_OK}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -112,7 +115,7 @@ class Questions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showEditAnwser('<div>{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showEditAnwser('{LANG_QUESTION} {ERROR_EDIT}: ' . $ex->getMessage());
                 }
                 break;
             case 'delete': 
@@ -126,9 +129,9 @@ class Questions extends Component
                         $question = new Question($_GET['id']);
 
                         if (!$question->delete())
-                          $this->showQuestions('<div>{ERROR_OLD_FILE_REMOVE}<br />{LANG_QUESTION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showQuestions('{ERROR_OLD_FILE_REMOVE}<br />{LANG_QUESTION} {LANG_REMOVE_OK}');
                         else
-                          $this->showQuestions('<div>{LANG_QUESTION} {LANG_REMOVE_OK}</div><br />' . "\n");
+                          $this->showQuestions('{LANG_QUESTION} {LANG_REMOVE_OK}');
                     }
                     else
                     {
@@ -137,7 +140,7 @@ class Questions extends Component
                 }
                 catch (Exception $ex)
                 {
-                    $this->showQuestions('<div>{LANG_QUESTION} {ERROR_REMOVE}: ' . $ex->getMessage() . '</div><br />' . "\n");
+                    $this->showQuestions('{LANG_QUESTION} {ERROR_REMOVE}: ' . $ex->getMessage());
                 }
                 break;
             default:
@@ -151,9 +154,29 @@ class Questions extends Component
 
         Question::getAllQuestions(@$_GET['competition']);
 
+        // Store questions for both views
+        $questions = array();
+        while (($question = Question::nextQuestion()) != null)
+        {
+            $questions[] = $question;
+        }
+
         $c = 0;
         $content = '';
-        while (($question = Question::nextQuestion()) != null)
+        
+        // Desktop table view
+        $content .= '<div class="d-none d-md-block">'."\n";
+        $content .= '<div class="table-responsive">'."\n";
+        $content .= '<table class="list" cellpadding="0" cellspacing="0">'."\n";
+        $content .= '<tr>'."\n";
+        $content .= '<th style="width: 40px;">{LANG_ID}</th>'."\n";
+        $content .= '<th>{LANG_QUESTION}</th>'."\n";
+        $content .= '<th>{LANG_QUESTIONTYPE_NAME}</th>'."\n";
+        $content .= '<th>{LANG_QUESTION_ANWSER}</th>'."\n";
+        $content .= '<th style="width: 75px;">{LANG_ACTIONS}</th>'."\n";
+        $content .= '</tr>'."\n";
+        
+        foreach ($questions as $question)
         {
             $currentClass = (($c % 2) ? 'odd' : 'even');
             $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
@@ -179,12 +202,54 @@ class Questions extends Component
         }
 
         $content .= '<tr><td colspan="5">{LANG_COUNT}: ' . $c . '</td></tr>' . "\n";
+        $content .= '</table>'."\n";
+        $content .= '</div>'."\n";
+        $content .= '</div>'."\n";
+        
+        // Mobile card view
+        $content .= '<div class="d-md-none">'."\n";
+        $c = 0;
+        foreach ($questions as $question)
+        {
+            $content .= '<div class="card mb-3">'."\n";
+            $content .= '<div class="card-body">'."\n";
+            $content .= '<h6 class="card-title">'.$question->question_question.'</h6>'."\n";
+            $content .= '<div class="mb-2"><small class="text-muted">{LANG_ID}:</small> '.$question->question_id.'</div>'."\n";
+            $content .= '<div class="mb-2"><small class="text-muted">{LANG_QUESTIONTYPE_NAME}:</small> '.Question::$_TYPES[$question->question_type].'</div>'."\n";
+            
+            $content .= '<div class="mb-3"><strong>{LANG_QUESTION_ANWSER}:</strong> ';
+            if ($question->question_type == 'yesno')
+                if ($question->question_anwser == '1') 
+                    $content .= '{LANG_YES}';            
+                else if ($question->question_anwser == '0') 
+                    $content .= '{LANG_NO}';            
+                else
+                    $content .= '-';            
+            else
+                $content .= ($question->question_anwser ? $question->question_anwser : '-');
+            $content .= '</div>'."\n";
+            
+            if ($this->hasAccess(CRUD_EDIT) || $this->hasAccess(CRUD_DELETE))
+            {
+                $content .= '<div class="mt-3">'."\n";
+                ($this->hasAccess(CRUD_EDIT) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=editanwser&amp;id='.$question->question_id .'" class="btn btn-sm btn-outline-primary me-2"><img src="templates/{TEMPLATE_NAME}/icons/award_star_add.png" width="16" alt="{LANG_QUESTION} {LANG_EDIT}" /> {LANG_QUESTION_ANWSER}</a>' . "\n" : '');
+                ($this->hasAccess(CRUD_EDIT) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$question->question_id .'" class="btn btn-sm btn-outline-secondary me-2"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" width="16" alt="{LANG_QUESTION} {LANG_EDIT}" /> {LANG_EDIT}</a>' . "\n" : '');
+                ($this->hasAccess(CRUD_DELETE) ? $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=delete&amp;id='.$question->question_id.'" onclick="return confirm(\'{LANG_CONFIRM_DELETE}\');" class="btn btn-sm btn-outline-danger"><img src="templates/{TEMPLATE_NAME}/icons/page_delete.png" width="16" alt="{LANG_QUESTION} {LANG_REMOVE}" /> {LANG_REMOVE}</a>' . "\n" : '');
+                $content .= '</div>'."\n";
+            }
+            
+            $content .= '</div>'."\n";
+            $content .= '</div>'."\n";
+            $c++;
+        }
+        $content .= '<div class="text-muted mt-2">{LANG_COUNT}: ' . $c . '</div>'."\n";
+        $content .= '</div>'."\n";
 
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_QUESTIONS}';
-        $replaceArr['QUESTION_MSG'] = $msg;
+        $replaceArr['QUESTION_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['COM_ID'] = $this->componentId;
-        $replaceArr['QUESTION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<img src="templates/{TEMPLATE_NAME}/icons/page_add.png" alt="{LANG_QUESTION} {LANG_ADD}" class="actions_top" /> <a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="button">{LANG_QUESTION} {LANG_ADD}</a><br />'. "\n" : '');
+        $replaceArr['QUESTION_ADD'] = ($this->hasAccess(CRUD_CREATE) ? '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=add" class="btn btn-primary mb-2"><i class="bi bi-plus-lg me-1"></i>{LANG_QUESTION} {LANG_ADD}</a>'. "\n" : '');
         $replaceArr['CONTENT'] = $content;
         $tpl->replace($replaceArr);
         echo $tpl;
@@ -209,11 +274,15 @@ class Questions extends Component
         //get default values
         if ($edit && @$question != null)
         {
+            echo 'jaap read db';
             //on edit read all values from db
             $questionQuestion = $question->getQuestion();
+                        
             $questionAnwser = $question->getAnwser();
+            echo 'jaap4';
             $questionType = $question->getType();
             $questionAnwserCount = $question->getAnwserCount();
+                            
         }
         else if ($edit && $edit instanceof InputException)
         {
@@ -223,12 +292,13 @@ class Questions extends Component
             $questionType = @$_POST['questiontype'];
             $questionAnwserCount = @$_POST['questionanwsercount'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
-        $content .= '<tr><td valign="top">{LANG_QUESTION}:</td><td><textarea ' . (@$edit && !@$questionQuestion ? 'style="background-color: red;" ' : ' ') . 'cols="80" rows="10" name="questionquestion">' . (@$questionQuestion ? ''.@$questionQuestion.'' : '') . '</textarea></td></tr>' . "\n";
+
+        $content .= '<tr><td valign="top">{LANG_QUESTION}:</td><td><textarea class="form-control' . ((@$edit && !@$questionQuestion) ? ' error' : '') . '" cols="80" rows="10" name="questionquestion">' . (@$questionQuestion ? ''.@$questionQuestion.'' : '') . '</textarea></td></tr>' . "\n";
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_QUESTIONTYPE_NAME}:</td>' . "\n";
-        $content .= '<td><select name="questiontype">' . "\n";
+        $content .= '<td><select class="form-select" name="questiontype">' . "\n";
         foreach (Question::$_TYPES as $key => $value)
         {
             $content .= '<option value="' . $key . '" ' . (@$edit && ($questionType == $key) ? ' selected' : '') . '>' . $value . '</option>' . "\n";
@@ -237,7 +307,8 @@ class Questions extends Component
         $content .= '</tr>' . "\n";
         $content .= '<tr>' . "\n";
         $content .= '<td>{LANG_QUESTION_ANWSER_COUNT}:</td>' . "\n";
-        $content .= '<td><select name="questionanwsercount">' . "\n";
+        $content .= '<td><select class="form-select" name="questionanwsercount">' . "\n";
+
         for ($i=1; $i<=App::$_CONF->getValue('MAX_SELECTION_QUESTION_ANWSER_COUNT'); $i++)
         {
             $content .= '<option value="' . $i . '" ' . (@$edit && ($questionAnwserCount == $i) ? ' selected' : '') . '>' . $i . '</option>' . "\n";
@@ -249,7 +320,6 @@ class Questions extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['QUESTION_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditQuestion
@@ -307,7 +377,7 @@ class Questions extends Component
         {
             $content .= '<tr>' . "\n";
             $content .= '<td>{LANG_QUESTION_ANWSER}:</td>' . "\n";
-            $content .= '<td><select name="questionanwser_'.$i.'">' . "\n";
+            $content .= '<td><select class="form-select" name="questionanwser_'.$i.'">' . "\n";
             switch ($question->getType()) 
             {
                 case 'yesno':

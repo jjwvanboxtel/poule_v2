@@ -6,8 +6,8 @@ require_once('./simpletest/autorun.php');
 
 class AllTests extends TestSuite {
 
-    function AllTests() {
-        $this->TestSuite('All tests for Poule system');
+    function __construct() {
+        parent::__construct('All tests for Poule system');
         $this->addFile('cities_tests.php');
         $this->addFile('competitions_tests.php');
         $this->addFile('countries_tests.php');
@@ -22,6 +22,34 @@ class AllTests extends TestSuite {
         $this->addFile('scorings_tests.php');
         $this->addFile('table_tests.php');
         $this->addFile('upload_tests.php');
+        
+        // UI regression suites (001-ui-ux-refresh).
+        // ui_testcase.php defines the shared UiTestCase base class.
+        // ui_shell_assertions.php adds UiShellAssertions for shell/navigation.
+        // ui_markup_assertions.php adds UiMarkupAssertions for alerts/forms/tables.
+        require_once('ui/ui_testcase.php');
+        require_once('ui/ui_shell_assertions.php');
+        require_once('ui/ui_markup_assertions.php');
+
+        // T008: Shell render regressions for placeholder usage, hero context
+        // and sidebar output (locks down the shell before the T009 refactor).
+        $this->addFile('ui/ui_shell_render_tests.php');
+
+        // T013: Form render regressions for login, add, field grouping,
+        // action rows, validation states and token replacement
+        // (locks down the form contract before the T014–T017 restyling).
+        $this->addFile('ui/ui_form_render_tests.php');
+
+        // T019: Overview render regressions for standings tables, competition
+        // and games lists, prediction overviews, participant and user lists,
+        // action regions and token replacement
+        // (locks down the overview contract before the T020–T023 restyling).
+        $this->addFile('ui/ui_overview_render_tests.php');
+    }
+
+    /* Backwards-compatible PHP4-style constructor */
+    function AllTests() {
+        $this->__construct();
     }
 }
 ?>

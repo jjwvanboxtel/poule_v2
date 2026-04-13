@@ -37,7 +37,7 @@ class Participants extends Component
                     if(isset($_POST['submit']))
                     {
                         Participants::doEditParticipant();
-                        $this->showParticipants('<div>{LANG_PARTICIPANT} {LANG_EDIT_OK}</div><br />' . "\n");
+                        $this->showParticipants('{LANG_PARTICIPANT} {LANG_EDIT_OK}');
                     }
                     else
                     {
@@ -77,14 +77,12 @@ class Participants extends Component
                     || @$_POST['filter'] == "5" && !$participant->getPayed(@$_GET['competition']) && $participant->getSubscribed(@$_GET['competition'])
                     || @$_POST['filter'] == "6" && !$participant->getPayed(@$_GET['competition']) && !$participant->getSubscribed(@$_GET['competition']))
             {
-                $currentClass = (($c % 2) ? 'odd' : 'even');
-                $content .= '<tr class="' . $currentClass . '" onmouseover="this.className = \'hover\';" onmouseout="this.className = \'' . $currentClass . '\';">' . "\n";
-                $content .= '<td>' . $user->user_id . '</td>' . "\n";
-                $content .= '<td>' . $user->user_firstname . ' ' . $user->user_lastname . '</td>' . "\n";
-                $content .= '<td>' . "\n";
-                $content .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
-                $content .= '</td>' . "\n";
-                $content .= '</tr>' . "\n";
+                $cells  = '<td>' . $user->user_id . '</td>' . "\n";
+                $cells .= '<td>' . $user->user_firstname . ' ' . $user->user_lastname . '</td>' . "\n";
+                $cells .= '<td>' . "\n";
+                $cells .= '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=edit&amp;id='.$user->user_id .'"><img src="templates/{TEMPLATE_NAME}/icons/page_edit.png" alt="{LANG_USER} {LANG_EDIT}" class="actions" /></a>' . "\n";
+                $cells .= '</td>' . "\n";
+                $content .= self::buildOverviewRow($cells, $c);
                 $c++;
             }
         }
@@ -93,7 +91,7 @@ class Participants extends Component
 
         //filter
         $filter  = '<form name="filterlist" action="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com=' . $this->componentId . '" method="post">' . "\n";
-        $filter .= '<select onchange="document.filterlist.submit();" name="filter">' . "\n";
+        $filter .= '<select class="form-select" onchange="document.filterlist.submit();" name="filter">' . "\n";
         $filter .= '<option value="0" '.(@$_POST['filter'] == "0" ? 'selected' : '').'>{LANG_NO_FILTER}</option>';
         $filter .= '<option value="1" '.(@$_POST['filter'] == "1" ? 'selected' : '').'>{LANG_PARTICIPANT_PAYED}</option>';
         $filter .= '<option value="2" '.(@$_POST['filter'] == "2" ? 'selected' : '').'>{LANG_PARTICIPANT_SUBSCRIBED}</option>';
@@ -106,7 +104,7 @@ class Participants extends Component
         
         $replaceArr = array();
         $replaceArr['COM_NAME'] = '{LANG_PARTICIPANTS}';
-        $replaceArr['PARTICIPANT_MSG'] = $msg;
+        $replaceArr['PARTICIPANT_MSG'] = self::buildMsgWrapper($msg);
         $replaceArr['CONTENT'] = $content;
         $replaceArr['FILTER_LIST'] = $filter; 
         $replaceArr['COM_ID'] = $this->componentId;
@@ -139,7 +137,7 @@ class Participants extends Component
             //the post went wrong, get previous values
             $payed = @$_POST['participantpayed'];
             
-            $replaceArr['ERROR_MSG'] = $edit->getMessage();
+            $replaceArr['ERROR_MSG'] = self::buildMsgWrapper($edit->getMessage());
         }
         else if ($edit)
         {
@@ -148,12 +146,13 @@ class Participants extends Component
         }
         
         $content .= '<tr><td>{LANG_PARTICIPANT}:</td><td>'.$firstName . ' ' . $lastName . '</td></tr>' . "\n";
-        $content .= '<tr><td>{LANG_PARTICIPANT_PAYED}:</td><td><input type="checkbox" name="participantpayed" value="1" ' . (@$payed == 1 ? ' checked' : '') . '></td></tr>' . "\n";
+        $content .= '<tr><td>{LANG_PARTICIPANT_PAYED}:</td><td><input class="form-check-input" type="checkbox" name="participantpayed" value="1" ' . (@$payed == 1 ? ' checked' : '') . '></td></tr>' . "\n";
         
         $replaceArr['PARTICIPANT_TITLE'] = "{LANG_PARTICIPANT} {LANG_EDIT}";
         $replaceArr['CONTENT'] = $content;       
         $replaceArr['PARTICIPANT_COM_ID'] = $_GET['com'];
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditParticipantGroup
