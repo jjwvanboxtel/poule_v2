@@ -10,9 +10,10 @@ error_reporting(0);
 //ini_set('display_errors',1);
 
 // Composer autoloader (HTMLPurifier and other dependencies)
-if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
+if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+    die('Composer dependencies not installed. Please run: composer install');
 }
+require_once __DIR__ . '/vendor/autoload.php';
 
 # Session lifetime of 3 hours
 ini_set('session.gc_maxlifetime', 10800);
@@ -102,6 +103,8 @@ final class App
                 
             $replaceArr = array();
             ob_start();
+
+            $purifier = new \HTMLPurifier(\HTMLPurifier_Config::createDefault());
              
             try
             {
@@ -171,7 +174,6 @@ final class App
                         echo '</div>' . "\n"; // end stat row
 
                         // Description card
-                        $purifier = new \HTMLPurifier(\HTMLPurifier_Config::createDefault());
                         echo '<div class="card stat-card">'
                            . '<div class="card-header"><h5 class="mb-0">' . htmlspecialchars($competition->getName()) . '</h5></div>'
                            . '<div class="card-body">' . $purifier->purify($competition->getDescription()) . '</div>'
