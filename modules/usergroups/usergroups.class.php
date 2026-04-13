@@ -30,6 +30,7 @@ class UserGroups extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditUserGroup();
@@ -57,6 +58,7 @@ class UserGroups extends Component
                 {
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         $userGroup = new UserGroup($_GET['id']);
                         $userGroup->setGroupName($_POST['group']);
 
@@ -249,6 +251,7 @@ class UserGroups extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['USERGROUP_TOTAL'] = $c;
         $replaceArr['USERGROUP_COM_ID'] = $this->componentId;
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditUserGroup      

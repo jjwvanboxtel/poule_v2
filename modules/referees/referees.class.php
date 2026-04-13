@@ -34,6 +34,7 @@ class Referees extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditReferee();
@@ -63,6 +64,7 @@ class Referees extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditReferee($referee))
                           $this->showReferees('{LANG_REFEREE} {ERROR_EDIT}');
                         else
@@ -181,6 +183,7 @@ class Referees extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['REFEREE_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditReferee

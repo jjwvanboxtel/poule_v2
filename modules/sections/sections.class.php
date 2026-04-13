@@ -38,6 +38,7 @@ class Sections extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditSection($section))
                           $this->showSections('{LANG_SECTION} {ERROR_EDIT}');
                         else
@@ -133,6 +134,7 @@ class Sections extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['SECTION_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditSection

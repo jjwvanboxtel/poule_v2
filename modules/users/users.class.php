@@ -34,6 +34,7 @@ class Users extends Component
                   
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         Users::doEditUser();
@@ -62,6 +63,7 @@ class Users extends Component
                 {
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         Users::doEditUser(true);
                         if (Usercontrol::getCurrentUserGroup()->getId() != PARTICIPANT)
                             $this->showUsers('{LANG_USER} {LANG_EDIT_OK}');
@@ -370,6 +372,7 @@ class Users extends Component
 
         $replaceArr['USER_COM_ID'] =  @$_GET['competition'] ? '' : $_GET['com'];
         $replaceArr['COMPETITION'] = @$_GET['competition'] ? '&competition=' . $_GET['competition'] . '&' : '';
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditUserGroup

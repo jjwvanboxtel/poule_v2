@@ -10,7 +10,7 @@
     <p>{LANG_LOST_MSG}</p>
 
     <form action="" method="post">
-        <div class="form-group">
+        {CSRF_TOKEN}
             <label class="form-label">{LANG_LOST_INFO}</label>
             <input class="form-control" type="text" name="email" />
         </div>

@@ -243,6 +243,7 @@ LANG_COMPETITION_FIRST_PLACE = 1e plaats
 LANG_COMPETITION_SECOND_PLACE = 2e plaats
 LANG_COMPETITION_THIRD_PLACE = 3e plaats
 ERROR_COMPETITION = Competitie bestaat niet!
+ERROR_CSRF_INVALID = Ongeldige beveiligingstoken. Ververs de pagina en probeer opnieuw.
 LANG_COMPETITION_HEADER = Header
 LANG_COMPETITION_DESCRIPTION = Beschrijving/Informatie
 LANG_COMPETITION_FINAL_SUBMISSION_DATE = Uiterste inleverdatum

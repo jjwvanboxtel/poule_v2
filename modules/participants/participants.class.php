@@ -36,6 +36,7 @@ class Participants extends Component
                 {
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         Participants::doEditParticipant();
                         $this->showParticipants('{LANG_PARTICIPANT} {LANG_EDIT_OK}');
                     }
@@ -152,7 +153,7 @@ class Participants extends Component
         $replaceArr['CONTENT'] = $content;       
         $replaceArr['PARTICIPANT_COM_ID'] = $_GET['com'];
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
-
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditParticipantGroup

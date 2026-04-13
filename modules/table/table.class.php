@@ -41,6 +41,7 @@ class Table extends Component
                 {
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->hasAccess(CRUD_EDIT))
                             throw new Exception('{ERROR_ACCESSDENIED}');
 
@@ -100,6 +101,7 @@ class Table extends Component
         $replaceArr['COM_ID'] = $this->componentId;
         $replaceArr['CONTENT'] = $content;
         $replaceArr['TABLE_BUTTONS'] = ($this->hasAccess(CRUD_EDIT) ? '<input class="btn btn-primary" type="submit" name="submit" value="{LANG_CALCULATE}" />' : ''); 
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
 

@@ -35,6 +35,7 @@ class Countries extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditCountry();
@@ -64,6 +65,7 @@ class Countries extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditCountry($country))
                           $this->showCountries('{LANG_COUNTRY} {ERROR_EDIT}');
                         else
@@ -193,6 +195,7 @@ class Countries extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['COUNTRY_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditCountry

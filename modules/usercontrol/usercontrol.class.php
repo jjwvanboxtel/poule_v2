@@ -25,6 +25,7 @@ class UserControl extends Component
             case 'login':
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         self::$currentUser = User::loginUser();
@@ -59,6 +60,7 @@ class UserControl extends Component
                 {
                     if (isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         $userId = User::getUserId($_POST['email']);
                         $password = User::setTempPassword($_POST['email']);
                         
@@ -183,6 +185,7 @@ class UserControl extends Component
         $replaceArr['LOGIN_ACTION'] = '?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=login';
         $replaceArr['LOGIN_LOST'] = '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=login_lost">{LANG_LOGIN_LOST}</a>';
         $replaceArr['NEW_CUSTOMER'] = '<a href="?'.(@$_GET['competition'] ? 'competition='.@$_GET['competition'].'&amp;' : '').'com='.$this->componentId.'&amp;option=newparticipant">{LANG_PARTICIPANT_NEW}</a>';
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
 
         echo $tpl;
@@ -218,6 +221,7 @@ class UserControl extends Component
         
         if(isset($_POST['submit']))
         {
+            self::validateCsrfToken();
             try
             {
                 $userId = Users::doEditUser();
@@ -260,6 +264,7 @@ class UserControl extends Component
         $replaceArr = array();
         $replaceArr['LOGIN_MSG_WRAPPER'] = self::buildMsgWrapper($msg);
         $replaceArr['USER_COM_ID'] = $_GET['com'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
 
          echo $tpl;

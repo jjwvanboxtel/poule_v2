@@ -37,6 +37,7 @@ class Rounds extends Component
 
                 if(isset($_POST['submit']))
                 {
+                    self::validateCsrfToken();
                     try
                     {
                         $this->doEditRound();
@@ -66,6 +67,7 @@ class Rounds extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditRound($round))
                           $this->showRounds('{LANG_ROUND} {ERROR_EDIT}');
                         else
@@ -95,6 +97,7 @@ class Rounds extends Component
 
                     if(isset($_POST['submit']))
                     {
+                        self::validateCsrfToken();
                         if(!$this->doEditRoundCountries($round))
                           $this->showRounds('{LANG_ROUND} {ERROR_EDIT}');
                         else
@@ -274,6 +277,7 @@ class Rounds extends Component
         $replaceArr['ROUND_TITLE'] = "{LANG_ROUND} {LANG_" . ((@$_GET['option'] == 'edit') ? "EDIT" : "ADD") . "}";        $replaceArr['CONTENT'] = $content;
         $replaceArr['ROUND_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditRound
@@ -314,6 +318,7 @@ class Rounds extends Component
         $replaceArr['CONTENT'] = $content;
         $replaceArr['ROUND_COM_ID'] = $this->componentId;
         $replaceArr['COMPETITION_ID'] = @$_GET['competition'];
+        $replaceArr['CSRF_TOKEN'] = self::getCsrfTokenField();
         $tpl->replace($replaceArr);
         echo $tpl;
     } // showEditRoundCountries

@@ -8,6 +8,7 @@
 
 <div id="login_container" class="card card-body">
     <form action="{LOGIN_ACTION}" method="post">
+        {CSRF_TOKEN}
         <table class="list" cellpadding="0" cellspacing="0">
             <tr>
                 <td><span class="form-label">{LANG_EMAIL}:</span></td>
