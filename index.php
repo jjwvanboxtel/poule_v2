@@ -9,13 +9,6 @@ error_reporting(0);
 //error_reporting(E_ALL ^ E_STRICT);
 //ini_set('display_errors',1);
 
-// Composer autoloader (HTMLPurifier and other dependencies)
-if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
-    http_response_code(500);
-    die('Application dependencies are missing. Please contact the system administrator.');
-}
-require_once __DIR__ . '/vendor/autoload.php';
-
 # Session lifetime of 3 hours
 ini_set('session.gc_maxlifetime', 10800);
 
@@ -104,8 +97,6 @@ final class App
                 
             $replaceArr = array();
             ob_start();
-
-            $purifier = new \HTMLPurifier(\HTMLPurifier_Config::createDefault());
              
             try
             {
@@ -177,7 +168,7 @@ final class App
                         // Description card
                         echo '<div class="card stat-card">'
                            . '<div class="card-header"><h5 class="mb-0">' . htmlspecialchars($competition->getName()) . '</h5></div>'
-                           . '<div class="card-body">' . $purifier->purify($competition->getDescription()) . '</div>'
+                           . '<div class="card-body">' . Component::sanitizeHtml($competition->getDescription()) . '</div>'
                            . '</div>' . "\n";
                     }
                     else 

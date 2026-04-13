@@ -208,7 +208,123 @@ class Component
              . $cells
              . '</tr>' . "\n";
     }
+
+    /**
+     * Sanitizes HTML by allowing only a safe subset of tags and attributes.
+     *
+     * Uses PHP's built-in DOMDocument to parse and clean the HTML, removing
+     * script elements, event-handler attributes, and javascript: URIs.
+     * Suitable for displaying TinyMCE-authored rich text without XSS risk.
+     *
+     * @param  string $html  The HTML to sanitize.
+     * @return string        Safe HTML containing only allowed tags and attributes.
+     */
+    public static function sanitizeHtml($html)
+    {
+        if (trim((string)$html) === '') {
+            return '';
+        }
+
+        $allowedTags = [
+            'p', 'br', 'hr', 'strong', 'b', 'em', 'i', 'u', 's', 'del', 'ins',
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
+            'a', 'img', 'div', 'span',
+            'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+            'sub', 'sup',
+        ];
+
+        $allowedAttributes = [
+            'a'   => ['href', 'title', 'target'],
+            'img' => ['src', 'alt', 'width', 'height', 'title'],
+            '*'   => ['class', 'align', 'style'],
+        ];
+
+        $doc = new DOMDocument('1.0', 'UTF-8');
+        libxml_use_internal_errors(true);
+        $doc->loadHTML(
+            '<?xml encoding="UTF-8"><html><head><meta charset="UTF-8"/></head><body>' . $html . '</body></html>',
+            LIBXML_HTML_NODEFDTD
+        );
+        libxml_clear_errors();
+
+        $body = $doc->getElementsByTagName('body')->item(0);
+        if ($body === null) {
+            return '';
+        }
+
+        self::sanitizeDomNode($body, $allowedTags, $allowedAttributes);
+
+        $output = '';
+        foreach ($body->childNodes as $child) {
+            $output .= $doc->saveHTML($child);
+        }
+
+        return $output;
+    }
+
+    /**
+     * Recursively removes disallowed elements and dangerous attributes from a DOM node.
+     *
+     * @param DOMNode $node               The node to process.
+     * @param array   $allowedTags        List of lowercase tag names that may remain.
+     * @param array   $allowedAttributes  Map of tag => [attr, ...] plus '*' for globals.
+     */
+    private static function sanitizeDomNode($node, array $allowedTags, array $allowedAttributes)
+    {
+        $toRemove = [];
+        foreach ($node->childNodes as $child) {
+            if ($child->nodeType !== XML_ELEMENT_NODE) {
+                continue;
+            }
+            $tag = strtolower($child->nodeName);
+            if (!in_array($tag, $allowedTags, true)) {
+                $toRemove[] = $child;
+                continue;
+            }
+
+            // Strip disallowed and dangerous attributes from this element.
+            $attrsToRemove = [];
+            if ($child->hasAttributes()) {
+                foreach ($child->attributes as $attr) {
+                    $name = strtolower($attr->nodeName);
+                    // Block all event-handler attributes (onclick, onerror, …).
+                    if (strncasecmp($name, 'on', 2) === 0) {
+                        $attrsToRemove[] = $name;
+                        continue;
+                    }
+                    $allowed = array_merge(
+                        isset($allowedAttributes[$tag]) ? $allowedAttributes[$tag] : [],
+                        isset($allowedAttributes['*'])  ? $allowedAttributes['*']  : []
+                    );
+                    if (!in_array($name, $allowed, true)) {
+                        $attrsToRemove[] = $name;
+                        continue;
+                    }
+                    // Block javascript: URIs in href/src.
+                    if (in_array($name, ['href', 'src'], true)) {
+                        if (preg_match('/^\s*javascript\s*:/i', $attr->nodeValue)) {
+                            $attrsToRemove[] = $name;
+                        }
+                    }
+                }
+            }
+            foreach ($attrsToRemove as $attrName) {
+                $child->removeAttribute($attrName);
+            }
+
+            // Recurse into the now-clean element.
+            self::sanitizeDomNode($child, $allowedTags, $allowedAttributes);
+        }
+
+        // Promote text children of removed elements so no content is lost,
+        // then remove the disallowed element itself.
+        foreach ($toRemove as $child) {
+            while ($child->hasChildNodes()) {
+                $node->insertBefore($child->firstChild, $child);
+            }
+            $node->removeChild($child);
+        }
+    }
 }
-
-
 ?>
