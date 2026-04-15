@@ -13,9 +13,7 @@ class RoundResult
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `round_result`
-                                          WHERE `round_result_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `round_result` WHERE `round_result_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -47,44 +45,34 @@ class RoundResult
 
     public function delete()
     {
-        App::$_DB->doSQL('DELETE FROM `round_result` WHERE `round_result_id` = ' . $this->id . '');
-
+        App::$_DB->doQuery('DELETE FROM `round_result` WHERE `round_result_id` = ?', 'i', $this->id);
         $this->__destruct();
         return true;
     }
 
     public static function deleteAllByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `round_result`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `round_result` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `round_result` SET
-                          `Country_country_id` = "'.$this->result->Country_country_id.'",
-                          `Round_round_id` = "'.$this->result->Round_round_id.'"
-                          WHERE `round_result_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `round_result` SET `Country_country_id` = ?, `Round_round_id` = ? WHERE `round_result_id` = ? LIMIT 1', 'iii', (int)$this->result->Country_country_id, (int)$this->result->Round_round_id, $this->id);
     }
 
     public static function getAllRoundResults($roundId)
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `round_result` WHERE `Round_round_id` = ' .$roundId);
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `round_result` WHERE `Round_round_id` = ?', 'i', (int)$roundId);
     }
 
     public static function deleteAllRoundResultsByRound($roundId)
     {
-        self::$resultList = App::$_DB->doSQL('DELETE FROM `round_result`
-                          WHERE `Round_round_id` = ' . (int)$roundId . '');
+        App::$_DB->doQuery('DELETE FROM `round_result` WHERE `Round_round_id` = ?', 'i', (int)$roundId);
     }    
     
     public static function add($countryId, $roundId)
     {
-        App::$_DB->doSQL('INSERT INTO `round_result` (Country_country_id, Round_round_id)
-                          VALUES (
-                            '.(int)$countryId.',
-                            '.(int)$roundId.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `round_result` (Country_country_id, Round_round_id) VALUES (?, ?)', 'ii', (int)$countryId, (int)$roundId);
     }
 
     public static function nextRoundResult()
@@ -101,10 +89,7 @@ class RoundResult
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `round_result`
-                                    WHERE `Round_round_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `round_result` WHERE `Round_round_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

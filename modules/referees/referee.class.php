@@ -13,9 +13,7 @@ class Referee
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `referee`
-                                          WHERE `referee_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `referee` WHERE `referee_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -47,48 +45,35 @@ class Referee
      */
     public function getGameCount()
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `game`
-                                    WHERE `Referee_referee_id` = ' . $this->id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `game` WHERE `Referee_referee_id` = ?', 'i', $this->id);
         return App::$_DB->getRecord($record)->total;
     } //getGameCount
 
     public function delete()
     {
-        App::$_DB->doSQL('DELETE FROM `referee` WHERE `referee_id` = ' . $this->id . '');
-
+        App::$_DB->doQuery('DELETE FROM `referee` WHERE `referee_id` = ?', 'i', $this->id);
         $this->__destruct();
         return true;
     }
 
     public static function deleteAllByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `referee`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `referee` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `referee` SET
-                          `referee_name` = "'.App::$_DB->escapeString($this->result->referee_name).'"
-                          WHERE `referee_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `referee` SET `referee_name` = ? WHERE `referee_id` = ? LIMIT 1', 'si', $this->result->referee_name, $this->id);
     }
 
     public static function getAllReferees($competitionId)
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `referee`
-                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
-                                             ORDER BY `referee_name` ASC');
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `referee` WHERE `Competition_competition_id` = ? ORDER BY `referee_name` ASC', 'i', (int)$competitionId);
     }
 
     public static function add($competitionId, $name)
     {
-        App::$_DB->doSQL('INSERT INTO `referee` (referee_name, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($name).'",
-                            '.(int)$competitionId.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `referee` (referee_name, Competition_competition_id) VALUES (?, ?)', 'si', $name, (int)$competitionId);
         return App::$_DB->getLastId();
     }
 
@@ -106,10 +91,7 @@ class Referee
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `referee`
-                                    WHERE `referee_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `referee` WHERE `referee_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

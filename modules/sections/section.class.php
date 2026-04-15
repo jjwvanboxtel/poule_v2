@@ -19,13 +19,10 @@ class Section
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `section`
-                                          WHERE `section_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `section` WHERE `section_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
         
-        $resultList = App::$_DB->doSQL('SELECT * FROM `section_competition`
-                  WHERE `Section_section_id` = ' . $this->id);
+        $resultList = App::$_DB->doQuery('SELECT * FROM `section_competition` WHERE `Section_section_id` = ?', 'i', $this->id);
                           
         while (($competition = App::$_DB->getRecord($resultList)) != null)
         {
@@ -68,16 +65,11 @@ class Section
 
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `section` SET
-                          `section_name` = "'.App::$_DB->escapeString($this->result->section_name).'"
-                         WHERE `section_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `section` SET `section_name` = ? WHERE `section_id` = ? LIMIT 1', 'si', $this->result->section_name, $this->id);
         
         foreach ($this->competitionList as $competitionId => $section)
         {
-            App::$_DB->doSQL('UPDATE `section_competition` SET
-                                `Section_Competition_enabled` = "'.$section['enabled'].'"
-                                WHERE `Section_section_id` = ' . $this->id . ' 
-                                AND `Competition_competition_id` = ' . (int)$competitionId . ' LIMIT 1;');
+            App::$_DB->doQuery('UPDATE `section_competition` SET `Section_Competition_enabled` = ? WHERE `Section_section_id` = ? AND `Competition_competition_id` = ? LIMIT 1', 'iii', (int)$section['enabled'], $this->id, (int)$competitionId);
         }
     }
     
@@ -85,15 +77,11 @@ class Section
     {
         if ($competitionId != 0)
         {
-            self::$resultList = App::$_DB->doSQL('SELECT `section`.*, `section_competition`.`Section_Competition_enabled`
-                                                  FROM `section`
-                                                  INNER JOIN `section_competition` ON `section`.`section_id` = `section_competition`.`Section_section_id`
-                                                  WHERE `section_competition`.`Competition_competition_id` = '.(int)$competitionId.'');
+            self::$resultList = App::$_DB->doQuery('SELECT `section`.*, `section_competition`.`Section_Competition_enabled` FROM `section` INNER JOIN `section_competition` ON `section`.`section_id` = `section_competition`.`Section_section_id` WHERE `section_competition`.`Competition_competition_id` = ?', 'i', (int)$competitionId);
         }
         else
         {
-            self::$resultList = App::$_DB->doSQL('SELECT *
-                                                  FROM `section`');
+            self::$resultList = App::$_DB->doQuery('SELECT * FROM `section`');
         }
     }
 
@@ -111,27 +99,18 @@ class Section
    
     public static function deleteAllSectionCompetitionByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `section_competition`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `section_competition` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `section`
-                                    WHERE `section_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `section` WHERE `section_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
     
     public static function addCompetition($sectionId, $competitionId)
     {
-            App::$_DB->doSQL('INSERT INTO `section_competition` (Section_section_id, Competition_competition_id, Section_Competition_enabled)
-                          VALUES (
-                            '.(int)$sectionId.',
-                            '.(int)$competitionId.',
-                            0)
-                          ');
+        App::$_DB->doQuery('INSERT INTO `section_competition` (Section_section_id, Competition_competition_id, Section_Competition_enabled) VALUES (?, ?, ?)', 'iii', (int)$sectionId, (int)$competitionId, 0);
     }
 }
 ?>

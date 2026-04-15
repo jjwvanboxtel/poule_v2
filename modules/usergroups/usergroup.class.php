@@ -56,7 +56,7 @@ class UserGroup
      */
     private function getAllRights()
     {
-        $rightsResult = App::$_DB->doSQL('SELECT `Component_com_id`, `rights` FROM `rights` WHERE UserGroup_group_id = ' .$this->id);
+        $rightsResult = App::$_DB->doQuery('SELECT `Component_com_id`, `rights` FROM `rights` WHERE `UserGroup_group_id` = ?', 'i', $this->id);
 
         while($row = App::$_DB->getRecord($rightsResult))
           $this->rights[$row->Component_com_id] = $row->rights;
@@ -67,7 +67,7 @@ class UserGroup
      */
     private function getAllChangeAccess()
     {
-        $rightsResult = App::$_DB->doSQL('SELECT `Component_com_id`, `rightnochange` FROM `rights` WHERE UserGroup_group_id = ' .$this->id);
+        $rightsResult = App::$_DB->doQuery('SELECT `Component_com_id`, `rightnochange` FROM `rights` WHERE `UserGroup_group_id` = ?', 'i', $this->id);
 
         while($row = App::$_DB->getRecord($rightsResult))
           $this->changeaccess[$row->Component_com_id] = $row->rightnochange;
@@ -174,10 +174,8 @@ class UserGroup
                               App::$_LANG->getValue('ERROR_HASSTILL') . ' ' .
                               App::$_LANG->getValue('LANG_USERGROUP_MEMBERS'));
 
-        App::$_DB->doSQL('DELETE FROM `rights`
-                          WHERE `UserGroup_group_id` = ' . $this->id . '');
-        
-        App::$_DB->doSQL('DELETE FROM `usergroup` WHERE `group_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `rights` WHERE `UserGroup_group_id` = ?', 'i', $this->id);
+        App::$_DB->doQuery('DELETE FROM `usergroup` WHERE `group_id` = ?', 'i', $this->id);
 
         $this->__destruct();
     } // delete
@@ -187,9 +185,7 @@ class UserGroup
      */
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `usergroup` SET
-                          `group_name` = "'.App::$_DB->escapeString($this->result->group_name).'"
-                          WHERE `group_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `usergroup` SET `group_name` = ? WHERE `group_id` = ? LIMIT 1', 'si', $this->result->group_name, $this->id);
 
         foreach($this->rights as $com => $right)
         {
@@ -199,9 +195,7 @@ class UserGroup
             }
             else
             {
-                App::$_DB->doSQL('UPDATE `rights` SET
-                                 `rights` = "'.App::$_DB->escapeString($right).'"
-                                 WHERE `Component_com_id` = "'. $com .'" AND `UserGroup_group_id` = ' . $this->id . ' LIMIT 1');
+                App::$_DB->doQuery('UPDATE `rights` SET `rights` = ? WHERE `Component_com_id` = ? AND `UserGroup_group_id` = ? LIMIT 1', 'iii', (int)$right, (int)$com, $this->id);
             }
         }
     } // save
@@ -221,10 +215,7 @@ class UserGroup
      */
     public function getMemberCount()
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `user`
-                                    WHERE `UserGroup_group_id` = ' . $this->id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `user` WHERE `UserGroup_group_id` = ?', 'i', $this->id);
         return (boolean)App::$_DB->getRecord($record)->total;
     } //getMemberCount
 
@@ -236,11 +227,7 @@ class UserGroup
      */
     private static function rightExists($componentId, $userGroupId)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `rights`
-                                    WHERE `Component_com_id` = ' . (int)$componentId . '
-                                    AND `UserGroup_group_id` = ' . (int)$userGroupId);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `rights` WHERE `Component_com_id` = ? AND `UserGroup_group_id` = ?', 'ii', (int)$componentId, (int)$userGroupId);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
     /**
@@ -248,9 +235,7 @@ class UserGroup
      */
     public static function getAllUserGroups()
     {
-        self::$resultList = App::$_DB->doSQL('SELECT `usergroup`.*, COUNT(`user`.`UserGroup_group_id`) AS `member_count`
-                                              FROM `usergroup` LEFT OUTER JOIN `user` ON `user`.`UserGroup_group_id` = `usergroup`.`group_id`
-                                              GROUP BY `usergroup`.`group_id` ORDER BY `usergroup`.`group_id` ASC;');
+        self::$resultList = App::$_DB->doQuery('SELECT `usergroup`.*, COUNT(`user`.`UserGroup_group_id`) AS `member_count` FROM `usergroup` LEFT OUTER JOIN `user` ON `user`.`UserGroup_group_id` = `usergroup`.`group_id` GROUP BY `usergroup`.`group_id` ORDER BY `usergroup`.`group_id` ASC');
     } //getAllUserGroups
 
     /**
@@ -278,10 +263,8 @@ class UserGroup
      */
     public static function add($name)
     {
-       App::$_DB->doSQL('INSERT INTO `usergroup` (group_name)
-                            VALUES ("'.App::$_DB->escapeString($name).'")');
-
-       return App::$_DB->getLastId();
+        App::$_DB->doQuery('INSERT INTO `usergroup` (group_name) VALUES (?)', 's', $name);
+        return App::$_DB->getLastId();
     } //add
 
     /**
@@ -293,12 +276,7 @@ class UserGroup
      */
     public static function newRight($componentId, $userGroupId, $rights)
     {
-       App::$_DB->doSQL('INSERT INTO `rights` (Component_com_id, UserGroup_group_id, rights)
-                            VALUES (
-                                "'.App::$_DB->escapeString($componentId).'",
-                                "'.App::$_DB->escapeString($userGroupId).'",
-                                "'.App::$_DB->escapeString($rights).'"
-                                )');
+        App::$_DB->doQuery('INSERT INTO `rights` (Component_com_id, UserGroup_group_id, rights) VALUES (?, ?, ?)', 'iii', (int)$componentId, (int)$userGroupId, (int)$rights);
     } // newRight
 
     /**
@@ -312,10 +290,7 @@ class UserGroup
         if (!$id)
           return false;
 
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `usergroup`
-                                    WHERE `group_id` = ' . (int)$id);
-        
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `usergroup` WHERE `group_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     } //exists
 
@@ -326,12 +301,7 @@ class UserGroup
      */
     public static function getGroupMemberCount($id)
     {
-        $record = App::$_DB->doSQL('SELECT COUNT(`UserGroup_group_id`) AS `member_count`
-                                    FROM `user`
-                                    WHERE `Usergroup_group_id` = '. (int)$id . '
-                                    AND `user_enabled` = 1
-                                    GROUP BY `Usergroup_group_id`;');
-
+        $record = App::$_DB->doQuery('SELECT COUNT(`UserGroup_group_id`) AS `member_count` FROM `user` WHERE `Usergroup_group_id` = ? AND `user_enabled` = 1 GROUP BY `Usergroup_group_id`', 'i', (int)$id);
         return (int)App::$_DB->getRecord($record)->member_count;
     } //getMemberCount
 
@@ -342,11 +312,7 @@ class UserGroup
      */
     public static function getGroupEnabledCount($id)
     {
-        $record = App::$_DB->doSQL('SELECT COUNT(`UserGroup_group_id`) AS `member_count`
-                                    FROM `user`
-                                    WHERE `Usergroup_group_id` = '. (int)$id . ' AND `user_enabled` = 1
-                                    GROUP BY `Usergroup_group_id`;');
-
+        $record = App::$_DB->doQuery('SELECT COUNT(`UserGroup_group_id`) AS `member_count` FROM `user` WHERE `Usergroup_group_id` = ? AND `user_enabled` = 1 GROUP BY `Usergroup_group_id`', 'i', (int)$id);
         $r = App::$_DB->getRecord($record);
         if ($r == null)
           return 0;

@@ -13,9 +13,7 @@ class Game
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `game`
-                                          WHERE `game_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `game` WHERE `game_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -120,7 +118,7 @@ class Game
         //delete all of them
         GamePrediction::deleteAllPredictionsByGame($this->id);
     
-        App::$_DB->doSQL('DELETE FROM `game` WHERE `game_id` = ' . $this->id . '');       
+        App::$_DB->doQuery('DELETE FROM `game` WHERE `game_id` = ?', 'i', $this->id);
         
         $this->__destruct();
         return true;
@@ -136,54 +134,48 @@ class Game
             GamePrediction::deleteAllPredictionsByGame($game->game_id);
         }
         
-        App::$_DB->doSQL('DELETE FROM `game`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `game` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `game` SET
-                          `game_date` = "'.App::$_DB->escapeString($this->result->game_date).'",
-                          `game_result` = "'.App::$_DB->escapeString($this->result->game_result).'",
-                          `game_red_cards` = "'.App::$_DB->escapeString($this->result->game_red_cards).'",
-                          `game_yellow_cards` = "'.App::$_DB->escapeString($this->result->game_yellow_cards).'",
-                          `City_city_id` = "'.$this->result->City_city_id.'",
-                          `Country_country_id_home` = "'.$this->result->Country_country_id_home.'",
-                          `Country_country_id_away` = "'.$this->result->Country_country_id_away.'",
-                          `Poule_poule_id` = "'.$this->result->Poule_poule_id.'"
-                          WHERE `game_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery(
+            'UPDATE `game` SET `game_date` = ?, `game_result` = ?, `game_red_cards` = ?, `game_yellow_cards` = ?, `City_city_id` = ?, `Country_country_id_home` = ?, `Country_country_id_away` = ?, `Poule_poule_id` = ? WHERE `game_id` = ? LIMIT 1',
+            'sssiiiii',
+            $this->result->game_date,
+            $this->result->game_result,
+            $this->result->game_red_cards,
+            $this->result->game_yellow_cards,
+            (int)$this->result->City_city_id,
+            (int)$this->result->Country_country_id_home,
+            (int)$this->result->Country_country_id_away,
+            (int)$this->result->Poule_poule_id,
+            $this->id
+        );
     }
 
     public static function getAllGames($competitionId=false)
     {
-        $query = '';
-        if ($competitionId)
-            $query = 'WHERE `game`.`Competition_competition_id` = ' . (int)$competitionId;
-    
-       self::$resultList = App::$_DB->doSQL('SELECT `game`.*, `home`.`country_name` AS `home_country_name`, `home`.`country_flag` AS `home_country_flag`, `away`.`country_name` AS `away_country_name`, `away`.`country_flag` AS `away_country_flag`, `city`.`city_name`, `poule`.`poule_name` 
-                FROM `game` 
-                INNER JOIN `country` AS `home` ON `game`.`Country_country_id_home` = `home`.`country_id` 
-                INNER JOIN `country` AS `away` ON `game`.`Country_country_id_away` = `away`.`country_id` 
-                INNER JOIN `city` ON `game`.`City_city_id` = `city`.`city_id` 
-                INNER JOIN `poule` ON `game`.`Poule_poule_id` = `poule`.`poule_id`
-                '.$query.'
-                ORDER BY `poule`.`poule_name` ASC, `game`.`game_date` ASC, `game`.`game_id` ASC');
+        $baseSql = 'SELECT `game`.*, `home`.`country_name` AS `home_country_name`, `home`.`country_flag` AS `home_country_flag`, `away`.`country_name` AS `away_country_name`, `away`.`country_flag` AS `away_country_flag`, `city`.`city_name`, `poule`.`poule_name` FROM `game` INNER JOIN `country` AS `home` ON `game`.`Country_country_id_home` = `home`.`country_id` INNER JOIN `country` AS `away` ON `game`.`Country_country_id_away` = `away`.`country_id` INNER JOIN `city` ON `game`.`City_city_id` = `city`.`city_id` INNER JOIN `poule` ON `game`.`Poule_poule_id` = `poule`.`poule_id`';
+
+        if ($competitionId) {
+            self::$resultList = App::$_DB->doQuery($baseSql . ' WHERE `game`.`Competition_competition_id` = ? ORDER BY `poule`.`poule_name` ASC, `game`.`game_date` ASC, `game`.`game_id` ASC', 'i', (int)$competitionId);
+        } else {
+            self::$resultList = App::$_DB->doQuery($baseSql . ' ORDER BY `poule`.`poule_name` ASC, `game`.`game_date` ASC, `game`.`game_id` ASC');
+        }
     }
 
     public static function add($competitionId, $date, $result, $red_cards, $yellow_cards, $city_id, $country_id_home, $country_id_away, $poule_id)
     {
-        App::$_DB->doSQL('INSERT INTO `game` (game_date, game_result, game_red_cards, game_yellow_cards, City_city_id, Country_country_id_home, Country_country_id_away, Poule_poule_id, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($date).'",
-                            "'.App::$_DB->escapeString($result).'",
-                            "'.App::$_DB->escapeString($red_cards).'",
-                            "'.App::$_DB->escapeString($yellow_cards).'",
-                            '.(int)$city_id.',
-                            '.(int)$country_id_home.',
-                            '.(int)$country_id_away.',
-                            '.(int)$poule_id.',
-                            '.(int)$competitionId.')
-                          ');
+        App::$_DB->doQuery(
+            'INSERT INTO `game` (game_date, game_result, game_red_cards, game_yellow_cards, City_city_id, Country_country_id_home, Country_country_id_away, Poule_poule_id, Competition_competition_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'sssiiiiii',
+            (int)$city_id,
+            (int)$country_id_home,
+            (int)$country_id_away,
+            (int)$poule_id,
+            (int)$competitionId
+        );
 
         $gameId = App::$_DB->getLastId();
         
@@ -222,10 +214,7 @@ class Game
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `game`
-                                    WHERE `game_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `game` WHERE `game_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

@@ -16,10 +16,7 @@ class QuestionPrediction
         $this->userId = (int)$userId;
         $this->questionId = (int)$questionId;
         
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `participant_question_prediction`
-                                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                                          AND `Question_question_id` = ' . $this->questionId . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `participant_question_prediction` WHERE `Participant_User_user_id` = ? AND `Question_question_id` = ? LIMIT 1', 'ii', $this->userId, $this->questionId);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -53,62 +50,42 @@ class QuestionPrediction
 
     public function delete()
     {
-        App::$_DB->doSQL('DELETE FROM `participant_question_prediction` 
-                            WHERE `Participant_User_user_id` = ' . $this->userId . '
-                            AND `Question_question_id` = ' . $this->questionId . '');
-
+        App::$_DB->doQuery('DELETE FROM `participant_question_prediction` WHERE `Participant_User_user_id` = ? AND `Question_question_id` = ?', 'ii', $this->userId, $this->questionId);
         $this->__destruct();
         return true;
     }
 
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `participant_question_prediction` SET
-                          `Participant_Question_answer` = "'.App::$_DB->escapeString($this->result->Participant_Question_answer).'"
-                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                          AND `Question_question_id` = ' . $this->questionId . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `participant_question_prediction` SET `Participant_Question_answer` = ? WHERE `Participant_User_user_id` = ? AND `Question_question_id` = ? LIMIT 1', 'sii', $this->result->Participant_Question_answer, $this->userId, $this->questionId);
     }
 
     public static function getAllQuestionPredictions($userId, $questionId)
     {
-        self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_question_prediction`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId);
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `participant_question_prediction` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function getPredictionAnswerCount($questionId)
     {
-        self::$resultList = App::$_DB->doSQL('SELECT `Participant_Question_answer`, COUNT( Participant_Question_answer ) AS count
-                                FROM `participant_question_prediction` 
-                                INNER JOIN `participant_competition`
-                                ON `participant_question_prediction`.`Participant_User_user_id`=`participant_competition`.`Participant_User_user_id`
-                                WHERE `participant_question_prediction`.`Question_question_id` = '.(int)$questionId.'
-                                AND `participant_competition`.`Participant_Competition_payed` = 1 
-                                AND `participant_competition`.`Participant_Competition_subscribed` = 1
-                                GROUP BY `Participant_Question_answer`
-                                ORDER BY `count` DESC
-                                LIMIT 15');
+        self::$resultList = App::$_DB->doQuery(
+            'SELECT `Participant_Question_answer`, COUNT(`Participant_Question_answer`) AS count FROM `participant_question_prediction` INNER JOIN `participant_competition` ON `participant_question_prediction`.`Participant_User_user_id` = `participant_competition`.`Participant_User_user_id` WHERE `participant_question_prediction`.`Question_question_id` = ? AND `participant_competition`.`Participant_Competition_payed` = 1 AND `participant_competition`.`Participant_Competition_subscribed` = 1 GROUP BY `Participant_Question_answer` ORDER BY `count` DESC LIMIT 15',
+            'i', (int)$questionId
+        );
     }
     
     public static function deleteAllPredictionsByUser($userId)
     {
-        self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_question_prediction`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId);
+        App::$_DB->doQuery('DELETE FROM `participant_question_prediction` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function deleteAllPredictionsByQuestion($questionId)
     {
-        self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_question_prediction`
-                          WHERE `Question_question_id` = ' . (int)$questionId . '');
+        App::$_DB->doQuery('DELETE FROM `participant_question_prediction` WHERE `Question_question_id` = ?', 'i', (int)$questionId);
     }
     
     public static function add($userId, $questionId, $answer)
     {
-        App::$_DB->doSQL('INSERT INTO `participant_question_prediction` (Participant_User_user_id, Question_question_id, Participant_Question_answer)
-                          VALUES (
-                            '.(int)$userId.',
-                            '.(int)$questionId.',
-                            "'.App::$_DB->escapeString($answer).'")
-                          ');
+        App::$_DB->doQuery('INSERT INTO `participant_question_prediction` (Participant_User_user_id, Question_question_id, Participant_Question_answer) VALUES (?, ?, ?)', 'iis', (int)$userId, (int)$questionId, $answer);
     }
 
     public static function nextQuestionPrediction()
@@ -125,11 +102,7 @@ class QuestionPrediction
 
     public static function exists($userId, $questionId)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `participant_question_prediction`
-                                    WHERE `Participant_User_user_id` = ' . (int)$userId . '
-                                    AND `Question_question_id` = ' . (int)$questionId . '');
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `participant_question_prediction` WHERE `Participant_User_user_id` = ? AND `Question_question_id` = ?', 'ii', (int)$userId, (int)$questionId);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 
