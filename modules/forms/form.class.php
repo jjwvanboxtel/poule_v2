@@ -14,9 +14,7 @@ class Form
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `form`
-                                          WHERE `form_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `form` WHERE `form_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -62,7 +60,7 @@ class Form
    
     public function delete()
     {
-        App::$_DB->doSQL('DELETE FROM `form` WHERE `form_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `form` WHERE `form_id` = ?', 'i', $this->id);
 
         $curFile = $this->result->form_file;
 
@@ -74,35 +72,24 @@ class Form
 
     public static function deleteAllByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `form`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `form` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `form` SET
-                          `form_name` = "'.App::$_DB->escapeString($this->result->form_name).'",
-                          `form_file` = "'.App::$_DB->escapeString($this->result->form_file).'"
-                          WHERE `form_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `form` SET `form_name` = ?, `form_file` = ? WHERE `form_id` = ? LIMIT 1', 'ssi', $this->result->form_name, $this->result->form_file, $this->id);
     }
 
     public static function getAllForms($competitionId)
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `form`
-                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
-                                             ORDER BY `form_name` ASC');
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `form` WHERE `Competition_competition_id` = ? ORDER BY `form_name` ASC', 'i', (int)$competitionId);
     }
 
     public static function add($name, $file, $competitionId)
     {
         $safe = App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
         
-        App::$_DB->doSQL('INSERT INTO `form` (form_name, form_file, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($name).'",
-                            "'.App::$_DB->escapeString($safe).'",
-                            '.(int)$competitionId.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `form` (form_name, form_file, Competition_competition_id) VALUES (?, ?, ?)', 'ssi', $name, $safe, (int)$competitionId);
     }
 
     public static function nextform()
@@ -119,10 +106,7 @@ class Form
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `form`
-                                    WHERE `form_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `form` WHERE `form_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

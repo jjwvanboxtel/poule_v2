@@ -37,14 +37,11 @@ class Component
      */
     public static function getAllComponents($parent=false)
     {
-        $query = '';
-        if (is_numeric($parent))
-          $query = ' WHERE `com_menu_parent` = ' . (int)$parent;
-
-        self::$resultList = App::$_DB->doSQL('SELECT *
-                                             FROM `component` 
-                                             '.$query.'
-                                             ORDER BY `com_friendlyname` ASC;');
+        if (is_numeric($parent)) {
+            self::$resultList = App::$_DB->doQuery('SELECT * FROM `component` WHERE `com_menu_parent` = ? ORDER BY `com_friendlyname` ASC', 'i', (int)$parent);
+        } else {
+            self::$resultList = App::$_DB->doQuery('SELECT * FROM `component` ORDER BY `com_friendlyname` ASC');
+        }
                                              
         return self::$resultList; 
     } //getAllComponents
@@ -75,7 +72,7 @@ class Component
 
     public static function getComponentId($name)
     {
-        $record = App::$_DB->doSQL('SELECT `com_id` FROM `component` WHERE `com_name` = "'.App::$_DB->escapeString($name).'"');
+        $record = App::$_DB->doQuery('SELECT `com_id` FROM `component` WHERE `com_name` = ?', 's', $name);
         $rec = App::$_DB->getRecord($record);
 
         return $rec->com_id;
@@ -83,10 +80,7 @@ class Component
 
     public static function hasDefaultChRights($com_id, $option)
     {
-        $record = App::$_DB->doSQL('SELECT `com_defchrights`
-                                    FROM `component`
-                                    WHERE `com_id` = ' . (int)$com_id . '
-                                    LIMIT 1;');
+        $record = App::$_DB->doQuery('SELECT `com_defchrights` FROM `component` WHERE `com_id` = ? LIMIT 1', 'i', (int)$com_id);
         $rights = (int)App::$_DB->getRecord($record)->com_defchrights;
         if (($rights&$option) == $option)
           return false;
@@ -96,10 +90,7 @@ class Component
 
     public static function getDefaultRights($com_id, $option)
     {
-        $record = App::$_DB->doSQL('SELECT `com_defrights`
-                                    FROM `component`
-                                    WHERE `com_id` = ' . (int)$com_id . '
-                                    LIMIT 1;');
+        $record = App::$_DB->doQuery('SELECT `com_defrights` FROM `component` WHERE `com_id` = ? LIMIT 1', 'i', (int)$com_id);
         
         $rights = (int)App::$_DB->getRecord($record)->com_defrights;
         if (($rights&$option) == $option)
@@ -110,9 +101,7 @@ class Component
 
     public static function hasChilds($com_id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `component`
-                                    WHERE `com_menu_parent` = ' . (int)$com_id);
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `component` WHERE `com_menu_parent` = ?', 'i', (int)$com_id);
         
         return (boolean)App::$_DB->getRecord($record)->total;
     }

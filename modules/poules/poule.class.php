@@ -13,9 +13,7 @@ class Poule
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `poule`
-                                          WHERE `poule_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `poule` WHERE `poule_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -47,10 +45,7 @@ class Poule
      */
     public function getGameCount()
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `game`
-                                    WHERE `Poule_poule_id` = ' . $this->id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `game` WHERE `Poule_poule_id` = ?', 'i', $this->id);
         return App::$_DB->getRecord($record)->total;
     } //getGameCount
 
@@ -62,7 +57,7 @@ class Poule
                               App::$_LANG->getValue('ERROR_HASSTILL') . ' ' .
                               App::$_LANG->getValue('LANG_POULE_GAMES'));
 
-        App::$_DB->doSQL('DELETE FROM `poule` WHERE `poule_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `poule` WHERE `poule_id` = ?', 'i', $this->id);
 
         $this->__destruct();
         return true;
@@ -70,32 +65,22 @@ class Poule
 
     public static function deleteAllByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `poule`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `poule` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `poule` SET
-                          `poule_name` = "'.App::$_DB->escapeString($this->result->poule_name).'"
-                          WHERE `poule_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `poule` SET `poule_name` = ? WHERE `poule_id` = ? LIMIT 1', 'si', $this->result->poule_name, $this->id);
     }
 
     public static function getAllPoules($competitionId)
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `poule`
-                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
-                                             ORDER BY `poule_name` ASC');
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `poule` WHERE `Competition_competition_id` = ? ORDER BY `poule_name` ASC', 'i', (int)$competitionId);
     }
 
     public static function add($name, $competitionId)
     {
-        App::$_DB->doSQL('INSERT INTO `poule` (poule_name, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($name).'",
-                            '.(int)$competitionId.')
-                          ');
-
+        App::$_DB->doQuery('INSERT INTO `poule` (poule_name, Competition_competition_id) VALUES (?, ?)', 'si', $name, (int)$competitionId);
         return App::$_DB->getLastId();
     }
 
@@ -113,10 +98,7 @@ class Poule
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `poule`
-                                    WHERE `poule_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `poule` WHERE `poule_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

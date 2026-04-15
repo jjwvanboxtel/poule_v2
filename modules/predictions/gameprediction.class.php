@@ -16,10 +16,7 @@ class GamePrediction
         $this->userId = (int)$userId;
         $this->gameId = (int)$gameId;
         
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `participant_game_prediction`
-                                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                                          AND `Game_game_id` = ' . $this->gameId . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `participant_game_prediction` WHERE `Participant_User_user_id` = ? AND `Game_game_id` = ? LIMIT 1', 'ii', $this->userId, $this->gameId);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -73,52 +70,50 @@ class GamePrediction
 
     public function delete()
     {
-        App::$_DB->doSQL('DELETE FROM `participant_game_prediction` 
-                            WHERE `Participant_User_user_id` = ' . $this->userId . '
-                            AND `Game_game_id` = ' . $this->gameId . '');
-
+        App::$_DB->doQuery('DELETE FROM `participant_game_prediction` WHERE `Participant_User_user_id` = ? AND `Game_game_id` = ?', 'ii', $this->userId, $this->gameId);
         $this->__destruct();
         return true;
     }
 
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `participant_game_prediction` SET
-                          `Participant_Game_result` = "'.App::$_DB->escapeString($this->result->Participant_Game_result).'",
-                          `Participant_Game_red_cards` = "'.App::$_DB->escapeString($this->result->Participant_Game_red_cards).'",
-                          `Participant_Game_yellow_cards` = "'.App::$_DB->escapeString($this->result->Participant_Game_yellow_cards).'"
-                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                          AND `Game_game_id` = ' . $this->gameId . ' LIMIT 1;');
+        App::$_DB->doQuery(
+            'UPDATE `participant_game_prediction` SET `Participant_Game_result` = ?, `Participant_Game_red_cards` = ?, `Participant_Game_yellow_cards` = ? WHERE `Participant_User_user_id` = ? AND `Game_game_id` = ? LIMIT 1',
+            'siiiii',
+            $this->result->Participant_Game_result,
+            (int)$this->result->Participant_Game_red_cards,
+            (int)$this->result->Participant_Game_yellow_cards,
+            $this->userId,
+            $this->gameId
+        );
     }
 
     public static function getAllPredictions($userId)
     {
-        self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_game_prediction`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId);
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `participant_game_prediction` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function deleteAllPredictionsByUser($userId)
     {
-        self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_game_prediction`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId);
+        App::$_DB->doQuery('DELETE FROM `participant_game_prediction` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
 
     public static function deleteAllPredictionsByGame($gameId)
     {
-        self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_game_prediction`
-                          WHERE `Game_game_id` = ' . (int)$gameId . '');
+        App::$_DB->doQuery('DELETE FROM `participant_game_prediction` WHERE `Game_game_id` = ?', 'i', (int)$gameId);
     }
         
     public static function add($userId, $gameId, $result, $red_cards, $yellow_cards)
     {
-        App::$_DB->doSQL('INSERT INTO `participant_game_prediction` (Participant_User_user_id, Game_game_id, Participant_Game_result, Participant_Game_red_cards, Participant_Game_yellow_cards)
-                          VALUES (
-                            '.(int)$userId.',
-                            '.(int)$gameId.',
-                            "'.App::$_DB->escapeString($result).'",
-                            '.(int)$red_cards.',
-                            '.(int)$yellow_cards.')
-                          ');                         
+        App::$_DB->doQuery(
+            'INSERT INTO `participant_game_prediction` (Participant_User_user_id, Game_game_id, Participant_Game_result, Participant_Game_red_cards, Participant_Game_yellow_cards) VALUES (?, ?, ?, ?, ?)',
+            'iisii',
+            (int)$userId,
+            (int)$gameId,
+            $result,
+            (int)$red_cards,
+            (int)$yellow_cards
+        );
     }
 
     public static function nextPrediction()
@@ -135,11 +130,7 @@ class GamePrediction
 
     public static function exists($userId, $gameId)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `participant_game_prediction`
-                                    WHERE `Participant_User_user_id` = ' . (int)$userId . '
-                                    AND `Game_game_id` = ' . (int)$gameId . '');
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `participant_game_prediction` WHERE `Participant_User_user_id` = ? AND `Game_game_id` = ?', 'ii', (int)$userId, (int)$gameId);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

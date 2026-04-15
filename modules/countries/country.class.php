@@ -14,9 +14,7 @@ class Country
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `country`
-                                          WHERE `country_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `country` WHERE `country_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -65,11 +63,7 @@ class Country
      */
     public function getGameCount()
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `game`
-                                    WHERE `Country_country_id_home` = ' . $this->id . '
-                                    OR `Country_country_id_away` = ' . $this->id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `game` WHERE `Country_country_id_home` = ? OR `Country_country_id_away` = ?', 'ii', $this->id, $this->id);
         return App::$_DB->getRecord($record)->total;
     } //getGameCount
 
@@ -78,10 +72,7 @@ class Country
      */
     public function getPredictionCount()
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `participant_round_prediction`
-                                    WHERE `Country_country_id` = ' . $this->id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `participant_round_prediction` WHERE `Country_country_id` = ?', 'i', $this->id);
         return App::$_DB->getRecord($record)->total;
     } //getRoundCount
     
@@ -90,10 +81,7 @@ class Country
      */
     public function getRoundCount()
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `round_result`
-                                    WHERE `Country_country_id` = ' . $this->id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `round_result` WHERE `Country_country_id` = ?', 'i', $this->id);
         return App::$_DB->getRecord($record)->total;
     } //getRoundCount
 
@@ -109,7 +97,7 @@ class Country
                               App::$_LANG->getValue('ERROR_HASSTILL') . ' ' .
                               App::$_LANG->getValue('LANG_COUNTRY_GAMES'));
 
-        App::$_DB->doSQL('DELETE FROM `country` WHERE `country_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `country` WHERE `country_id` = ?', 'i', $this->id);
 
         $curImage = $this->result->country_flag;
 
@@ -121,42 +109,30 @@ class Country
 
     public static function deleteAllByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `country`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `country` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `country` SET
-                          `country_name` = "'.App::$_DB->escapeString($this->result->country_name).'",
-                          `country_flag` = "'.App::$_DB->escapeString($this->result->country_flag).'"
-                          WHERE `country_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `country` SET `country_name` = ?, `country_flag` = ? WHERE `country_id` = ? LIMIT 1', 'ssi', $this->result->country_name, $this->result->country_flag, $this->id);
     }
 
     public static function getCountriesByName($pattern)
     {
-       self::$resultList = App::$_DB->doSQL("SELECT * FROM `country`
-                                             WHERE `country_name` LIKE '%".$pattern."%'
-                                             ORDER BY `country_name` ASC");
+        $likePattern = '%' . $pattern . '%';
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `country` WHERE `country_name` LIKE ? ORDER BY `country_name` ASC', 's', $likePattern);
     }
 
     public static function getAllCountries($competitionId)
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `country`
-                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
-                                             ORDER BY `country_name` ASC');
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `country` WHERE `Competition_competition_id` = ? ORDER BY `country_name` ASC', 'i', (int)$competitionId);
     }
         
     public static function add($name, $file, $competitionId)
     {
         $safe = App::$_UPL->loadUp($file, $competitionId.'/'.self::$image_dir);
         
-        App::$_DB->doSQL('INSERT INTO `country` (country_name, country_flag, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($name).'",
-                            "'.App::$_DB->escapeString($safe).'",
-                            '.(int)$competitionId.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `country` (country_name, country_flag, Competition_competition_id) VALUES (?, ?, ?)', 'ssi', $name, $safe, (int)$competitionId);
                          
         return App::$_DB->getLastId();
     }
@@ -175,10 +151,7 @@ class Country
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `country`
-                                    WHERE `country_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `country` WHERE `country_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

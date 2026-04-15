@@ -13,9 +13,7 @@ class Round
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `round`
-                                          WHERE `round_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `round` WHERE `round_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -124,7 +122,7 @@ class Round
         App::openClass('Scoring', 'modules/scorings');
         Scoring::deleteScoringByRound($this->id);
             
-        App::$_DB->doSQL('DELETE FROM `round` WHERE `round_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `round` WHERE `round_id` = ?', 'i', $this->id);
 
         $this->__destruct();
         return true;
@@ -141,36 +139,26 @@ class Round
            RoundResult::deleteAllRoundResultsByRound($round->round_id);
         }
         
-        App::$_DB->doSQL('DELETE FROM `round`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `round` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `round` SET
-                          `round_name` = "'.App::$_DB->escapeString($this->result->round_name).'",
-                          `round_count` = "'.App::$_DB->escapeString($this->result->round_count).'"
-                          WHERE `round_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `round` SET `round_name` = ?, `round_count` = ? WHERE `round_id` = ? LIMIT 1', 'sii', $this->result->round_name, (int)$this->result->round_count, $this->id);
     }
 
     public static function getAllRounds($competitionId=false)
     {
-        $query = '';
-        if ($competitionId)
-            $query = 'WHERE `Competition_competition_id` = ' . (int)$competitionId;
-
-        self::$resultList = App::$_DB->doSQL('SELECT * FROM `round`
-                                              '.$query);
+        if ($competitionId) {
+            self::$resultList = App::$_DB->doQuery('SELECT * FROM `round` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
+        } else {
+            self::$resultList = App::$_DB->doQuery('SELECT * FROM `round`');
+        }
     }
 
     public static function add($competitionId, $name, $count)
     {
-        App::$_DB->doSQL('INSERT INTO `round` (round_name, round_count, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($name).'",
-                            "'.App::$_DB->escapeString($count).'",
-                            '.(int)$competitionId.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `round` (round_name, round_count, Competition_competition_id) VALUES (?, ?, ?)', 'sii', $name, (int)$count, (int)$competitionId);
         
         $roundId = App::$_DB->getLastId();
         
@@ -222,10 +210,7 @@ class Round
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `round`
-                                    WHERE `round_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `round` WHERE `round_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

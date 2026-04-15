@@ -16,18 +16,13 @@ class Subleague
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `subleague`
-                                          WHERE `subleague_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `subleague` WHERE `subleague_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
         
-        $resultList = App::$_DB->doSQL('SELECT `table`.`Participant_User_user_id`, `table`.`table_points`, `table`.`table_position`
-                        FROM  `subleague` 
-                        INNER JOIN  `participant_subleague` ON  `subleague`.`subleague_id` =  `participant_subleague`.`Subleague_subleague_id` 
-                        INNER JOIN  `table` ON  `participant_subleague`.`Participant_User_user_id` =  `table`.`Participant_User_user_id` 
-                        AND `subleague`.`Competition_competition_id`=`table`.`Competition_competition_id`
-                        WHERE `subleague`.`subleague_id`='.$this->id.'
-                        ORDER BY `table`.`table_position` ASC');
+        $resultList = App::$_DB->doQuery(
+            'SELECT `table`.`Participant_User_user_id`, `table`.`table_points`, `table`.`table_position` FROM `subleague` INNER JOIN `participant_subleague` ON `subleague`.`subleague_id` = `participant_subleague`.`Subleague_subleague_id` INNER JOIN `table` ON `participant_subleague`.`Participant_User_user_id` = `table`.`Participant_User_user_id` AND `subleague`.`Competition_competition_id` = `table`.`Competition_competition_id` WHERE `subleague`.`subleague_id` = ? ORDER BY `table`.`table_position` ASC',
+            'i', $this->id
+        );
                                   
         while (($result = App::$_DB->getRecord($resultList)) != null)
         {
@@ -94,8 +89,8 @@ class Subleague
     {        
         App::$_UPL->deleteDir(UPLOAD_DIR.$this->result->Competition_competition_id.'/'.self::$header_dir.'/'.$this->id.'/');
 
-        App::$_DB->doSQL('DELETE FROM `participant_subleague` WHERE `Subleague_subleague_id` = ' . $this->id . '');        
-        App::$_DB->doSQL('DELETE FROM `subleague` WHERE `subleague_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `participant_subleague` WHERE `Subleague_subleague_id` = ?', 'i', $this->id);
+        App::$_DB->doQuery('DELETE FROM `subleague` WHERE `subleague_id` = ?', 'i', $this->id);
         
         $this->__destruct();
         return true;
@@ -103,25 +98,17 @@ class Subleague
 
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `subleague` SET
-                          `subleague_name` = "'.App::$_DB->escapeString($this->result->subleague_name).'",
-                          `subleague_header` = "'.App::$_DB->escapeString($this->result->subleague_header).'"
-                          WHERE `subleague_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `subleague` SET `subleague_name` = ?, `subleague_header` = ? WHERE `subleague_id` = ? LIMIT 1', 'ssi', $this->result->subleague_name, $this->result->subleague_header, $this->id);
     }
 
     public static function getAllSubleagues()
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `subleague` ORDER BY `subleague_id` ASC');
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `subleague` ORDER BY `subleague_id` ASC');
     }
 
     public static function add($name, /*$header,*/ $competitionId)
     {
-        App::$_DB->doSQL('INSERT INTO `subleague` (subleague_name, subleague_header, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($name).'",
-                            "" './*App::$_DB->escapeString($header['name']).*/',
-                            '.(int)$competitionId.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `subleague` (subleague_name, subleague_header, Competition_competition_id) VALUES (?, ?, ?)', 'ssi', $name, '', (int)$competitionId);
         
         $subleagueId = App::$_DB->getLastId();
 
@@ -132,19 +119,12 @@ class Subleague
     
     public function addParticipant($participantId)
     {
-        App::$_DB->doSQL('INSERT INTO `participant_subleague` (Subleague_subleague_id, Participant_User_user_id)
-                      VALUES (
-                        '.$this->getId().',
-                        '.(int)$participantId.')
-                      ');
+        App::$_DB->doQuery('INSERT INTO `participant_subleague` (Subleague_subleague_id, Participant_User_user_id) VALUES (?, ?)', 'ii', $this->getId(), (int)$participantId);
     }
 
     public function deleteParticipant($participantId)
     {
-        App::$_DB->doSQL('DELETE FROM `participant_subleague` 
-                           WHERE `Subleague_subleague_id`='.$this->getId().' 
-                           AND `Participant_User_user_id`='.(int)$participantId.'
-                      ');
+        App::$_DB->doQuery('DELETE FROM `participant_subleague` WHERE `Subleague_subleague_id` = ? AND `Participant_User_user_id` = ?', 'ii', $this->getId(), (int)$participantId);
     }
     
     public static function nextSubleague()
@@ -161,36 +141,29 @@ class Subleague
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `subleague`
-                                    WHERE `subleague_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `subleague` WHERE `subleague_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 
     public static function deleteAllByUser($userId)
     {
-        App::$_DB->doSQL('DELETE FROM `participant_subleague` WHERE `Participant_User_user_id` = ' . (int)$userId . '');        
+        App::$_DB->doQuery('DELETE FROM `participant_subleague` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function deleteAllByCompetition($competitionId)
     {
-        $resultList = App::$_DB->doSQL('SELECT * FROM `subleague` WHERE `Competition_competition_id` = ' . (int)$competitionId);                                  
+        $resultList = App::$_DB->doQuery('SELECT * FROM `subleague` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
         while (($result = App::$_DB->getRecord($resultList)) != null)
         {
-            App::$_DB->doSQL('DELETE FROM `participant_subleague` WHERE `Subleague_subleague_id` = ' . $result->subleague_id . '');            
+            App::$_DB->doQuery('DELETE FROM `participant_subleague` WHERE `Subleague_subleague_id` = ?', 'i', (int)$result->subleague_id);
         }
-        App::$_DB->doSQL('DELETE FROM `subleague` WHERE `Competition_competition_id` = ' . (int)$competitionId . '');                    
+        App::$_DB->doQuery('DELETE FROM `subleague` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public static function participantExists($id, $participantId)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `participant_subleague`
-                                    WHERE `Subleague_subleague_id` = ' . (int)$id . '
-                                    AND `Participant_User_user_id` = '. (int)$participantId);
-
-        return (boolean)App::$_DB->getRecord($record)->total;   
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `participant_subleague` WHERE `Subleague_subleague_id` = ? AND `Participant_User_user_id` = ?', 'ii', (int)$id, (int)$participantId);
+        return (boolean)App::$_DB->getRecord($record)->total;
     }
     
     public static function getHeaderDir($competitionId, $subleagueId)

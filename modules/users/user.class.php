@@ -22,9 +22,7 @@ class User
         App::openClass('Participant', 'modules/users');
 
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `user`
-                                          WHERE `user_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `user` WHERE `user_id` = ? LIMIT 1', 'i', $this->id);
 
         $this->result = App::$_DB->getRecord($this->result);        
         $this->userGroup = new UserGroup($this->result->UserGroup_group_id);
@@ -40,17 +38,30 @@ class User
      */
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `user` SET
-                            `user_enabled` = "'.App::$_DB->escapeString($this->result->user_enabled).'",
-                            `user_email` = "'.App::$_DB->escapeString($this->result->user_email).'",
-                            `user_firstname` = "'.App::$_DB->escapeString($this->result->user_firstname).'",
-                            `user_lastname` = "'.App::$_DB->escapeString($this->result->user_lastname).'",
-                            `user_password` = "'.App::$_DB->escapeString($this->result->user_password).'",
-                            `user_phonenr` = "'.App::$_DB->escapeString($this->result->user_phonenr).'",
-                            `user_lastlogin` = '.(int)$this->result->user_lastlogin.',
-                            `user_logincount` = '.(int)$this->result->user_logincount.',
-                            `UserGroup_group_id` = '.(int)$this->result->UserGroup_group_id.'
-                          WHERE `user_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery(
+            'UPDATE `user` SET
+                `user_enabled` = ?,
+                `user_email` = ?,
+                `user_firstname` = ?,
+                `user_lastname` = ?,
+                `user_password` = ?,
+                `user_phonenr` = ?,
+                `user_lastlogin` = ?,
+                `user_logincount` = ?,
+                `UserGroup_group_id` = ?
+             WHERE `user_id` = ? LIMIT 1',
+            'ssssssiiii',
+            $this->result->user_enabled,
+            $this->result->user_email,
+            $this->result->user_firstname,
+            $this->result->user_lastname,
+            $this->result->user_password,
+            $this->result->user_phonenr,
+            (int)$this->result->user_lastlogin,
+            (int)$this->result->user_logincount,
+            (int)$this->result->UserGroup_group_id,
+            $this->id
+        );
     } //save
 
     /**
@@ -78,23 +89,26 @@ class User
             Subleague::deleteAllByUser($this->id);
             
             //remove participant information
-            App::$_DB->doSQL('DELETE FROM `participant_competition` WHERE `Participant_User_user_id` = ' . $this->id . ';');
-            App::$_DB->doSQL('DELETE FROM `participant` WHERE `User_user_id` = ' . $this->id . ';');
+            App::$_DB->doQuery('DELETE FROM `participant_competition` WHERE `Participant_User_user_id` = ?', 'i', $this->id);
+            App::$_DB->doQuery('DELETE FROM `participant` WHERE `User_user_id` = ?', 'i', $this->id);
         }
 
-        App::$_DB->doSQL('DELETE FROM `user` WHERE `user_id` = ' . $this->id . ';');
+        App::$_DB->doQuery('DELETE FROM `user` WHERE `user_id` = ?', 'i', $this->id);
         $this->__destruct();
     } //delete
 
     public static function getAllUsers($usergroup=false)
     {
-        $query = '';
-        if ($usergroup)
-          $query = ' WHERE `UserGroup_group_id` = ' . (int)$usergroup;
-
-        self::$resultList = App::$_DB->doSQL('SELECT `user` . * , `usergroup`.`group_name`
-                                              FROM `user`
-                                              LEFT OUTER JOIN `usergroup` ON `user`.`UserGroup_group_id` = `usergroup`.`group_id`' . $query . ';');
+        if ($usergroup) {
+            self::$resultList = App::$_DB->doQuery(
+                'SELECT `user`.*, `usergroup`.`group_name` FROM `user` LEFT OUTER JOIN `usergroup` ON `user`.`UserGroup_group_id` = `usergroup`.`group_id` WHERE `UserGroup_group_id` = ?',
+                'i', (int)$usergroup
+            );
+        } else {
+            self::$resultList = App::$_DB->doQuery(
+                'SELECT `user`.*, `usergroup`.`group_name` FROM `user` LEFT OUTER JOIN `usergroup` ON `user`.`UserGroup_group_id` = `usergroup`.`group_id`'
+            );
+        }
     } //getAllUsers
 
     public static function nextUser()
@@ -127,19 +141,18 @@ class User
         if (self::emailExists($email))
           throw new InputException('{ERROR_USER_EMAILEXISTS}', 'emailaddress');
 
-        App::$_DB->doSQL('INSERT INTO `user` (user_enabled, user_email, user_password, user_temp_password, user_firstname, user_lastname,
-                                                user_phonenr, user_lastlogin, user_logincount, UserGroup_group_id)
-                            VALUES ('.(int)$enabled.', 
-                                "'.App::$_DB->escapeString($email).'",
-                                "'.App::$_DB->escapeString($password).'",
-                                "'.hash('sha256', bin2hex(random_bytes(32))).'",
-                                "'.App::$_DB->escapeString($firstName).'",
-                                "'.App::$_DB->escapeString($lastName).'",
-                                "'.App::$_DB->escapeString($phoneNr).'",
-                                "0",
-                                "0",
-                                '.(int)$userGroup.'
-                            )');
+        App::$_DB->doQuery(
+            'INSERT INTO `user` (user_enabled, user_email, user_password, user_temp_password, user_firstname, user_lastname, user_phonenr, user_lastlogin, user_logincount, UserGroup_group_id) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?)',
+            'issssssi',
+            (int)$enabled,
+            $email,
+            $password,
+            hash('sha256', bin2hex(random_bytes(32))),
+            $firstName,
+            $lastName,
+            $phoneNr,
+            (int)$userGroup
+        );
         return App::$_DB->getLastId();
     } //add
 
@@ -151,10 +164,7 @@ class User
      */
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `user`
-                                    WHERE `user_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `user` WHERE `user_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     } //exists
 
@@ -163,10 +173,7 @@ class User
      */
     public static function isParticipant($id)
     {
-         $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `participant`
-                                    WHERE `User_user_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `participant` WHERE `User_user_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     } //isParticipant
 
@@ -304,13 +311,11 @@ class User
 
     public static function emailExists($email, $id=-1)
     {
-        if ($id >= 0)
-          $sql = ' AND NOT `user_id` = ' . (int)$id;
-       
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `user`
-                                    WHERE `user_email` = "' . App::$_DB->escapeString($email) . '"' . @$sql);
-
+        if ($id >= 0) {
+            $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `user` WHERE `user_email` = ? AND NOT `user_id` = ?', 'si', $email, (int)$id);
+        } else {
+            $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `user` WHERE `user_email` = ?', 's', $email);
+        }
         return (boolean)App::$_DB->getRecord($record)->total;
     } //emailExists
 
@@ -457,11 +462,10 @@ class User
                 throw new \Exception('{LANG_TOO_MANY_ATTEMPTS}');
             }
 
-            $username = App::$_DB->escapeString($_POST['geb']);
+            $username = $_POST['geb'];
             $plainPassword = $_POST['wac'];
 
-            $result = App::$_DB->doSQL('SELECT `user_enabled`, `user_id`, `user_password` FROM `user`
-                                        WHERE `user_email`="'.$username.'";');
+            $result = App::$_DB->doQuery('SELECT `user_enabled`, `user_id`, `user_password` FROM `user` WHERE `user_email` = ?', 's', $username);
 
             $row = App::$_DB->getRecord($result);
 
@@ -511,12 +515,8 @@ class User
 
     public static function getUserId($email)
     {
-        $result = App::$_DB->doSQL('SELECT `user_id`
-                                          FROM `user`
-                                          WHERE `user_email` = "' . App::$_DB->escapeString($email) . '" LIMIT 1;');
-
-        $result = App::$_DB->getRecord($result);   
-
+        $result = App::$_DB->doQuery('SELECT `user_id` FROM `user` WHERE `user_email` = ? LIMIT 1', 's', $email);
+        $result = App::$_DB->getRecord($result);
         return $result->user_id;
     }
     
@@ -533,9 +533,7 @@ class User
 
         $token = bin2hex(random_bytes(32));
         $hash  = hash('sha256', $token);
-        App::$_DB->doSQL('UPDATE `user` SET
-                             `user_temp_password` = "'.App::$_DB->escapeString($hash).'"
-                          WHERE `user_email` = "'.$email.'" LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `user` SET `user_temp_password` = ? WHERE `user_email` = ? LIMIT 1', 'ss', $hash, $email);
 
         return $token;
     } //setTempPassword

@@ -85,6 +85,56 @@ class Database
 	} // doSQL
 
     /**
+     * Executes a parameterised SQL query using a prepared statement.
+     *
+     * Use this method for every query that incorporates user-supplied or
+     * externally-sourced values.  Pass a query string with '?' placeholders,
+     * a type string for bind_param() (e.g. 'si' for string + int), and the
+     * values as additional arguments.
+     *
+     * For SELECT queries the method returns a mysqli_result object that is
+     * compatible with getRecord() / numRows() / freeQuery().
+     * For INSERT / UPDATE / DELETE queries it returns true.
+     *
+     * @param string $sql   SQL with '?' placeholders.
+     * @param string $types bind_param() type string (e.g. 'si', 'ss', 'i').
+     * @param mixed  ...$params  Values matching the placeholders in order.
+     * @return mysqli_result|bool  Result set for SELECT; true for DML.
+     * @throws Exception on prepare or execute failure.
+     */
+    public function doQuery(string $sql, string $types = '', mixed ...$params): mixed
+    {
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            if (App::$_CONF->getValue('TEST_MODE') != 'true')
+                throw new Exception(App::$_LANG->getValue('ERROR_DB_EXECSQL'));
+            else
+                throw new Exception(App::$_LANG->getValue('ERROR_DB_EXECSQL') . '; prepare failed: ' . $this->conn->error . ' [' . $sql . ']');
+        }
+
+        if ($types !== '' && count($params) > 0) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        if (!$stmt->execute()) {
+            if (App::$_CONF->getValue('TEST_MODE') != 'true')
+                throw new Exception(App::$_LANG->getValue('ERROR_DB_EXECSQL'));
+            else
+                throw new Exception(App::$_LANG->getValue('ERROR_DB_EXECSQL') . '; execute failed: ' . $stmt->error);
+        }
+
+        $this->queryCount++;
+
+        $result = $stmt->get_result();
+        if ($result === false) {
+            // DML statement (INSERT / UPDATE / DELETE) — no result set
+            return true;
+        }
+
+        return $result;
+    } // doQuery
+
+    /**
      * Fetches a mixed object.
      *
      * @param mixed $record.

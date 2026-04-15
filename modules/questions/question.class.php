@@ -22,9 +22,7 @@ class Question
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `question`
-                                          WHERE `question_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `question` WHERE `question_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -145,7 +143,7 @@ class Question
         //delete all of them
         QuestionPrediction::deleteAllPredictionsByQuestion($this->id);
     
-        App::$_DB->doSQL('DELETE FROM `question` WHERE `question_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `question` WHERE `question_id` = ?', 'i', $this->id);
 
         $this->__destruct();
         return true;
@@ -161,29 +159,29 @@ class Question
             QuestionPrediction::deleteAllPredictionsByQuestion($question->question_id);
         }
     
-        App::$_DB->doSQL('DELETE FROM `question`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `question` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `question` SET
-                          `question_question` = "'.App::$_DB->escapeString($this->result->question_question).'",
-                          `question_anwser_count` = '.App::$_DB->escapeString($this->result->question_anwser_count).',
-                          `question_anwser` = "'.App::$_DB->escapeString($this->result->question_anwser).'",
-                          `question_type` = "'.App::$_DB->escapeString($this->result->question_type).'"
-                         WHERE `question_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery(
+            'UPDATE `question` SET `question_question` = ?, `question_anwser_count` = ?, `question_anwser` = ?, `question_type` = ? WHERE `question_id` = ? LIMIT 1',
+            'sissi',
+            $this->result->question_question,
+            (int)$this->result->question_anwser_count,
+            $this->result->question_anwser,
+            $this->result->question_type,
+            $this->id
+        );
     }
 
     public static function getAllQuestions($competitionId=false)
     {
-        $query = '';
-        if ($competitionId)
-            $query = 'WHERE `Competition_competition_id` = ' . (int)$competitionId;
-
-       self::$resultList = App::$_DB->doSQL('SELECT * 
-                                             FROM `question`
-                                             '.$query);
+        if ($competitionId) {
+            self::$resultList = App::$_DB->doQuery('SELECT * FROM `question` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
+        } else {
+            self::$resultList = App::$_DB->doQuery('SELECT * FROM `question`');
+        }
     }
 
     public static function add($competitionId, $question_anwser_count, $question, $type)
@@ -195,14 +193,15 @@ class Question
             $question_anwser .= 'empty' . ($i<($question_anwser_count-1) ? ',' : '');
         }
         
-        App::$_DB->doSQL('INSERT INTO `question` (question_question, question_type, question_anwser_count, question_anwser, Competition_competition_id)
-                          VALUES (
-                            "'.App::$_DB->escapeString($question).'",
-                            "'.App::$_DB->escapeString($type).'",
-                            '.$question_anwser_count.',
-                            "'.App::$_DB->escapeString($question_anwser).'",
-                            '.(int)$competitionId.')
-                          ');
+        App::$_DB->doQuery(
+            'INSERT INTO `question` (question_question, question_type, question_anwser_count, question_anwser, Competition_competition_id) VALUES (?, ?, ?, ?, ?)',
+            'ssisi',
+            $question,
+            $type,
+            (int)$question_anwser_count,
+            $question_anwser,
+            (int)$competitionId
+        );
         
         $questionId = App::$_DB->getLastId();
         
@@ -241,10 +240,7 @@ class Question
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `question`
-                                    WHERE `question_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `question` WHERE `question_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

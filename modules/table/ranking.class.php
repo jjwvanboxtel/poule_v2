@@ -16,10 +16,7 @@ class Ranking
         $this->userId = (int)$userId;
         $this->competitionId = (int)$competitionId;
 
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `table`
-                                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                                          AND `Competition_competition_id` = '. $this->competitionId.' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `table` WHERE `Participant_User_user_id` = ? AND `Competition_competition_id` = ? LIMIT 1', 'ii', $this->userId, $this->competitionId);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -68,51 +65,34 @@ class Ranking
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `table` SET
-                          `table_points` = '.$this->result->table_points.',
-                          `table_position` = '.$this->result->table_position.',
-                          `table_old_position` = '.$this->result->table_old_position.'
-                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                          AND `Competition_competition_id` = ' . $this->competitionId. ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `table` SET `table_points` = ?, `table_position` = ?, `table_old_position` = ? WHERE `Participant_User_user_id` = ? AND `Competition_competition_id` = ? LIMIT 1', 'iiiii', (int)$this->result->table_points, (int)$this->result->table_position, (int)$this->result->table_old_position, $this->userId, $this->competitionId);
     }
     
     public function delete()
     {
-        App::$_DB->doSQL('DELETE FROM `table` WHERE `Participant_User_user_id` = ' . $this->userId . '');
-
+        App::$_DB->doQuery('DELETE FROM `table` WHERE `Participant_User_user_id` = ?', 'i', $this->userId);
         $this->__destruct();
         return true;
     }
 
     public static function deleteAllByCompetition($competitionId)
     {
-        App::$_DB->doSQL('DELETE FROM `table`
-                          WHERE `Competition_competition_id` = ' . (int)$competitionId . '');
+        App::$_DB->doQuery('DELETE FROM `table` WHERE `Competition_competition_id` = ?', 'i', (int)$competitionId);
     }
 
     public static function deleteAllByUser($userId)
     {
-        App::$_DB->doSQL('DELETE FROM `table`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId . '');
+        App::$_DB->doQuery('DELETE FROM `table` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function getAllRankings($competitionId)
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `table`
-                                             WHERE `Competition_competition_id` = '.(int)$competitionId.'
-                                             ORDER BY `table_position` ASC');
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `table` WHERE `Competition_competition_id` = ? ORDER BY `table_position` ASC', 'i', (int)$competitionId);
     }
 
     public static function add($competitionId, $userId, $points, $position, $oldPosition)
     {
-        App::$_DB->doSQL('INSERT INTO `table` (Participant_User_user_id, Competition_competition_id, table_points, table_position, table_old_position)
-                          VALUES (
-                            '.(int)$userId.',
-                            '.(int)$competitionId.',
-                            '.$points.',
-                            '.$position.',
-                            '.$oldPosition.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `table` (Participant_User_user_id, Competition_competition_id, table_points, table_position, table_old_position) VALUES (?, ?, ?, ?, ?)', 'iiiii', (int)$userId, (int)$competitionId, (int)$points, (int)$position, (int)$oldPosition);
     }
 
     public static function addOrUpdateUser($competitionId, $userId, $points, $position, $old_position)
@@ -133,7 +113,7 @@ class Ranking
     
     public static function deleteAllRankings()
     {
-        App::$_DB->doSQL('DELETE FROM `table`');
+        App::$_DB->doQuery('DELETE FROM `table`');
     }    
     
     public static function nextRanking()
@@ -150,11 +130,7 @@ class Ranking
 
     public static function exists($competitionId, $userId)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `table`
-                                    WHERE `Participant_User_user_id` = '.(int)$userId.'
-                                    AND `Competition_competition_id` = '.(int)$competitionId);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `table` WHERE `Participant_User_user_id` = ? AND `Competition_competition_id` = ?', 'ii', (int)$userId, (int)$competitionId);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

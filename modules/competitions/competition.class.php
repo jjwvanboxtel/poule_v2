@@ -14,9 +14,7 @@ class Competition
     public function __construct($id)
     {
         $this->id = (int)$id;
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `competition`
-                                          WHERE `competition_id` = ' . $this->id . ' LIMIT 1;');
+        $this->result = App::$_DB->doQuery('SELECT * FROM `competition` WHERE `competition_id` = ? LIMIT 1', 'i', $this->id);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -157,7 +155,7 @@ class Competition
         
         App::$_UPL->deleteDir(UPLOAD_DIR.$this->id);
         
-        App::$_DB->doSQL('DELETE FROM `competition` WHERE `competition_id` = ' . $this->id . '');
+        App::$_DB->doQuery('DELETE FROM `competition` WHERE `competition_id` = ?', 'i', $this->id);
         
         $this->__destruct();
         return true;
@@ -165,21 +163,33 @@ class Competition
 
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `competition` SET
-                          `competition_name` = "'.App::$_DB->escapeString($this->result->competition_name).'",
-                          `competition_description` = "'.addslashes($this->result->competition_description).'",
-                          `competition_header` = "'.App::$_DB->escapeString($this->result->competition_header).'",
-                          `competition_final_submission_date` = '.$this->result->competition_final_submission_date.',
-                          `competition_money` = '.$this->result->competition_money.',
-                          `competition_first_place` = '.$this->result->competition_first_place.',
-                          `competition_second_place` = '.$this->result->competition_second_place.',
-                          `competition_third_place` = '.$this->result->competition_third_place.'
-                          WHERE `competition_id` = ' . $this->id . ' LIMIT 1;');
+        App::$_DB->doQuery(
+            'UPDATE `competition` SET
+                `competition_name` = ?,
+                `competition_description` = ?,
+                `competition_header` = ?,
+                `competition_final_submission_date` = ?,
+                `competition_money` = ?,
+                `competition_first_place` = ?,
+                `competition_second_place` = ?,
+                `competition_third_place` = ?
+             WHERE `competition_id` = ? LIMIT 1',
+            'sssiiiiii',
+            $this->result->competition_name,
+            $this->result->competition_description,
+            $this->result->competition_header,
+            (int)$this->result->competition_final_submission_date,
+            (int)$this->result->competition_money,
+            (int)$this->result->competition_first_place,
+            (int)$this->result->competition_second_place,
+            (int)$this->result->competition_third_place,
+            $this->id
+        );
     }
 
     public static function getAllCompetitions()
     {
-       self::$resultList = App::$_DB->doSQL('SELECT * FROM `competition` ORDER BY `competition_name` ASC');
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `competition` ORDER BY `competition_name` ASC');
     }
 
     public static function add($name, $description, $header, $submission_date, $money, $first_place, $second_place, $third_place)
@@ -187,23 +197,24 @@ class Competition
         // Insert with an empty header placeholder first so we have the
         // competition ID available for the upload path, then update the
         // header field with the safe (randomised) filename after upload.
-        App::$_DB->doSQL('INSERT INTO `competition` (competition_name, competition_description, competition_header, competition_final_submission_date, competition_money, competition_first_place, competition_second_place, competition_third_place)
-                          VALUES (
-                            "'.App::$_DB->escapeString($name).'",
-                            "'.addslashes($description).'",
-                            "",
-                            '.$submission_date.',
-                            '.App::$_DB->escapeString($money).',
-                            '.App::$_DB->escapeString($first_place).',
-                            '.App::$_DB->escapeString($second_place).',
-                            '.App::$_DB->escapeString($third_place).')
-                          ');
+        App::$_DB->doQuery(
+            'INSERT INTO `competition` (competition_name, competition_description, competition_header, competition_final_submission_date, competition_money, competition_first_place, competition_second_place, competition_third_place) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            'sssiiiii',
+            $name,
+            $description,
+            '',
+            (int)$submission_date,
+            (int)$money,
+            (int)$first_place,
+            (int)$second_place,
+            (int)$third_place
+        );
         
         $competitionId = App::$_DB->getLastId();
 
         $safe = App::$_UPL->loadUp($header, $competitionId.'/'.self::$header_dir);
 
-        App::$_DB->doSQL('UPDATE `competition` SET `competition_header` = "'.App::$_DB->escapeString($safe).'" WHERE `competition_id` = '.intval($competitionId).' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `competition` SET `competition_header` = ? WHERE `competition_id` = ? LIMIT 1', 'si', $safe, (int)$competitionId);
         
         App::openClass('Participant', 'modules/users');
         User::getAllUsers(3);
@@ -243,10 +254,7 @@ class Competition
 
     public static function exists($id)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `competition`
-                                    WHERE `competition_id` = ' . (int)$id);
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `competition` WHERE `competition_id` = ?', 'i', (int)$id);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 

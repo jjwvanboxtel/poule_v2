@@ -18,12 +18,7 @@ class RoundPrediction
         $this->roundId = (int)$roundId;
         $this->predictionId = (int)$predictionId;
         
-        $this->result = App::$_DB->doSQL('SELECT *
-                                          FROM `participant_round_prediction`
-                                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                                          AND `Round_round_id` = ' . $this->roundId . '
-                                          AND `Round_prediction_id` = ' . $this->predictionId);
-                                          
+        $this->result = App::$_DB->doQuery('SELECT * FROM `participant_round_prediction` WHERE `Participant_User_user_id` = ? AND `Round_round_id` = ? AND `Round_prediction_id` = ?', 'iii', $this->userId, $this->roundId, $this->predictionId);
         $this->result = App::$_DB->getRecord($this->result);
     }
 
@@ -66,72 +61,47 @@ class RoundPrediction
 
     public function delete()
     {
-        App::$_DB->doSQL('DELETE FROM `participant_round_prediction` 
-                            WHERE `Participant_User_user_id` = ' . $this->userId . '
-                            AND `Round_round_id` = ' . $this->roundId . '
-                            AND `Round_prediction_id` = ' . $this->predictionId . '');
-
+        App::$_DB->doQuery('DELETE FROM `participant_round_prediction` WHERE `Participant_User_user_id` = ? AND `Round_round_id` = ? AND `Round_prediction_id` = ?', 'iii', $this->userId, $this->roundId, $this->predictionId);
         $this->__destruct();
         return true;
     }
     
     public function save()
     {
-        App::$_DB->doSQL('UPDATE `participant_round_prediction` SET
-                          `Country_country_id` = "'.App::$_DB->escapeString($this->result->Country_country_id).'"
-                          WHERE `Participant_User_user_id` = ' . $this->userId . '
-                          AND `Round_round_id` = ' . $this->roundId . '
-                          AND `Round_prediction_id` = ' . $this->predictionId . ' LIMIT 1;');
+        App::$_DB->doQuery('UPDATE `participant_round_prediction` SET `Country_country_id` = ? WHERE `Participant_User_user_id` = ? AND `Round_round_id` = ? AND `Round_prediction_id` = ? LIMIT 1', 'iiii', (int)$this->result->Country_country_id, $this->userId, $this->roundId, $this->predictionId);
     }
 
     public static function getAllPredictions($userId)
     {
-        self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_round_prediction`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId);
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `participant_round_prediction` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function getAllPredictionsByRound($userId, $roundId)
     {
-        self::$resultList = App::$_DB->doSQL('SELECT * FROM `participant_round_prediction`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId . '
-                          AND `Round_round_id` = ' . (int)$roundId);
+        self::$resultList = App::$_DB->doQuery('SELECT * FROM `participant_round_prediction` WHERE `Participant_User_user_id` = ? AND `Round_round_id` = ?', 'ii', (int)$userId, (int)$roundId);
     }
     
     public static function getPredictionCountryCount($roundId)
     {
-        self::$resultList = App::$_DB->doSQL('SELECT  `Country_country_id` , COUNT( Country_country_id ) AS count
-                          FROM  `participant_round_prediction` 
-                          INNER JOIN `participant_competition`
-                          ON `participant_round_prediction`.`Participant_User_user_id`=`participant_competition`.`Participant_User_user_id`
-                          WHERE  `Round_round_id` = ' . (int)$roundId . '
-                          AND `participant_competition`.`Participant_Competition_payed` = 1 
-                          AND `participant_competition`.`Participant_Competition_subscribed` = 1
-                          GROUP BY  `Country_country_id`
-                          ORDER BY  `count` DESC
-                          LIMIT 15');
+        self::$resultList = App::$_DB->doQuery(
+            'SELECT `Country_country_id`, COUNT(`Country_country_id`) AS count FROM `participant_round_prediction` INNER JOIN `participant_competition` ON `participant_round_prediction`.`Participant_User_user_id` = `participant_competition`.`Participant_User_user_id` WHERE `Round_round_id` = ? AND `participant_competition`.`Participant_Competition_payed` = 1 AND `participant_competition`.`Participant_Competition_subscribed` = 1 GROUP BY `Country_country_id` ORDER BY `count` DESC LIMIT 15',
+            'i', (int)$roundId
+        );
     }
     
     public static function deleteAllPredictionsByUser($userId)
     {
-        self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_round_prediction`
-                          WHERE `Participant_User_user_id` = ' . (int)$userId);
+        App::$_DB->doQuery('DELETE FROM `participant_round_prediction` WHERE `Participant_User_user_id` = ?', 'i', (int)$userId);
     }
     
     public static function deleteAllPredictionsByRound($roundId)
     {
-        self::$resultList = App::$_DB->doSQL('DELETE FROM `participant_round_prediction`
-                          WHERE `Round_round_id` = ' . (int)$roundId . '');
+        App::$_DB->doQuery('DELETE FROM `participant_round_prediction` WHERE `Round_round_id` = ?', 'i', (int)$roundId);
     }
     
     public static function add($userId, $roundId, $predictionId, $country)
     {
-        App::$_DB->doSQL('INSERT INTO `participant_round_prediction` (Participant_User_user_id, Round_round_id, Round_prediction_id, Country_country_id)
-                          VALUES (
-                            '.(int)$userId.',
-                            '.(int)$roundId.',
-                            '.(int)$predictionId.',
-                            '.(int)$country.')
-                          ');
+        App::$_DB->doQuery('INSERT INTO `participant_round_prediction` (Participant_User_user_id, Round_round_id, Round_prediction_id, Country_country_id) VALUES (?, ?, ?, ?)', 'iiii', (int)$userId, (int)$roundId, (int)$predictionId, (int)$country);
     }
 
     public static function nextPrediction()
@@ -148,11 +118,7 @@ class RoundPrediction
 
     public static function exists($userId, $roundId)
     {
-        $record = App::$_DB->doSQL('SELECT count( * ) AS total
-                                    FROM `participant_round_prediction`
-                                    WHERE `Participant_User_user_id` = ' . (int)$userId . '
-                                    AND `Round_round_id` = ' . (int)$roundId . '');
-
+        $record = App::$_DB->doQuery('SELECT count(*) AS total FROM `participant_round_prediction` WHERE `Participant_User_user_id` = ? AND `Round_round_id` = ?', 'ii', (int)$userId, (int)$roundId);
         return (boolean)App::$_DB->getRecord($record)->total;
     }
 
