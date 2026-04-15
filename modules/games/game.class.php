@@ -141,11 +141,11 @@ class Game
     {
         App::$_DB->doQuery(
             'UPDATE `game` SET `game_date` = ?, `game_result` = ?, `game_red_cards` = ?, `game_yellow_cards` = ?, `City_city_id` = ?, `Country_country_id_home` = ?, `Country_country_id_away` = ?, `Poule_poule_id` = ? WHERE `game_id` = ? LIMIT 1',
-            'sssiiiii',
+            'ssiiiiiii',
             $this->result->game_date,
             $this->result->game_result,
-            $this->result->game_red_cards,
-            $this->result->game_yellow_cards,
+            (int)$this->result->game_red_cards,
+            (int)$this->result->game_yellow_cards,
             (int)$this->result->City_city_id,
             (int)$this->result->Country_country_id_home,
             (int)$this->result->Country_country_id_away,
@@ -169,7 +169,11 @@ class Game
     {
         App::$_DB->doQuery(
             'INSERT INTO `game` (game_date, game_result, game_red_cards, game_yellow_cards, City_city_id, Country_country_id_home, Country_country_id_away, Poule_poule_id, Competition_competition_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            'sssiiiiii',
+            'ssiiiiiii',
+            $date,
+            $result,
+            (int)$red_cards,
+            (int)$yellow_cards,
             (int)$city_id,
             (int)$country_id_home,
             (int)$country_id_away,
