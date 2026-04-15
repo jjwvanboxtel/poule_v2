@@ -210,14 +210,13 @@ class Component
     }
 
     /**
-     * Sanitizes HTML by allowing only a safe subset of tags and attributes.
+     * Sanitizes HTML using HTMLPurifier v4.19.0, preserving TinyMCE markup while
+     * stripping <script>, event-handler attributes, javascript: URIs, and dangerous CSS.
      *
-     * Uses PHP's built-in DOMDocument to parse and clean the HTML, removing
-     * script elements, event-handler attributes, and javascript: URIs.
-     * Suitable for displaying TinyMCE-authored rich text without XSS risk.
+     * HTMLPurifier is vendored under libs/htmlpurifier/ (no Composer required).
      *
      * @param  string $html  The HTML to sanitize.
-     * @return string        Safe HTML containing only allowed tags and attributes.
+     * @return string        Safe HTML containing only the allowed tags and attributes.
      */
     public static function sanitizeHtml($html)
     {
@@ -225,140 +224,80 @@ class Component
             return '';
         }
 
-        // Tags produced by TinyMCE that are safe to preserve.
-        $allowedTags = [
-            'p', 'br', 'hr', 'strong', 'b', 'em', 'i', 'u', 's', 'del', 'ins',
-            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-            'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
-            'a', 'img', 'figure', 'figcaption',
-            'div', 'span',
-            'table', 'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
-            'sub', 'sup', 'mark', 'small', 'abbr', 'cite', 'q', 'address',
-        ];
+        require_once dirname(__DIR__) . '/libs/htmlpurifier/HTMLPurifier.safe-includes.php';
 
-        $allowedAttributes = [
-            'a'        => ['href', 'title', 'target', 'rel'],
-            'img'      => ['src', 'alt', 'width', 'height', 'title'],
-            'col'      => ['span', 'width', 'style'],
-            'td'       => ['colspan', 'rowspan', 'headers'],
-            'th'       => ['colspan', 'rowspan', 'scope', 'headers'],
-            // 'style' is allowed globally so TinyMCE formatting (alignment, colours, etc.)
-            // is preserved; dangerous CSS patterns are stripped in sanitizeDomNode().
-            '*'        => ['class', 'align', 'style', 'id'],
-        ];
+        $config = HTMLPurifier_Config::createDefault();
 
-        $doc = new DOMDocument('1.0', 'UTF-8');
-        libxml_use_internal_errors(true);
-        // The XML declaration with encoding ensures DOMDocument treats input as UTF-8
-        // rather than defaulting to iso-8859-1. LIBXML_NONET prevents external DTD/entity
-        // network requests.
-        $doc->loadHTML(
-            '<?xml version="1.0" encoding="UTF-8"?><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body>' . $html . '</body></html>',
-            LIBXML_HTML_NODEFDTD | LIBXML_NONET
+        // ── Definition ID (required before maybeGetRawHTMLDefinition) ────────────
+        $config->set('HTML.DefinitionID', 'poule_v2-tinymce');
+        $config->set('HTML.DefinitionRev', 1);
+
+        // Disable serializer cache — no writable cache directory needed.
+        $config->set('Cache.DefinitionImpl', null);
+
+        // ── Allowed elements & attributes (TinyMCE output set) ──────────────────
+        $config->set('HTML.Allowed',
+            'p[class|id|style|align],'
+            . 'br,hr,'
+            . 'strong,b,em,i,u,s,del,ins,'
+            . 'h1[class|id|style],h2[class|id|style],h3[class|id|style],'
+            . 'h4[class|id|style],h5[class|id|style],h6[class|id|style],'
+            . 'ul[class|id|style],ol[class|id|style],li[class|id|style],'
+            . 'blockquote[class|id|style],pre[class|id|style],code[class|id|style],'
+            . 'a[href|title|target|rel],'
+            . 'img[src|alt|width|height|title|class|id|style],'
+            . 'figure[class|id|style],figcaption[class|id|style],'
+            . 'div[class|id|style|align],span[class|id|style],'
+            . 'table[class|id|style|align],'
+            . 'caption[class|id|style],'
+            . 'colgroup[class|id|style],col[span|width|class|id|style],'
+            . 'thead[class|id|style],tbody[class|id|style],tfoot[class|id|style],'
+            . 'tr[class|id|style],th[class|id|style|colspan|rowspan|scope|headers],'
+            . 'td[class|id|style|colspan|rowspan|headers],'
+            . 'sub,sup,mark,small,abbr[title|class|id],cite[class|id],'
+            . 'q[cite|class|id],address[class|id|style]'
         );
-        libxml_clear_errors();
 
-        $body = $doc->getElementsByTagName('body')->item(0);
-        if ($body === null) {
-            return '';
+        // ── CSS: allow common TinyMCE formatting properties only ─────────────────
+        $config->set('CSS.AllowedProperties', [
+            'text-align', 'text-decoration', 'text-indent',
+            'color', 'background-color',
+            'font-size', 'font-weight', 'font-style', 'font-family',
+            'line-height', 'letter-spacing',
+            'width', 'height', 'max-width', 'max-height',
+            'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+            'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+            'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
+            'border-color', 'border-style', 'border-width',
+            'float', 'clear', 'vertical-align',
+            'list-style', 'list-style-type',
+        ]);
+
+        // ── URI: allow http(s), mailto, relative paths; block javascript:, data: ─
+        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true]);
+
+        // ── Encoding & output ────────────────────────────────────────────────────
+        $config->set('Core.Encoding', 'UTF-8');
+
+        // Do not auto-add paragraphs or remove empty nodes — preserve TinyMCE output as-is.
+        $config->set('AutoFormat.AutoParagraph', false);
+        $config->set('AutoFormat.RemoveEmpty', false);
+
+        // ── Register HTML5 elements not in the default HTML4 definition ──────────
+        // Must be called after all config->set() calls and before new HTMLPurifier().
+        if ($def = $config->maybeGetRawHTMLDefinition()) {
+            $def->addElement('figure',     'Block',  'Optional: (figcaption, Flow) | (Flow, figcaption?) | Flow', 'Common');
+            $def->addElement('figcaption', 'Inline', 'Flow',   'Common');
+            $def->addElement('mark',       'Inline', 'Inline', 'Common');
+            $def->addElement('address',    'Block',  'Flow',   'Common');
+            // Register HTML4 accessibility attributes missing from the bundled definition.
+            $def->addAttribute('td', 'headers', 'NMTOKENS');
+            $def->addAttribute('th', 'headers', 'NMTOKENS');
         }
 
-        self::sanitizeDomNode($body, $allowedTags, $allowedAttributes);
+        $purifier = new HTMLPurifier($config);
 
-        $output = '';
-        foreach ($body->childNodes as $child) {
-            $output .= $doc->saveHTML($child);
-        }
-
-        return $output;
-    }
-
-    /**
-     * Recursively removes disallowed elements and dangerous attributes from a DOM node.
-     *
-     * Children of removed elements are sanitized first, then promoted into the parent
-     * so that no unsafe content (e.g. a <script> nested inside a <figure>) survives.
-     *
-     * @param DOMNode $node               The node to process.
-     * @param array   $allowedTags        List of lowercase tag names that may remain.
-     * @param array   $allowedAttributes  Map of tag => [attr, ...] plus '*' for globals.
-     */
-    private static function sanitizeDomNode($node, array $allowedTags, array $allowedAttributes)
-    {
-        // Snapshot children into an array first so that DOM modifications made during
-        // the loop (by recursive calls) do not affect the iteration order.
-        $children = [];
-        foreach ($node->childNodes as $child) {
-            $children[] = $child;
-        }
-
-        $toRemove = [];
-        foreach ($children as $child) {
-            if ($child->nodeType !== XML_ELEMENT_NODE) {
-                continue;
-            }
-            $tag = strtolower($child->nodeName);
-            if (!in_array($tag, $allowedTags, true)) {
-                $toRemove[] = $child;
-                continue;
-            }
-
-            // Strip disallowed and dangerous attributes from this element.
-            $attrsToRemove = [];
-            if ($child->hasAttributes()) {
-                // Snapshot attribute names before any modification.
-                $attrNames = [];
-                foreach ($child->attributes as $attr) {
-                    $attrNames[] = [$attr->nodeName, $attr->nodeValue];
-                }
-                foreach ($attrNames as [$attrName, $attrValue]) {
-                    $name = strtolower($attrName);
-                    // Block all event-handler attributes (onclick, onerror, …).
-                    if (strncasecmp($name, 'on', 2) === 0) {
-                        $attrsToRemove[] = $attrName;
-                        continue;
-                    }
-                    $allowed = array_merge(
-                        isset($allowedAttributes[$tag]) ? $allowedAttributes[$tag] : [],
-                        isset($allowedAttributes['*'])  ? $allowedAttributes['*']  : []
-                    );
-                    if (!in_array($name, $allowed, true)) {
-                        $attrsToRemove[] = $attrName;
-                        continue;
-                    }
-                    // Enforce an allowlist of safe URI schemes for href/src.
-                    if (in_array($name, ['href', 'src'], true)) {
-                        $val = trim($attrValue);
-                        if ($val !== '' && !preg_match('/^(https?:|mailto:|#|\/)/i', $val)) {
-                            $attrsToRemove[] = $attrName;
-                        }
-                    }
-                    // Strip dangerous patterns from inline CSS (expression(), javascript:, etc.).
-                    if ($name === 'style') {
-                        $safe = preg_replace('/expression\s*\(/i', '', $attrValue);
-                        $safe = preg_replace('/(javascript|vbscript)\s*:/i', '', $safe);
-                        $child->setAttribute($attrName, $safe);
-                    }
-                }
-            }
-            foreach ($attrsToRemove as $attrName) {
-                $child->removeAttribute($attrName);
-            }
-
-            // Recurse into the now-clean element.
-            self::sanitizeDomNode($child, $allowedTags, $allowedAttributes);
-        }
-
-        // For each disallowed element: sanitize its subtree first (so a <script> nested
-        // inside a <figure> is removed before the <figure>'s children are promoted),
-        // then inline-promote its children into the current node.
-        foreach ($toRemove as $child) {
-            self::sanitizeDomNode($child, $allowedTags, $allowedAttributes);
-            while ($child->hasChildNodes()) {
-                $node->insertBefore($child->firstChild, $child);
-            }
-            $node->removeChild($child);
-        }
+        return $purifier->purify($html);
     }
 }
 ?>
