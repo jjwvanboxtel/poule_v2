@@ -19,7 +19,7 @@ class UserControl extends Component
         {
             case 'confirm':
                 if(@$_GET['com'] != parent::getComponentId('UserControl'))
-                  throw new Exception(@$_GET['option'] . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
+                  throw new Exception(htmlspecialchars(@$_GET['option'], ENT_QUOTES | ENT_HTML5, 'UTF-8') . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
                 break;
             default:
             case 'login':
@@ -128,7 +128,7 @@ class UserControl extends Component
                     $this->showLoginScreen('<div id="msg">{LANG_ACCOUNT_ACTIVATION}: {LANG_ACCOUNT_ACTIVATION_ALREADY_ENABLED}</div>' . "\n");
                 }
                 break;
-            //throw new Exception(@$_GET['option'] . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
+            //throw new Exception(htmlspecialchars(@$_GET['option'], ENT_QUOTES | ENT_HTML5, 'UTF-8') . ' ' . App::$_LANG->getValue('ERROR_NOTVALIDOPT'));
         }
     } //__construct
 
@@ -157,11 +157,31 @@ class UserControl extends Component
 
     /**
      * Logs the current user out.
+     *
+     * Fully destroys the session: clears the session data, expires the session
+     * cookie, calls session_destroy(), and regenerates the session ID to prevent
+     * session fixation and hijacking with a captured cookie.
      */
-    public static function logOut()
+    public static function logOut(): void
     {
-        unset($_SESSION['user_id']);
-        unset($_SESSION['logged_in']);
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $cookieParams = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 3600,
+                $cookieParams['path'],
+                $cookieParams['domain'],
+                $cookieParams['secure'],
+                $cookieParams['httponly']
+            );
+        }
+
+        session_destroy();
+        session_start();
+        session_regenerate_id(true);
 
         self::$currentUser = null;
     } // logOut
@@ -277,7 +297,7 @@ class UserControl extends Component
 		$header .= 'Content-Type: text/html; charset=iso-8859-1' . "\n";
 		$header .= 'X-Priority: 3' . "\n";
 		$header .= 'X-MSMail-Priority: Normal' . "\n";
-		$header .= 'X-Mailer: PHP / ' . phpversion() . "\n";
+		$header .= 'X-Mailer: Application Mailer' . "\n";
 		$subject = '' . App::$_CONF->getValue('LOGIN_LOST_SUBJECT') . ''."\n";
 		$body = "<html><body>"."\n";
 		$body .= "<font face=\"Tahoma\" size=\"2\">"."\n";
@@ -303,7 +323,7 @@ class UserControl extends Component
 		$header .= 'Content-Type: text/html; charset=iso-8859-1' . "\n";
 		$header .= 'X-Priority: 3' . "\n";
 		$header .= 'X-MSMail-Priority: Normal' . "\n";
-		$header .= 'X-Mailer: PHP / ' . phpversion() . "\n";
+		$header .= 'X-Mailer: Application Mailer' . "\n";
 		$subject = '' . App::$_CONF->getValue('ACCOUNT_ACTIVATION') . ''."\n";
 
         $body = '' . App::$_LANG->getValue('LANG_WELCOME').': ' . $user->getFirstName() . ' ' . $user->getLastName() . '<br />'."\n";

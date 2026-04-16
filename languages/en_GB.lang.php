@@ -10,6 +10,7 @@ LANG_LOGIN              = Login
 LANG_USERNAME           = Username
 LANG_PASSWORD           = Password
 LANG_LOGIN_LOST         = Lost your login credentials?
+LANG_TOO_MANY_ATTEMPTS  = Too many failed login attempts. Please try again later.
 ERROR_CSRF_INVALID = Invalid security token. Please refresh the page and try again.
 LANG_STATISTICS_GENERATE     = Generate statistics
 LANG_STATISTICS_GENERATED    = Statistics generated successfully.

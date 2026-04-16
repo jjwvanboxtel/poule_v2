@@ -10,3 +10,4 @@
 /tests/playwright/playwright-report
 /tests/playwright/test-results
 /libs/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer
+/logs/*.log
