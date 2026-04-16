@@ -167,7 +167,7 @@ class Competition
     {
         App::$_DB->doSQL('UPDATE `competition` SET
                           `competition_name` = "'.App::$_DB->escapeString($this->result->competition_name).'",
-                          `competition_description` = "'.addslashes($this->result->competition_description).'",
+                          `competition_description` = "'.App::$_DB->escapeString($this->result->competition_description).'",
                           `competition_header` = "'.App::$_DB->escapeString($this->result->competition_header).'",
                           `competition_final_submission_date` = '.$this->result->competition_final_submission_date.',
                           `competition_money` = '.$this->result->competition_money.',
@@ -190,7 +190,7 @@ class Competition
         App::$_DB->doSQL('INSERT INTO `competition` (competition_name, competition_description, competition_header, competition_final_submission_date, competition_money, competition_first_place, competition_second_place, competition_third_place)
                           VALUES (
                             "'.App::$_DB->escapeString($name).'",
-                            "'.addslashes($description).'",
+                            "'.App::$_DB->escapeString($description).'",
                             "",
                             '.$submission_date.',
                             '.App::$_DB->escapeString($money).',

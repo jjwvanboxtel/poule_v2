@@ -172,7 +172,7 @@ final class App
                         // Description card
                         echo '<div class="card stat-card">'
                            . '<div class="card-header"><h5 class="mb-0">' . htmlspecialchars($competition->getName()) . '</h5></div>'
-                           . '<div class="card-body">' . $competition->getDescription() . '</div>'
+                           . '<div class="card-body">' . Component::sanitizeHtml($competition->getDescription()) . '</div>'
                            . '</div>' . "\n";
                     }
                     else 
@@ -241,16 +241,19 @@ final class App
             $replaceArr['TEMPLATE_NAME'] = self::$_CONF->getValue('TEMPLATE');
             $replaceArr = array_merge($replaceArr, self::$_LANG->toArray());
             
-            self::$_TPL->addHeader('<script type="text/javascript" src="./modules/tinymce/js/tinymce/tinymce.min.js"></script>
+            self::$_TPL->addHeader('<script type="text/javascript" src="./libs/tinymce/js/tinymce/tinymce.min.js"></script>
                 <script type="text/javascript">
                 tinymce.init({
                     selector: "textarea.editor",
                     plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table paste"
+                        "advlist", "anchor", "autolink", "charmap", "code", "fullscreen",
+                        "help", "image", "insertdatetime", "link", "lists", "media",
+                        "preview", "searchreplace", "table", "visualblocks",
                     ],
-                    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                    toolbar: "anchor |undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+                    menubar: "file edit view insert format tools table help",
+                    content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                    license_key: "gpl"
                 });
                 </script>');
                        

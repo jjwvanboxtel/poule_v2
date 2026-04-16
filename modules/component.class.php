@@ -208,7 +208,96 @@ class Component
              . $cells
              . '</tr>' . "\n";
     }
+
+    /**
+     * Sanitizes HTML using HTMLPurifier v4.19.0, preserving TinyMCE markup while
+     * stripping <script>, event-handler attributes, javascript: URIs, and dangerous CSS.
+     *
+     * HTMLPurifier is vendored under libs/htmlpurifier/ (no Composer required).
+     *
+     * @param  string $html  The HTML to sanitize.
+     * @return string        Safe HTML containing only the allowed tags and attributes.
+     */
+    public static function sanitizeHtml($html)
+    {
+        if (trim((string)$html) === '') {
+            return '';
+        }
+
+        require_once dirname(__DIR__) . '/libs/htmlpurifier/HTMLPurifier.safe-includes.php';
+
+        $config = HTMLPurifier_Config::createDefault();
+
+        // ── Definition ID (required before maybeGetRawHTMLDefinition) ────────────
+        $config->set('HTML.DefinitionID', 'poule_v2-tinymce');
+        $config->set('HTML.DefinitionRev', 1);
+
+        // Disable serializer cache — no writable cache directory needed.
+        $config->set('Cache.DefinitionImpl', null);
+
+        // ── Allowed elements & attributes (TinyMCE output set) ──────────────────
+        $config->set('HTML.Allowed',
+            'p[class|id|style|align],'
+            . 'br,hr,'
+            . 'strong,b,em,i,u,s,del,ins,'
+            . 'h1[class|id|style],h2[class|id|style],h3[class|id|style],'
+            . 'h4[class|id|style],h5[class|id|style],h6[class|id|style],'
+            . 'ul[class|id|style],ol[class|id|style],li[class|id|style],'
+            . 'blockquote[class|id|style],pre[class|id|style],code[class|id|style],'
+            . 'a[href|title|target|rel],'
+            . 'img[src|alt|width|height|title|class|id|style],'
+            . 'figure[class|id|style],figcaption[class|id|style],'
+            . 'div[class|id|style|align],span[class|id|style],'
+            . 'table[class|id|style|align],'
+            . 'caption[class|id|style],'
+            . 'colgroup[class|id|style],col[span|width|class|id|style],'
+            . 'thead[class|id|style],tbody[class|id|style],tfoot[class|id|style],'
+            . 'tr[class|id|style],th[class|id|style|colspan|rowspan|scope|headers],'
+            . 'td[class|id|style|colspan|rowspan|headers],'
+            . 'sub,sup,mark,small,abbr[title|class|id],cite[class|id],'
+            . 'q[cite|class|id],address[class|id|style]'
+        );
+
+        // ── CSS: allow common TinyMCE formatting properties only ─────────────────
+        $config->set('CSS.AllowedProperties', [
+            'text-align', 'text-decoration', 'text-indent',
+            'color', 'background-color',
+            'font-size', 'font-weight', 'font-style', 'font-family',
+            'line-height', 'letter-spacing',
+            'width', 'height', 'max-width', 'max-height',
+            'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+            'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+            'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
+            'border-color', 'border-style', 'border-width',
+            'float', 'clear', 'vertical-align',
+            'list-style', 'list-style-type',
+        ]);
+
+        // ── URI: allow http(s), mailto, relative paths; block javascript:, data: ─
+        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true]);
+
+        // ── Encoding & output ────────────────────────────────────────────────────
+        $config->set('Core.Encoding', 'UTF-8');
+
+        // Do not auto-add paragraphs or remove empty nodes — preserve TinyMCE output as-is.
+        $config->set('AutoFormat.AutoParagraph', false);
+        $config->set('AutoFormat.RemoveEmpty', false);
+
+        // ── Register HTML5 elements not in the default HTML4 definition ──────────
+        // Must be called after all config->set() calls and before new HTMLPurifier().
+        if ($def = $config->maybeGetRawHTMLDefinition()) {
+            $def->addElement('figure',     'Block',  'Optional: (figcaption, Flow) | (Flow, figcaption?) | Flow', 'Common');
+            $def->addElement('figcaption', 'Inline', 'Flow',   'Common');
+            $def->addElement('mark',       'Inline', 'Inline', 'Common');
+            $def->addElement('address',    'Block',  'Flow',   'Common');
+            // Register HTML4 accessibility attributes missing from the bundled definition.
+            $def->addAttribute('td', 'headers', 'NMTOKENS');
+            $def->addAttribute('th', 'headers', 'NMTOKENS');
+        }
+
+        $purifier = new HTMLPurifier($config);
+
+        return $purifier->purify($html);
+    }
 }
-
-
 ?>
